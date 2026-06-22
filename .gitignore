@@ -1,0 +1,12 @@
+# Build outputs
+*.pdf
+*.docx
+*.tex.bak
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OMC / Claude
+.omc/
+.claude/

@@ -1,0 +1,115 @@
+{
+  "preset": "gbt9704",
+  "version": "1.0",
+  "document": {
+    "page": {
+      "width": "210mm",
+      "height": "297mm",
+      "margin_top": "37mm",
+      "margin_bottom": "35mm",
+      "margin_left": "28mm",
+      "margin_right": "26mm"
+    },
+    "font_fallback": {
+      "方正小标宋简体": "FZXiaoBiaoSong-B05S",
+      "楷体_GB2312": "KaiTi",
+      "仿宋_GB2312": "FangSong",
+      "黑体": "SimHei"
+    },
+    "page_number": {
+      "enabled": true,
+      "font": "宋体",
+      "size": "14pt",
+      "alignment": "right",
+      "format": "- {PAGE} -",
+      "position_from_bottom": "7mm"
+    }
+  },
+  "styles": {
+    "Title": {
+      "font": "方正小标宋简体",
+      "size": "22pt",
+      "alignment": "center",
+      "bold": false,
+      "line_spacing": "28pt",
+      "first_line_indent": "0"
+    },
+    "Normal": {
+      "font": "仿宋_GB2312",
+      "size": "16pt",
+      "alignment": "both",
+      "line_spacing": "28pt",
+      "first_line_indent": "2chars"
+    },
+    "First Paragraph": {
+      "font": "仿宋_GB2312",
+      "size": "16pt",
+      "alignment": "both",
+      "line_spacing": "28pt",
+      "first_line_indent": "2chars"
+    },
+    "Heading 1": {
+      "font": "黑体",
+      "size": "16pt",
+      "bold": false,
+      "alignment": "justify",
+      "line_spacing": "28pt",
+      "first_line_indent": "2chars"
+    },
+    "Heading 2": {
+      "font": "楷体_GB2312",
+      "size": "16pt",
+      "bold": true,
+      "alignment": "justify",
+      "line_spacing": "28pt",
+      "first_line_indent": "2chars"
+    },
+    "Heading 3": {
+      "font": "仿宋_GB2312",
+      "size": "16pt",
+      "bold": true,
+      "alignment": "justify",
+      "line_spacing": "28pt",
+      "first_line_indent": "2chars"
+    },
+    "Verbatim Char": {
+      "font": "Consolas",
+      "size": "13pt",
+      "color": "C00000"
+    },
+    "Source Code": {
+      "font": "Consolas",
+      "size": "11pt",
+      "line_spacing": "18pt",
+      "first_line_indent": "0",
+      "space_before": "6pt",
+      "space_after": "6pt",
+      "background_color": "F2F2F2"
+    },
+    "Compact": {
+      "first_line_indent": "0",
+      "space_before": "1pt",
+      "space_after": "1pt"
+    }
+  },
+  "metadata": {
+    "red_header_line": false,
+    "title": "",
+    "author": "",
+    "header": [
+      "发文机关",
+      "字号",
+      "签发人"
+    ],
+    "main_receiver": "",
+    "attachments": [],
+    "signature": "",
+    "date": "",
+    "notes": null,
+    "copy_to": null,
+    "issue_info": null
+  },
+  "filters": [
+    "title-promotion"
+  ]
+}

@@ -1,0 +1,133 @@
+% _extensions/gb9704/context-template.tex
+% 字体方案（必须在 \usemodule 之前设置）：
+%   reference  — GB/T 9704 参考文档（SimHei/楷体国标/仿宋国标）
+%   fangzheng  — 方正全套（方正黑体/方正楷体/朱雀仿宋）
+%   modern     — 现代简洁（文泉等宽正黑/楷体国标/朱雀仿宋）
+\def\gbtfontpreset{%(fontpreset)s}
+
+% 加载 gbt9704 模块（字体/CJK断行/标题样式已由模块统一管理）
+\usemodule[gbt9704]
+
+% ==========================================================
+% 列表环境别名（兼容 Pandoc 默认语法）
+% ==========================================================
+\let\startenumerate\startitemize
+\let\stopenumerate\stopitemize
+\definedescription[description]
+
+% ==========================================================
+% 文本装饰命令（docx2ctx 生成器使用 \bold, \emph, \scaps, \overstrike, \high, \low）
+% gbt9704 模块锁定命令名，用 \pushoverloadmode 允许覆盖
+% ==========================================================
+\pushoverloadmode
+\def\bold#1{\FakeBold{#1}}
+\def\emph#1{\FakeSlant{#1}}
+\def\scaps#1{{\sc#1}}
+\popoverloadmode
+
+% ==========================================================
+% 三线表样式（覆盖 gbt9704 模块默认）
+% ==========================================================
+\setupTABLE[
+  frame=off,
+  rulethickness=0.5pt,
+  align={flushleft,lohi},
+]
+\setupTABLE[r][first][topframe=on, bottomframe=on]
+\setupTABLE[r][last][bottomframe=on]
+\setupTABLE[c][1][background=]     % 清除模块的灰色表头背景
+
+% ==========================================================
+% 标注块（Callouts）环境 — 对齐 Quarto LaTeX tcolorbox 样式
+% LaTeX: 白底 + 左粗右细彩色边框 + 彩色标题栏
+% ==========================================================
+\definecolor[callout-note-bg]    [r=0.89, g=0.93, b=0.98]  % #0758E5 10%
+\definecolor[callout-note-fg]    [r=0.27, g=0.51, b=0.93]  % #4582ec
+\definecolor[callout-warning-bg] [r=0.98, g=0.93, b=0.82]  % #EB9113 10%
+\definecolor[callout-warning-fg] [r=0.94, g=0.68, b=0.31]  % #f0ad4e
+\definecolor[callout-tip-bg]     [r=0.80, g=0.96, b=0.88]  % #00A047 10%
+\definecolor[callout-tip-fg]     [r=0.01, g=0.72, b=0.46]  % #02b875
+
+% 标注块：白底 + 彩色细框（简洁风格）
+\defineframedtext
+  [gbtnote]
+  [frame=on,
+   framecolor=callout-note-fg,
+   rulethickness=0.4pt,
+   offset=6pt,
+   background=color,
+   backgroundcolor=white,
+   width=local,
+   before={\blank[line]},
+   after={\blank[line]}]
+
+\defineframedtext
+  [gbtwarning]
+  [frame=on,
+   framecolor=callout-warning-fg,
+   rulethickness=0.4pt,
+   offset=6pt,
+   background=color,
+   backgroundcolor=white,
+   width=local,
+   before={\blank[line]},
+   after={\blank[line]}]
+
+\defineframedtext
+  [gbttip]
+  [frame=on,
+   framecolor=callout-tip-fg,
+   rulethickness=0.4pt,
+   offset=6pt,
+   background=color,
+   backgroundcolor=white,
+   width=local,
+   before={\blank[line]},
+   after={\blank[line]}]
+
+\defineframedtext
+  [gbtimportant]
+  [frame=on,
+   framecolor=darkred,
+   rulethickness=0.4pt,
+   background=color,
+   backgroundcolor=white,
+   corner=round,
+   radius=1mm,
+   width=local,
+   before={\blank[line]},
+   after={\blank[line]}]
+
+\defineframedtext
+  [gbtcaution]
+  [frame=on,
+   framecolor=darkorange,
+   rulethickness=0.4pt,
+   background=color,
+   backgroundcolor=white,
+   corner=round,
+   radius=1mm,
+   width=local,
+   before={\blank[line]},
+   after={\blank[line]}]
+
+% 标注块别名（兼容 notes 模板命名）
+\let\startnoteblock\startgbtnote  \let\stopnoteblock\stopgbtnote
+\let\startwarningblock\startgbtwarning  \let\stopwarningblock\stopgbtwarning
+\let\starttipblock\startgbttip  \let\stoptipblock\stopgbttip
+\let\startimportantblock\startgbtimportant  \let\stopimportantblock\stopgbtimportant
+\let\startcautionblock\startgbtcaution  \let\stopcautionblock\stopgbtcaution
+
+% ==========================================================
+% 文档开始
+% ==========================================================
+
+\officialtitle{%(title)s}
+
+\mainrecipient{%(mainreceiver)s}
+
+\starttext
+
+%(TEXT)s
+
+\stoptext

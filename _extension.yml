@@ -1,0 +1,37 @@
+author: songwupei
+contributes:
+  formats:
+    docx:
+      reference-doc: assets/reference-gbt9704.docx
+      filters:
+        - assets/filters/heading-demotion.lua
+        - assets/filters/title-promotion.lua
+    context:
+      keep-tex: true
+      pdf-engine: context
+      execute:
+        engine: context
+      template: context-template.tex
+      top-level-division: section
+      output-file: document-contex
+      filters:
+        - assets/filters/heading-demotion.lua
+      variables:
+        gbtfontpreset: "modern"
+    pdf:
+      keep-tex: true
+      documentclass: gbt9704
+      pdf-engine: xelatex
+      format-resources:
+        - gbt9704.cls
+      filters:
+        - assets/filters/heading-demotion.lua
+        - assets/filters/title-promotion.lua
+execute:
+  echo: true
+  warning: true
+jupyter: python3
+bibliography: []
+name: gbt9704
+title: GB/T 9704 文档格式
+version: 0.5.0
