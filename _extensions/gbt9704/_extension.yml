@@ -1,4 +1,7 @@
+title: GB/T 9704 文档格式
 author: songwupei
+version: 0.5.0
+quarto-required: ">=1.4.0"
 contributes:
   formats:
     docx:
@@ -9,11 +12,9 @@ contributes:
     context:
       keep-tex: true
       pdf-engine: context
-      execute:
-        engine: context
       template: context-template.tex
       top-level-division: section
-      output-file: document-contex
+      output-file: document-context
       filters:
         - assets/filters/heading-demotion.lua
       variables:
@@ -27,12 +28,3 @@ contributes:
       filters:
         - assets/filters/heading-demotion.lua
         - assets/filters/title-promotion.lua
-execute:
-  echo: true
-  warning: true
-jupyter: python3
-bibliography: []
-name: gbt9704
-title: GB/T 9704 文档格式
-version: 0.5.0
-quarto-required: ">=1.4.0"
