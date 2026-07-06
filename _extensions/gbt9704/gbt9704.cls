@@ -99,6 +99,7 @@
 \RequirePackage{longtable}
 \RequirePackage{caption}
 \RequirePackage{subcaption}
+\RequirePackage{fcolumn}       % v1.5+ 财务表格：千分位分隔、小数点对齐、\sumline
 
 \DeclareCaptionFont{sanhao}{\zihao{3}\fangsong}
 \captionsetup{
@@ -109,6 +110,28 @@
     skip=8pt,
 }
 
+
+% ------------------ 财务表格 (fcolumn) ------------------
+% 提供便捷的财务表格列类型：
+%   f  — 默认财务列：千分位 "."，小数点 ","，三位分组
+%   自定义：F{<千分位>}{<小数位>}{<分组>}{<格式>}
+%   示例：F{,}{.2}{{3}}{} → 1,234.56 样式（中文习惯）
+%
+% 便捷列类型：
+%   C  — Chinese financial：逗号千分位，小数点，两位小数（1,234.56）
+\newcolumntype{C}{F{,}{.2}{{3}}{}}
+%   N  — 数字列（无千分位，两位小数，小数点对齐）
+\newcolumntype{N}{F{}{.2}{}{}}
+
+% 财务表格环境：自动重置 sumline 计数器
+\newenvironment{financialtable}[1]{%
+  \zihao{3}\fangsong
+  \setlength{\baselineskip}{28pt}
+  \resetsumline
+  \begin{tabular}{#1}
+}{%
+  \end{tabular}
+}
 
 % ------------------ 标题格式 ------------------
 % 标题文本存储（pandoc 兼容：\title 存储，\maketitle 输出）
