@@ -108,10 +108,10 @@ function Pandoc(doc)
           )
         ))
       end
-      -- 红线：红色下划线段落（Pandoc 不支持原生段落边框）
+      -- 红线：无边框单格表格 + 红色底边框（Pandoc 不剥离表格属性）
       if meta["redline"] and escape(meta["redline"]) == "true" then
         table.insert(pre_blocks, pandoc.RawBlock("openxml",
-          '<w:p><w:pPr><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:color w:val="C8102E"/><w:u w:val="single"/></w:rPr><w:t xml:space="preserve">                                                                                            </w:t></w:r></w:p>'
+          '<w:tbl><w:tblPr><w:tblBorders><w:bottom w:val="single" w:sz="6" w:space="0" w:color="C8102E"/></w:tblBorders><w:tblW w:w="5000" w:type="pct"/></w:tblPr><w:tblGrid><w:gridCol w:w="9072"/></w:tblGrid><w:tr><w:tc><w:tcPr><w:tcW w:w="9072" w:type="dxa"/></w:tcPr><w:p><w:r><w:t xml:space="preserve"> </w:t></w:r></w:p></w:tc></w:tr></w:tbl>'
         ))
       end
     end

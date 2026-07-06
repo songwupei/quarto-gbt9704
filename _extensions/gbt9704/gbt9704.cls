@@ -365,11 +365,11 @@
     \setlength{\aftersubsecskip}{0pt}
     \setlength{\beforesubsubsecskip}{0pt}
     \setlength{\aftersubsubsecskip}{0pt}
-    % --- 二级标题（##）：楷体加粗，首行缩进2字符 ---
+    % --- 二级标题（##）：楷体，首行缩进2字符 ---
     \let\oldsubsection\subsection
     \renewcommand{\subsection}[1]{%
         \oldsubsection{%
-            \zihao{3}\kaishu\bfseries
+            \zihao{3}\kaishu
             \hspace*{2\ccwd}#1%
         }\par
     }%

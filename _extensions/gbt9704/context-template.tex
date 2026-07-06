@@ -23,30 +23,24 @@ $if(gbtfontpreset)$\def\gbtfontpreset{$gbtfontpreset$}$else$\def\gbtfontpreset{m
 }
 
 % ==========================================================
-% 各字体伪粗体变体 (\FakeBold 会切换回正文字体，不能混用)
-% ==========================================================
-\definefont[SimHeiBold]  [name:simhei*fakebold]
-\definefont[GBKaiBold]   [name:kaitigb2312*fakebold]
-\definefont[XiaoBiaoSongBold] [name:fzxiaobiaosongb05s*fakebold]
-
-% ==========================================================
 % 覆盖标题样式 — 与 LaTeX gbt9704.cls 一致
+% GB/T 9704: 一级黑体、二级楷体、三级仿宋加粗
 % ==========================================================
 \setuphead[title][
-  style={\XiaoBiaoSongBold\switchtobodyfont[22pt]},
+  style={\XiaoBiaoSong\switchtobodyfont[22pt]},
   color=officialred,
   align=middle,
   number=no,
 ]
 \setuphead[section][
-  style={\SimHeiBold},
+  style={\SimHei},
   number=no,
   align=flushleft,
   indentnext=yes,
   margin=2em,
 ]
 \setuphead[subsection][
-  style={\GBKaiBold},
+  style={\GBKai},
   number=no,
   indentnext=yes,
   margin=2em,
