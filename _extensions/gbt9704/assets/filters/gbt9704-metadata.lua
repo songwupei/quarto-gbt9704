@@ -1,9 +1,9 @@
 -- gbt9704-metadata.lua
 -- Pandoc Lua filter: 将 YAML 元数据映射到输出
--- 支持 PDF (LaTeX) 和 DOCX 两种格式
+-- 支持 PDF (LaTeX)、DOCX、ConTeXt 三种格式
 --
 -- YAML 元数据字段：
---   header-org, header-number, header-signatory → 红头版头 (PDF only)
+--   header-org, header-number, header-signatory → 红头版头 (PDF/ConTeXt)
 --   subtitle           → 副标题
 --   mainreceiver       → 主送机关
 --   attachments        → 附件列表
@@ -22,16 +22,21 @@ local function raw_latex(text)
   return pandoc.RawBlock("latex", text)
 end
 
+local function raw_context(text)
+  return pandoc.RawBlock("context", text)
+end
+
 local function para_text(text)
   return pandoc.Para({pandoc.Str(text)})
 end
 
 function Pandoc(doc)
   local meta = doc.meta
-  local is_latex = FORMAT:match("latex")
-  local is_docx  = FORMAT:match("docx")
+  local is_latex   = FORMAT:match("latex")
+  local is_docx    = FORMAT:match("docx")
+  local is_context = FORMAT:match("context")
 
-  if not is_latex and not is_docx then
+  if not is_latex and not is_docx and not is_context then
     return doc
   end
 
@@ -39,63 +44,108 @@ function Pandoc(doc)
   local post_blocks = {}
 
   -- ============================================================
-  -- 标题 (PDF: 抑制默认 \maketitle 后自行注入 \gongwentitle)
+  -- 标题 (PDF/ConTeXt: 抑制默认标题输出)
   -- ============================================================
   local title_text = meta["title"] and escape(meta["title"]) or ""
 
-  if is_latex and title_text ~= "" then
-    doc.meta["title"] = nil  -- 抑制默认 \maketitle
+  if (is_latex or is_context) and title_text ~= "" then
+    doc.meta["title"] = nil
   end
 
   -- ============================================================
-  -- 1. 红头版头 (PDF only — DOCX 不需要红头)
+  -- 1. 红头版头
   -- ============================================================
-  if is_latex then
-    local h_org = escape(meta["header-org"])
-    local h_num = escape(meta["header-number"])
-    local h_sig = escape(meta["header-signatory"])
-    if h_org ~= "" then
+  local h_org = escape(meta["header-org"])
+  local h_num = escape(meta["header-number"])
+  local h_sig = escape(meta["header-signatory"])
+
+  if h_org ~= "" then
+    if is_latex then
       table.insert(pre_blocks, raw_latex(
         string.format("\\makeheader{%s}{%s}{%s}", h_org, h_num, h_sig)
       ))
+    elseif is_context then
+      if h_org ~= "" then
+        table.insert(pre_blocks, raw_context(
+          string.format("\\issuingorgan{%s}", h_org)
+        ))
+      end
+      if h_num ~= "" then
+        table.insert(pre_blocks, raw_context(
+          string.format("\\documentnumber{%s}", h_num)
+        ))
+      end
+      -- 检查是否有 redline 类选项 (通过 classoption 元数据)
+      local classopts = meta["classoption"]
+      local has_redline = false
+      if classopts then
+        if classopts.t == "MetaList" then
+          for _, opt in ipairs(classopts) do
+            if escape(opt) == "redline" then
+              has_redline = true
+              break
+            end
+          end
+        elseif classopts.t == "MetaInlines" or classopts.t == "MetaString" then
+          if escape(classopts):find("redline") then
+            has_redline = true
+          end
+        end
+      end
+      if has_redline then
+        table.insert(pre_blocks, raw_context("\\redseparator"))
+      end
     end
   end
 
   -- ============================================================
   -- 2. 大标题
   -- ============================================================
-  if is_latex and title_text ~= "" then
-    table.insert(pre_blocks, raw_latex(
-      string.format("\\gongwentitle{%s}", title_text)
-    ))
+  if title_text ~= "" then
+    if is_latex then
+      table.insert(pre_blocks, raw_latex(
+        string.format("\\gongwentitle{%s}", title_text)
+      ))
+    elseif is_context then
+      table.insert(pre_blocks, raw_context(
+        string.format("\\officialtitle{%s}", title_text)
+      ))
+    end
   end
 
   -- ============================================================
   -- 3. 副标题
-  --   PDF: 清除 Pandoc 默认 subtitle，自行注入 \gongwensubtitle
-  --   DOCX: Pandoc 默认处理 subtitle 字段，无需重复注入
   -- ============================================================
   local subtitle = escape(meta["subtitle"])
   if subtitle ~= "" then
     if is_latex then
-      doc.meta["subtitle"] = nil  -- 抑制 Pandoc 默认 subtitle
+      doc.meta["subtitle"] = nil
       table.insert(pre_blocks, raw_latex(
         string.format("\\gongwensubtitle{%s}", subtitle)
       ))
+    elseif is_context then
+      doc.meta["subtitle"] = nil
+      -- ConTeXt 模块没有副标题命令，用居中块
+      table.insert(pre_blocks, raw_context(
+        string.format("\\startalignment[middle]{\\switchtobodyfont[16pt]\\FangSong %s}\\stopalignment", subtitle)
+      ))
     end
-    -- DOCX: subtitle 由 Pandoc 默认模板处理，不重复注入
+    -- DOCX: subtitle 由 Pandoc 默认处理
   end
 
   -- ============================================================
   -- 4. 主送机关
-  --   PDF: \mainreceiver (自带 \noindent)
-  --   DOCX: 顶格、无首行缩进
   -- ============================================================
   local mainreceiver = escape(meta["mainreceiver"])
   if mainreceiver ~= "" then
     if is_latex then
       table.insert(pre_blocks, raw_latex(
         string.format("\\mainreceiver{%s}", mainreceiver)
+      ))
+    elseif is_context then
+      doc.meta["mainreceiver"] = nil  -- 抑制模板重复输出
+      table.insert(pre_blocks, raw_context(
+        string.format("\\mainrecipient{%s}", mainreceiver)
       ))
     elseif is_docx then
       table.insert(pre_blocks, pandoc.RawBlock("openxml",
@@ -108,32 +158,26 @@ function Pandoc(doc)
   end
 
   -- ============================================================
-  -- 5. 开始正文环境 (PDF only)
+  -- 5. 正文环境 (PDF only)
   -- ============================================================
   if is_latex then
     table.insert(pre_blocks, raw_latex("\\begin{gongwenbody}"))
-  end
-
-  -- ============================================================
-  -- 6. 结束正文环境 (PDF only)
-  -- ============================================================
-  if is_latex then
     table.insert(post_blocks, raw_latex("\\end{gongwenbody}"))
   end
 
   -- ============================================================
-  -- 7. 附件
+  -- 6. 附件
   -- ============================================================
   local attachments = meta["attachments"]
   if attachments then
     local count = 0
     for _ in pairs(attachments) do count = count + 1 end
     if count > 0 then
-      if is_latex then
-        local first = true
-        for _, item in ipairs(attachments) do
-          local text = escape(item)
-          if text ~= "" then
+      local first = true
+      for _, item in ipairs(attachments) do
+        local text = escape(item)
+        if text ~= "" then
+          if is_latex then
             if first then
               table.insert(post_blocks, raw_latex(
                 string.format("\\attachmentHZ{%s}", text)
@@ -144,13 +188,18 @@ function Pandoc(doc)
                 string.format("\\attachmentNOHZ{%s}", text)
               ))
             end
-          end
-        end
-      elseif is_docx then
-        local first = true
-        for _, item in ipairs(attachments) do
-          local text = escape(item)
-          if text ~= "" then
+          elseif is_context then
+            if first then
+              table.insert(post_blocks, raw_context(
+                string.format("\\attachmentnoteA{%s}", text)
+              ))
+              first = false
+            else
+              table.insert(post_blocks, raw_context(
+                string.format("\\attachmentnoteB{%s}", text)
+              ))
+            end
+          elseif is_docx then
             if first then
               table.insert(post_blocks, para_text("附件：" .. text))
               first = false
@@ -164,13 +213,17 @@ function Pandoc(doc)
   end
 
   -- ============================================================
-  -- 8. 发文机关署名 (PDF: flushright, DOCX: 右对齐)
+  -- 7. 发文机关署名
   -- ============================================================
   local signature = escape(meta["signature"])
   if signature ~= "" then
     if is_latex then
       table.insert(post_blocks, raw_latex(
         string.format("\\signature{%s}", signature)
+      ))
+    elseif is_context then
+      table.insert(post_blocks, raw_context(
+        string.format("\\issuingsignature{%s}", signature)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
@@ -183,7 +236,7 @@ function Pandoc(doc)
   end
 
   -- ============================================================
-  -- 9. 成文日期 (PDF: flushright, DOCX: 右对齐)
+  -- 8. 成文日期
   -- ============================================================
   local signdate = escape(meta["signdate"])
   if signdate == "" then
@@ -193,6 +246,10 @@ function Pandoc(doc)
     if is_latex then
       table.insert(post_blocks, raw_latex(
         string.format("\\signdate{%s}", signdate)
+      ))
+    elseif is_context then
+      table.insert(post_blocks, raw_context(
+        string.format("\\documentdate{%s}", signdate)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
@@ -205,13 +262,17 @@ function Pandoc(doc)
   end
 
   -- ============================================================
-  -- 10. 附注 (no indent, left-aligned)
+  -- 9. 附注
   -- ============================================================
   local notes = escape(meta["notes"])
   if notes ~= "" then
     if is_latex then
       table.insert(post_blocks, raw_latex(
         string.format("\\notes{%s}", notes)
+      ))
+    elseif is_context then
+      table.insert(post_blocks, raw_context(
+        string.format("\\documentnote{%s}", notes)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
@@ -224,9 +285,7 @@ function Pandoc(doc)
   end
 
   -- ============================================================
-  -- 11. 版记：抄送 + 印发
-  --   PDF: \seprule \copyto \issueinfo
-  --   DOCX: 抄送左对齐，印发左+右（\hfill 效果）
+  -- 10. 版记：抄送 + 印发
   -- ============================================================
   local copyto = escape(meta["copyto"])
   local issue_author = escape(meta["issue-author"])
@@ -246,6 +305,17 @@ function Pandoc(doc)
         string.format("\\issueinfo{%s}{%s}", issue_author, issue_date)
       ))
     end
+  elseif is_context then
+    if copyto ~= "" then
+      table.insert(post_blocks, raw_context(
+        string.format("\\copyrecipient{%s}", copyto)
+      ))
+    end
+    if issue_author ~= "" then
+      table.insert(post_blocks, raw_context(
+        string.format("\\printinginfo{%s}{%s}", issue_author, issue_date)
+      ))
+    end
   elseif is_docx then
     if copyto ~= "" then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
@@ -256,7 +326,6 @@ function Pandoc(doc)
       ))
     end
     if issue_author ~= "" then
-      -- \hfill 效果：左半部分 + 右对齐制表符 + 右半部分
       table.insert(post_blocks, pandoc.RawBlock("openxml",
         string.format(
           '<w:p><w:pPr><w:ind w:firstLine="0"/><w:tabs><w:tab w:val="right" w:pos="9072"/></w:tabs></w:pPr><w:r><w:t xml:space="preserve">%s</w:t></w:r><w:r><w:tab/></w:r><w:r><w:t xml:space="preserve">%s</w:t></w:r></w:p>',

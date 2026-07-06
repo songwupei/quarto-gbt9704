@@ -23,6 +23,7 @@ contributes:
         - assets/filters/fakebold.lua
         - assets/filters/context-support.lua
         - assets/filters/natural-table.lua
+        - assets/filters/gbt9704-metadata.lua
       variables:
         gbtfontpreset: "modern"
     pdf:
