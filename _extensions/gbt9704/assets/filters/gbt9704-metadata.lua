@@ -228,8 +228,9 @@ function Pandoc(doc)
         string.format("\\signature{%s}", signature)
       ))
     elseif is_context then
+      -- 模块 \issuingsignature 是 flushleft+固定缩进，非真正右对齐
       table.insert(post_blocks, raw_context(
-        string.format("\\issuingsignature{%s}", signature)
+        string.format("\\startalignment[right]{\\switchtobodyfont[16pt]\\FangSong %s}\\stopalignment", signature)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
@@ -254,8 +255,9 @@ function Pandoc(doc)
         string.format("\\signdate{%s}", signdate)
       ))
     elseif is_context then
+      -- 模块 \documentdate 是 flushleft+固定缩进，非真正右对齐
       table.insert(post_blocks, raw_context(
-        string.format("\\documentdate{%s}", signdate)
+        string.format("\\startalignment[right]{\\switchtobodyfont[16pt]\\FangSong %s}\\stopalignment", signdate)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
