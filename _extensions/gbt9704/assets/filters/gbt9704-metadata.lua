@@ -108,10 +108,10 @@ function Pandoc(doc)
           )
         ))
       end
-      -- 红线：红色底纹细段落
+      -- 红线：红色下划线段落（Pandoc 不支持原生段落边框）
       if meta["redline"] and escape(meta["redline"]) == "true" then
         table.insert(pre_blocks, pandoc.RawBlock("openxml",
-          '<w:p><w:pPr><w:ind w:firstLine="0"/><w:shd w:val="clear" w:color="auto" w:fill="C8102E"/></w:pPr><w:r><w:rPr><w:sz w:val="4"/></w:rPr><w:t xml:space="preserve"> </w:t></w:r></w:p>'
+          '<w:p><w:pPr><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:color w:val="C8102E"/><w:u w:val="single"/></w:rPr><w:t xml:space="preserve">                                                                                            </w:t></w:r></w:p>'
         ))
       end
     end
@@ -220,13 +220,15 @@ function Pandoc(doc)
             end
           elseif is_context then
             if first then
+              -- 2em缩进 + "附件：" (匹配 LaTeX \attachmentHZ)
               table.insert(post_blocks, raw_context(
-                string.format("\\attachmentnoteA{%s}", text)
+                string.format("\\noindent\\hskip2em\\switchtobodyfont[16pt]\\FangSong 附件：%s", text)
               ))
               first = false
             else
+              -- 5em缩进 (对齐第一项 "附件：" 之后的文字)
               table.insert(post_blocks, raw_context(
-                string.format("\\attachmentnoteB{%s}", text)
+                string.format("\\noindent\\hskip5em\\switchtobodyfont[16pt]\\FangSong %s", text)
               ))
             end
           elseif is_docx then
