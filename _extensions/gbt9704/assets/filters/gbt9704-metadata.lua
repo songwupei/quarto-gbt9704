@@ -304,7 +304,7 @@ function Pandoc(doc)
       ))
     elseif is_context then
       table.insert(post_blocks, raw_context(
-        string.format("\\documentnote{%s}", notes)
+        string.format("\\noindent\\switchtobodyfont[16pt]\\FangSong （%s）", notes)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
@@ -340,12 +340,12 @@ function Pandoc(doc)
   elseif is_context then
     if copyto ~= "" then
       table.insert(post_blocks, raw_context(
-        string.format("\\copyrecipient{%s}", copyto)
+        string.format("\\noindent\\switchtobodyfont[16pt]\\FangSong 抄送：%s", copyto)
       ))
     end
     if issue_author ~= "" then
       table.insert(post_blocks, raw_context(
-        string.format("\\printinginfo{%s}{%s}", issue_author, issue_date)
+        string.format("\\noindent\\switchtobodyfont[16pt]\\FangSong %s\\hfill %s", issue_author, issue_date)
       ))
     end
   elseif is_docx then
