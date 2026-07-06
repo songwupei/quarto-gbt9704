@@ -1,6 +1,5 @@
 -- title-promotion.lua (pandoc.text UTF-8 安全)
-function Para(el)
-  local text = pandoc.utils.stringify(el)
+local function promote(text)
   if not text then return nil end
   local len = pandoc.text.len(text)
 
@@ -37,4 +36,13 @@ function Para(el)
   end
 
   return nil
+end
+
+function Para(el)
+  return promote(pandoc.utils.stringify(el))
+end
+
+-- Plain handler: 处理列表项等非段落块中的标题模式
+function Plain(el)
+  return promote(pandoc.utils.stringify(el))
 end
