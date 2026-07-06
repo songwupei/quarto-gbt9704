@@ -14,6 +14,15 @@ $if(gbtfontpreset)$\def\gbtfontpreset{$gbtfontpreset$}$else$\def\gbtfontpreset{m
 \definefont[SimSun][name:simsun*default]
 
 % ==========================================================
+% 修复 \redseparator — 模块用了 LaTeX 语法，ConTeXt 不支持
+% ==========================================================
+\def\redseparator{%
+  \startlinecorrection
+  \blackrule[color=officialred, width=156mm, height=1.5pt]
+  \stoplinecorrection
+}
+
+% ==========================================================
 % 覆盖标题样式 — 与 LaTeX gbt9704.cls 一致
 % GB/T 9704: 大标题 22pt 小标宋、一级 16pt 黑体、
 %   二级 16pt 楷体加粗、三级 16pt 仿宋加粗
