@@ -10,6 +10,7 @@ contributes:
         - assets/filters/heading-demotion.lua
         - assets/filters/title-promotion.lua
         - assets/filters/normalize-styles.lua
+        - assets/filters/gbt9704-metadata.lua
     context:
       keep-tex: true
       pdf-engine: context
