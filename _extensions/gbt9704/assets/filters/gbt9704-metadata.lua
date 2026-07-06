@@ -130,16 +130,22 @@ function Pandoc(doc)
     for _ in pairs(attachments) do count = count + 1 end
     if count > 0 then
       if is_latex then
-        table.insert(post_blocks, raw_latex("\\begin{attachments}"))
+        local first = true
         for _, item in ipairs(attachments) do
           local text = escape(item)
           if text ~= "" then
-            table.insert(post_blocks, raw_latex(
-              string.format("\\attachmentitem{%s}", text)
-            ))
+            if first then
+              table.insert(post_blocks, raw_latex(
+                string.format("\\attachmentHZ{%s}", text)
+              ))
+              first = false
+            else
+              table.insert(post_blocks, raw_latex(
+                string.format("\\attachmentNOHZ{%s}", text)
+              ))
+            end
           end
         end
-        table.insert(post_blocks, raw_latex("\\end{attachments}"))
       elseif is_docx then
         local first = true
         for _, item in ipairs(attachments) do
