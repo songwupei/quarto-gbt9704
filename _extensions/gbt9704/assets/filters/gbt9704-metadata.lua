@@ -80,6 +80,10 @@ function Pandoc(doc)
           string.format("\\startalignment[middle]{\\switchtobodyfont[15pt]\\SimSun %s}\\stopalignment", h_sig)
         ))
       end
+      -- 红线：通过 redline 元数据触发
+      if meta["redline"] and escape(meta["redline"]) == "true" then
+        table.insert(pre_blocks, raw_context("\\redseparator"))
+      end
     elseif is_docx then
       -- 红头：居中、红色、22pt 粗体
       table.insert(pre_blocks, pandoc.RawBlock("openxml",

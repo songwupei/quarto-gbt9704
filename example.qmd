@@ -1,8 +1,5 @@
 ---
 title: 关于印发《公文格式示例》的通知
-classoption:
-  - redline
-  - zhlineskip
 header-org: XX单位办公室
 header-number: XX发〔202X〕X号
 header-signatory: 张三
@@ -20,9 +17,14 @@ attachments:
 format:
   gbt9704-pdf:
     keep-tex: true
+    classoption:
+      - redline
+      - zhlineskip
   gbt9704-docx: default
   gbt9704-context:
     keep-tex: true
+    metadata:
+      redline: true
 ---
 
 全面推进公文格式标准化，根据 GB/T 9704—2012《党政机关公文格式》国家标准，特编制本示例文档。请各级单位认真组织学习，确保正确执行公文格式规范。
