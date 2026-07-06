@@ -18,6 +18,7 @@ contributes:
       output-file: document-context
       filters:
         - assets/filters/heading-demotion.lua
+        - assets/filters/title-promotion.lua
         - assets/filters/fakebold.lua
         - assets/filters/context-support.lua
         - assets/filters/natural-table.lua
