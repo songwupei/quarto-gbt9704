@@ -9,6 +9,42 @@ $if(gbtfontpreset)$\def\gbtfontpreset{$gbtfontpreset$}$else$\def\gbtfontpreset{m
 \usemodule[gbt9704]
 
 % ==========================================================
+% 补充字体定义 — 与 LaTeX gbt9704.cls 字体一致
+% ==========================================================
+\definefont[SimSun][name:simsun*default]
+
+% ==========================================================
+% 覆盖标题样式 — 与 LaTeX gbt9704.cls 一致
+% GB/T 9704: 大标题 22pt 小标宋、一级 16pt 黑体、
+%   二级 16pt 楷体加粗、三级 16pt 仿宋加粗
+% ==========================================================
+\setuphead[title][
+  style={\switchtobodyfont[22pt]\XiaoBiaoSong\FakeBold},
+  color=officialred,
+  align=middle,
+  number=no,
+]
+\setuphead[section][
+  style={\switchtobodyfont[16pt]\SimHei\FakeBold},
+  number=no,
+  align=flushleft,
+  indentnext=yes,
+  margin=2em,
+]
+\setuphead[subsection][
+  style={\switchtobodyfont[16pt]\GBKai\FakeBold},
+  number=no,
+  indentnext=yes,
+  margin=2em,
+]
+\setuphead[subsubsection][
+  style={\switchtobodyfont[16pt]\FakeBold},
+  number=no,
+  indentnext=yes,
+  margin=2em,
+]
+
+% ==========================================================
 % 列表环境别名（兼容 Pandoc 默认语法）
 % ==========================================================
 \let\startenumerate\startitemize
@@ -121,10 +157,6 @@ $if(gbtfontpreset)$\def\gbtfontpreset{$gbtfontpreset$}$else$\def\gbtfontpreset{m
 % ==========================================================
 % 文档开始
 % ==========================================================
-
-$if(title)$\officialtitle{$title$}$endif$
-
-$if(mainreceiver)$\mainrecipient{$mainreceiver$}$endif$
 
 \starttext
 

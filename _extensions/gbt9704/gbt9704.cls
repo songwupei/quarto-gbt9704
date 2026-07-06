@@ -365,19 +365,19 @@
     \setlength{\aftersubsecskip}{0pt}
     \setlength{\beforesubsubsecskip}{0pt}
     \setlength{\aftersubsubsecskip}{0pt}
-    % --- 二级标题（##）：楷体，首行缩进2字符 ---
+    % --- 二级标题（##）：楷体加粗，首行缩进2字符 ---
     \let\oldsubsection\subsection
     \renewcommand{\subsection}[1]{%
         \oldsubsection{%
-            \zihao{3}\kaishu
+            \zihao{3}\kaishu\bfseries
             \hspace*{2\ccwd}#1%
         }\par
     }%
-    % --- 三级标题（###）：仿宋，首行缩进2字符 ---
+    % --- 三级标题（###）：仿宋加粗，首行缩进2字符 ---
     \let\oldsubsubsection\subsubsection
     \renewcommand{\subsubsection}[1]{%
         \oldsubsubsection{%
-            \zihao{3}\normalfont
+            \zihao{3}\normalfont\bfseries
             \hspace*{2\ccwd}#1%
         }\par
     }%

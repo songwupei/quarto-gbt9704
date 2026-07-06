@@ -65,17 +65,23 @@ function Pandoc(doc)
         string.format("\\makeheader{%s}{%s}{%s}", h_org, h_num, h_sig)
       ))
     elseif is_context then
+      -- 红头：居中、红色、22pt大标宋（匹配 LaTeX \makeheader）
       if h_org ~= "" then
         table.insert(pre_blocks, raw_context(
-          string.format("\\issuingorgan{%s}", h_org)
+          string.format("\\startalignment[middle]{\\switchtobodyfont[22pt]\\DaBiaoSong\\color[officialred]{%s}}\\stopalignment", h_org)
         ))
       end
       if h_num ~= "" then
         table.insert(pre_blocks, raw_context(
-          string.format("\\documentnumber{%s}", h_num)
+          string.format("\\startalignment[middle]{\\switchtobodyfont[15pt]\\SimSun %s}\\stopalignment", h_num)
         ))
       end
-      -- 检查是否有 redline 类选项 (通过 classoption 元数据)
+      if h_sig ~= "" then
+        table.insert(pre_blocks, raw_context(
+          string.format("\\startalignment[middle]{\\switchtobodyfont[15pt]\\SimSun %s}\\stopalignment", h_sig)
+        ))
+      end
+      -- 红头红线
       local classopts = meta["classoption"]
       local has_redline = false
       if classopts then
