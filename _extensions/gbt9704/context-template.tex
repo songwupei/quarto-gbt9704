@@ -28,26 +28,26 @@ $if(gbtfontpreset)$\def\gbtfontpreset{$gbtfontpreset$}$else$\def\gbtfontpreset{m
 %   二级 16pt 楷体加粗、三级 16pt 仿宋加粗
 % ==========================================================
 \setuphead[title][
-  style={\switchtobodyfont[22pt]\XiaoBiaoSong\FakeBold},
+  style={\XiaoBiaoSong\FakeBold\switchtobodyfont[22pt]},
   color=officialred,
   align=middle,
   number=no,
 ]
 \setuphead[section][
-  style={\switchtobodyfont[16pt]\SimHei\FakeBold},
+  style={\SimHei\FakeBold},
   number=no,
   align=flushleft,
   indentnext=yes,
   margin=2em,
 ]
 \setuphead[subsection][
-  style={\switchtobodyfont[16pt]\GBKai\FakeBold},
+  style={\GBKai\FakeBold},
   number=no,
   indentnext=yes,
   margin=2em,
 ]
 \setuphead[subsubsection][
-  style={\switchtobodyfont[16pt]\FakeBold},
+  style={\FakeBold},
   number=no,
   indentnext=yes,
   margin=2em,
