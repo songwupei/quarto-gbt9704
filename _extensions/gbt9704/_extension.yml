@@ -34,3 +34,4 @@ contributes:
         - assets/filters/heading-demotion.lua
         - assets/filters/title-promotion.lua
         - assets/filters/format-legal.lua
+        - assets/filters/gbt9704-metadata.lua

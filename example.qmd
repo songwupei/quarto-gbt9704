@@ -1,5 +1,19 @@
 ---
 title: 关于印发《公文格式示例》的通知
+header-org: 国务院办公厅
+header-number: 国办发〔2024〕1号
+header-signatory: 张三
+subtitle: ——关于做好公文格式标准化工作的通知
+mainreceiver: 各省、自治区、直辖市人民政府，国务院各部委、各直属机构：
+signature: 国务院办公厅
+signdate: 2024年1月1日
+notes: 此件发至县团级
+copyto: 中共中央办公厅，全国人大常委会办公厅，国务院各部委、各直属机构
+issue-author: 国务院办公厅秘书局
+issue-date: 2024年1月1日
+attachments:
+  - "1. 关于印发《公文处理办法》的通知"
+  - "2. 公文格式标准对照表"
 format:
   gbt9704-pdf:
     keep-tex: true
@@ -7,14 +21,6 @@ format:
   gbt9704-context:
     keep-tex: true
 ---
-
-```{=latex}
-\gongwensubtitle{——关于做好公文格式标准化工作的通知}
-```
-
-```{=latex}
-\mainreceiver{各省、自治区、直辖市人民政府，国务院各部委、各直属机构：}
-```
 
 全面推进公文格式标准化，根据 GB/T 9704—2012《党政机关公文格式》国家标准，特编制本示例文档。请各级单位认真组织学习，确保正确执行公文格式规范。
 
@@ -45,11 +51,3 @@ format:
 一、附件
 
 附件是公文正文的补充说明材料，是公文的重要组成部分。附件应当另页编排，并在版记之前、成文日期之后标注。
-
-```{=latex}
-\attachmentHZ{1. 关于印发《公文处理办法》的通知}
-```
-
-```{=latex}
-\attachmentHZ{2. 公文格式标准对照表}
-```
