@@ -1,16 +1,17 @@
 ---
 title: 关于印发《公文格式示例》的通知
-header-org: 国务院办公厅
-header-number: 国办发〔2024〕1号
+classoption: redline
+header-org: XX单位办公室
+header-number: XX发〔202X〕X号
 header-signatory: 张三
 subtitle: ——关于做好公文格式标准化工作的通知
-mainreceiver: 各省、自治区、直辖市人民政府，国务院各部委、各直属机构：
-signature: 国务院办公厅
-signdate: 2024年1月1日
-notes: 此件发至县团级
-copyto: 中共中央办公厅，全国人大常委会办公厅，国务院各部委、各直属机构
-issue-author: 国务院办公厅秘书局
-issue-date: 2024年1月1日
+mainreceiver: 各有关单位：
+signature: XX单位办公室
+signdate: 202X年X月X日
+notes: （此件公开发布）
+copyto: XX部门、XX委员会
+issue-author: XX单位办公室
+issue-date: 202X年X月X日
 attachments:
   - "1. 关于印发《公文处理办法》的通知"
   - "2. 公文格式标准对照表"
