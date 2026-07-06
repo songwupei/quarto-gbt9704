@@ -89,7 +89,7 @@ function Pandoc(doc)
   -- ============================================================
   -- 4. 主送机关
   --   PDF: \mainreceiver (自带 \noindent)
-  --   DOCX: 用 Normal 样式（无首行缩进）
+  --   DOCX: 顶格、无首行缩进
   -- ============================================================
   local mainreceiver = escape(meta["mainreceiver"])
   if mainreceiver ~= "" then
@@ -100,7 +100,7 @@ function Pandoc(doc)
     elseif is_docx then
       table.insert(pre_blocks, pandoc.RawBlock("openxml",
         string.format(
-          '<w:p><w:pPr><w:pStyle w:val="Normal"/></w:pPr><w:r><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+          '<w:p><w:pPr><w:ind w:firstLine="0" w:firstLineChars="0"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="仿宋_GB2312" w:hAnsi="仿宋_GB2312" w:eastAsia="仿宋_GB2312"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
           mainreceiver
         )
       ))
@@ -164,7 +164,7 @@ function Pandoc(doc)
   end
 
   -- ============================================================
-  -- 8. 发文机关署名
+  -- 8. 发文机关署名 (PDF: flushright, DOCX: 右对齐)
   -- ============================================================
   local signature = escape(meta["signature"])
   if signature ~= "" then
@@ -173,12 +173,17 @@ function Pandoc(doc)
         string.format("\\signature{%s}", signature)
       ))
     elseif is_docx then
-      table.insert(post_blocks, para_text(signature))
+      table.insert(post_blocks, pandoc.RawBlock("openxml",
+        string.format(
+          '<w:p><w:pPr><w:jc w:val="right"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+          signature
+        )
+      ))
     end
   end
 
   -- ============================================================
-  -- 9. 成文日期
+  -- 9. 成文日期 (PDF: flushright, DOCX: 右对齐)
   -- ============================================================
   local signdate = escape(meta["signdate"])
   if signdate == "" then
@@ -190,12 +195,17 @@ function Pandoc(doc)
         string.format("\\signdate{%s}", signdate)
       ))
     elseif is_docx then
-      table.insert(post_blocks, para_text(signdate))
+      table.insert(post_blocks, pandoc.RawBlock("openxml",
+        string.format(
+          '<w:p><w:pPr><w:jc w:val="right"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+          signdate
+        )
+      ))
     end
   end
 
   -- ============================================================
-  -- 10. 附注
+  -- 10. 附注 (no indent, left-aligned)
   -- ============================================================
   local notes = escape(meta["notes"])
   if notes ~= "" then
@@ -204,12 +214,19 @@ function Pandoc(doc)
         string.format("\\notes{%s}", notes)
       ))
     elseif is_docx then
-      table.insert(post_blocks, para_text("（" .. notes .. "）"))
+      table.insert(post_blocks, pandoc.RawBlock("openxml",
+        string.format(
+          '<w:p><w:pPr><w:ind w:firstLine="0"/></w:pPr><w:r><w:t xml:space="preserve">（%s）</w:t></w:r></w:p>',
+          notes
+        )
+      ))
     end
   end
 
   -- ============================================================
-  -- 11. 版记分隔线 + 抄送 + 印发
+  -- 11. 版记：抄送 + 印发
+  --   PDF: \seprule \copyto \issueinfo
+  --   DOCX: 抄送左对齐，印发左+右（\hfill 效果）
   -- ============================================================
   local copyto = escape(meta["copyto"])
   local issue_author = escape(meta["issue-author"])
@@ -231,10 +248,21 @@ function Pandoc(doc)
     end
   elseif is_docx then
     if copyto ~= "" then
-      table.insert(post_blocks, para_text("抄送：" .. copyto))
+      table.insert(post_blocks, pandoc.RawBlock("openxml",
+        string.format(
+          '<w:p><w:pPr><w:ind w:firstLine="0"/></w:pPr><w:r><w:t xml:space="preserve">抄送：%s</w:t></w:r></w:p>',
+          copyto
+        )
+      ))
     end
     if issue_author ~= "" then
-      table.insert(post_blocks, para_text(issue_author .. "  " .. issue_date))
+      -- \hfill 效果：左半部分 + 右对齐制表符 + 右半部分
+      table.insert(post_blocks, pandoc.RawBlock("openxml",
+        string.format(
+          '<w:p><w:pPr><w:ind w:firstLine="0"/><w:tabs><w:tab w:val="right" w:pos="9072"/></w:tabs></w:pPr><w:r><w:t xml:space="preserve">%s</w:t></w:r><w:r><w:tab/></w:r><w:r><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+          issue_author, issue_date
+        )
+      ))
     end
   end
 
