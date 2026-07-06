@@ -12,3 +12,6 @@ Thumbs.db
 .claude/
 issue.md
 reply.md
+*.tex
+gbt9704.cls
+zhlineskip.sty

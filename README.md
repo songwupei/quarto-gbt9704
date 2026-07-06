@@ -61,6 +61,44 @@ format:
 | 页边距 Margins | 上 37mm / 下 35mm / 左 28mm / 右 26mm |
 | 伪粗体 Fakebold | 支持中文字体加粗 · Bold for CJK fonts |
 | 元数据 Metadata | 红头、密级、签发人 · Red-header, security level, signatory |
+| 财务表格 Financial tables | fcolumn v1.5+：千分位分隔、小数点对齐、\sumline 合计线 |
+
+## 财务表格 · Financial Tables
+
+基于 **fcolumn** 宏包 (v1.5+)，提供财务表格的自动排版：
+
+- **千分位分隔**：数字自动显示逗号千分位（如 `1,234.56`）
+- **小数点对齐**：财务列自动按小数点对齐
+- **合计线**：`\sumline` 自动绘制合计线并计算列合计
+- **自动检测**：表格中含 `\sumline` 标记时自动启用，无需额外配置
+
+### 在 Markdown 中使用
+
+```markdown
+| 项目       | 预算金额（元） | 实际支出（元） |
+|------------|---------------|---------------|
+| 办公设备    | 150000.00     | 148235.50     |
+| 信息化建设  | 350000.00     | 328900.00     |
+| \sumline   |               |               |
+| 合计       |               |               |
+```
+
+### 使用 LaTeX 环境
+
+```latex
+\begin{financialtable}{l C C l}
+\toprule
+项目 & 预算金额（元） & 实际支出（元） & 备注 \\
+\midrule
+办公设备 & 150000.00 & 148235.50 & 已完成 \\
+信息化建设 & 350000.00 & 328900.00 & 持续进行 \\
+\sumline
+合计 & & & \\
+\bottomrule
+\end{financialtable}
+```
+
+可用列类型：`l`（文本左对齐）、`f`（欧式财务列）、`C`（中式财务列，逗号千分位）、`N`（无千分位数字列）
 
 ## 许可证 · License
 

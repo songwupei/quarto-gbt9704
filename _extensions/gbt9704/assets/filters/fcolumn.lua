@@ -1,20 +1,19 @@
--- fcolumn.lua
--- 将 .financial 类别的 Markdown 表格转换为使用 fcolumn 宏包的 LaTeX tabular
--- 支持千分位分隔、小数点对齐、\sumline 合计线
+-- fcolumn.lua — 财务表格过滤器
+-- 自动检测含 \sumline 标记的表格，转换为 fcolumn 财务表格（仅 LaTeX/PDF）
+-- 同时支持手动添加 .financial 类到表格（若 Pandoc 支持 table attributes）
 --
--- 用法：
+-- 功能：
+--   - 数字列 → C 列类型（逗号千分位、小数点对齐、两位小数）
+--   - \sumline 标记行 → 实际 \sumline 合计线命令
+--   - 文本列 → l（左对齐）
+--
+-- 用法示例：
 --   | 项目     | 金额（元） |
 --   |----------|-----------|
 --   | 办公用品  | 1234.56   |
 --   | 差旅费    | 89012.00  |
 --   | \sumline  |           |
 --   | 合计      |           |
---   {tbl-colwidths="[30,70]" .financial}
---
--- 自动检测：
---   - 包含 . 数字的列 → f 列类型（千分位 + 小数点对齐）
---   - 包含 \sumline 标记的行 → 实际 \sumline 命令
---   - 纯文本列 → l（左对齐）
 
 local function is_numeric_cell(content)
   -- 检查单元格内容是否是数字（可能带千分位逗号和货币符号）
@@ -36,9 +35,19 @@ local function is_sumline_cell(content)
   if not content or #content == 0 then
     return false
   end
+  -- 直接检查 AST：pandoc.utils.stringify 会丢弃 RawInline 元素
+  for _, block in ipairs(content) do
+    if block.t == "Plain" or block.t == "Para" then
+      for _, il in ipairs(block.content) do
+        if il.t == "RawInline" and il.text:match("\\sumline") then
+          return true
+        end
+      end
+    end
+  end
+  -- Fallback: 检查字符串化后的文本
   local text = pandoc.utils.stringify(content)
-  -- 检查是否包含 \sumline 标记
-  if text:match("\\sumline") then
+  if text:match("sumline") then
     return true
   end
   return false
@@ -49,13 +58,34 @@ local function cell_text(content)
 end
 
 local function is_financial_table(tbl)
-  if not tbl.classes then
+  -- 方法1：检查 .financial 类（若 Pandoc 支持 table attributes）
+  if tbl.classes then
+    for _, cls in ipairs(tbl.classes) do
+      if cls == "financial" then
+        return true
+      end
+    end
+  end
+  -- 方法2：自动检测：表中是否包含 \sumline 标记
+  local function check_cells(rows)
+    for _, row in ipairs(rows) do
+      for _, cell in ipairs(row.cells) do
+        if is_sumline_cell(cell.contents) then
+          return true
+        end
+      end
+    end
     return false
   end
-  for _, cls in ipairs(tbl.classes) do
-    if cls == "financial" then
-      return true
+  if tbl.bodies then
+    for _, body in ipairs(tbl.bodies) do
+      if body.body and check_cells(body.body) then
+        return true
+      end
     end
+  end
+  if tbl.head and tbl.head.rows and check_cells(tbl.head.rows) then
+    return true
   end
   return false
 end
@@ -128,10 +158,11 @@ local function detect_column_types(tbl)
   end
 
   -- 如果某列有超过一半的行是数字，则标记为财务列
+  -- 使用 C 列类型（中文习惯：逗号千分位，小数点，两位小数）
   if total_rows > 0 then
     for c = 1, ncols do
       if numeric_counts[c] > total_rows * 0.4 then
-        coltypes[c] = "f"
+        coltypes[c] = "C"
       end
     end
   end
@@ -140,7 +171,7 @@ local function detect_column_types(tbl)
 end
 
 function Table(el)
-  -- 仅处理带 .financial 类的表格，且仅针对 LaTeX/PDF 输出
+  -- 仅处理含 \sumline 或 合计 行的表格，且仅针对 LaTeX/PDF 输出
   if not is_financial_table(el) then
     return nil
   end
@@ -169,7 +200,7 @@ function Table(el)
     table.insert(result, "\\caption{" .. cap_text .. "}")
   end
 
-  table.insert(result, "\\resetsumline")
+  -- fcolumn 通过 tbl/init hook 自动调用 \resetsumline，无需手动调用
   table.insert(result, "\\begin{tabular}{" .. colspec .. "}")
   table.insert(result, "\\toprule")
 
@@ -179,9 +210,6 @@ function Table(el)
       local cells = {}
       for _, cell in ipairs(row.cells) do
         local text = cell_text(cell.contents)
-        if text == "" then
-          text = "\\nbsp"
-        end
         table.insert(cells, "\\multicolumn{1}{c}{\\bfseries " .. text .. "}")
       end
       table.insert(result, table.concat(cells, " & ") .. " \\\\")
@@ -209,17 +237,10 @@ function Table(el)
             local cells = {}
             for c, cell in ipairs(row.cells) do
               local text = cell_text(cell.contents)
-              -- 对 f 列，只保留数字部分（去掉已格式化的千分位）
-              if coltypes[c] == "f" then
-                -- 清理数字：去掉逗号、空格、货币符号
+              -- 对财务列（f/C），去掉已格式化的千分位逗号和货币符号
+              if coltypes[c] == "f" or coltypes[c] == "C" then
                 text = text:gsub(",", ""):gsub("，", ""):gsub("%s+", "")
                   :gsub("¥", ""):gsub("$", ""):gsub("€", ""):gsub("£", "")
-                if text == "" then
-                  text = "0"
-                end
-              end
-              if text == "" then
-                text = "\\nbsp"
               end
               table.insert(cells, text)
             end
@@ -237,9 +258,6 @@ function Table(el)
       local cells = {}
       for _, cell in ipairs(row.cells) do
         local text = cell_text(cell.contents)
-        if text == "" then
-          text = "\\nbsp"
-        end
         table.insert(cells, text)
       end
       table.insert(result, table.concat(cells, " & ") .. " \\\\")

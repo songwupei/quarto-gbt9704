@@ -1,6 +1,6 @@
 title: GB/T 9704 文档格式
 author: songwupei
-version: 0.1.0
+version: 0.2.0
 quarto-required: ">=1.4.0"
 contributes:
   formats:
