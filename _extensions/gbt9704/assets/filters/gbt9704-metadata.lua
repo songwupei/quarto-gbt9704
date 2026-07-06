@@ -88,6 +88,8 @@ function Pandoc(doc)
 
   -- ============================================================
   -- 4. 主送机关
+  --   PDF: \mainreceiver (自带 \noindent)
+  --   DOCX: 用 Normal 样式（无首行缩进）
   -- ============================================================
   local mainreceiver = escape(meta["mainreceiver"])
   if mainreceiver ~= "" then
@@ -96,7 +98,12 @@ function Pandoc(doc)
         string.format("\\mainreceiver{%s}", mainreceiver)
       ))
     elseif is_docx then
-      table.insert(pre_blocks, para_text(mainreceiver))
+      table.insert(pre_blocks, pandoc.RawBlock("openxml",
+        string.format(
+          '<w:p><w:pPr><w:pStyle w:val="Normal"/></w:pPr><w:r><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+          mainreceiver
+        )
+      ))
     end
   end
 
@@ -134,10 +141,16 @@ function Pandoc(doc)
         end
         table.insert(post_blocks, raw_latex("\\end{attachments}"))
       elseif is_docx then
+        local first = true
         for _, item in ipairs(attachments) do
           local text = escape(item)
           if text ~= "" then
-            table.insert(post_blocks, para_text("附件：" .. text))
+            if first then
+              table.insert(post_blocks, para_text("附件：" .. text))
+              first = false
+            else
+              table.insert(post_blocks, para_text("　　　" .. text))
+            end
           end
         end
       end
