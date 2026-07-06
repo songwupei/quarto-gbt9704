@@ -281,7 +281,7 @@
     \zihao{3}
     \setlength{\baselineskip}{28pt}
     \begin{flushright}
-        #1
+        #1\hspace{2\ccwd}
     \end{flushright}
     \endgroup
 }
@@ -292,7 +292,7 @@
     \zihao{3}
     \setlength{\baselineskip}{28pt}
     \begin{flushright}
-        #1
+        #1\hspace{2\ccwd}
     \end{flushright}
     \endgroup
 }

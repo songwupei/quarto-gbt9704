@@ -44,11 +44,11 @@ function Pandoc(doc)
   local post_blocks = {}
 
   -- ============================================================
-  -- 标题 (PDF/ConTeXt: 抑制默认标题输出)
+  -- 标题 (所有格式: 抑制默认输出，由 filter 在红头之后注入)
   -- ============================================================
   local title_text = meta["title"] and escape(meta["title"]) or ""
 
-  if (is_latex or is_context) and title_text ~= "" then
+  if title_text ~= "" then
     doc.meta["title"] = nil
   end
 
@@ -59,31 +59,12 @@ function Pandoc(doc)
   local h_num = escape(meta["header-number"])
   local h_sig = escape(meta["header-signatory"])
 
-  -- 检测 classoption 中是否包含 redline
-  local classopts = meta["classoption"]
-  local has_redline = false
-  if classopts then
-    if classopts.t == "MetaList" then
-      for _, opt in ipairs(classopts) do
-        if escape(opt) == "redline" then
-          has_redline = true
-          break
-        end
-      end
-    elseif classopts.t == "MetaInlines" or classopts.t == "MetaString" then
-      if escape(classopts):find("redline") then
-        has_redline = true
-      end
-    end
-  end
-
   if h_org ~= "" then
     if is_latex then
       table.insert(pre_blocks, raw_latex(
         string.format("\\makeheader{%s}{%s}{%s}", h_org, h_num, h_sig)
       ))
     elseif is_context then
-      -- 红头：居中、红色、22pt大标宋
       if h_org ~= "" then
         table.insert(pre_blocks, raw_context(
           string.format("\\startalignment[middle]{\\switchtobodyfont[22pt]\\DaBiaoSong\\color[officialred]{%s}}\\stopalignment", h_org)
@@ -98,9 +79,6 @@ function Pandoc(doc)
         table.insert(pre_blocks, raw_context(
           string.format("\\startalignment[middle]{\\switchtobodyfont[15pt]\\SimSun %s}\\stopalignment", h_sig)
         ))
-      end
-      if has_redline then
-        table.insert(pre_blocks, raw_context("\\redseparator"))
       end
     elseif is_docx then
       -- 红头：居中、红色、22pt 粗体
@@ -126,15 +104,11 @@ function Pandoc(doc)
           )
         ))
       end
-      -- 红头红线：DOCX 用 HorizontalRule 模拟（Pandoc 无法插入原生红色段落边框）
-      if has_redline then
-        table.insert(pre_blocks, pandoc.HorizontalRule())
-      end
     end
   end
 
   -- ============================================================
-  -- 2. 大标题
+  -- 2. 大标题 (红头之后注入)
   -- ============================================================
   if title_text ~= "" then
     if is_latex then
@@ -145,27 +119,38 @@ function Pandoc(doc)
       table.insert(pre_blocks, raw_context(
         string.format("\\officialtitle{%s}", title_text)
       ))
+    elseif is_docx then
+      table.insert(pre_blocks, pandoc.RawBlock("openxml",
+        string.format(
+          '<w:p><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:rFonts w:eastAsia="方正小标宋简体"/><w:sz w:val="44"/><w:b/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+          title_text
+        )
+      ))
     end
   end
 
   -- ============================================================
-  -- 3. 副标题
+  -- 3. 副标题 (大标题之后注入)
   -- ============================================================
   local subtitle = escape(meta["subtitle"])
   if subtitle ~= "" then
+    doc.meta["subtitle"] = nil
     if is_latex then
-      doc.meta["subtitle"] = nil
       table.insert(pre_blocks, raw_latex(
         string.format("\\gongwensubtitle{%s}", subtitle)
       ))
     elseif is_context then
-      doc.meta["subtitle"] = nil
-      -- ConTeXt 模块没有副标题命令，用居中块
       table.insert(pre_blocks, raw_context(
         string.format("\\startalignment[middle]{\\switchtobodyfont[16pt]\\FangSong %s}\\stopalignment", subtitle)
       ))
+    elseif is_docx then
+      table.insert(pre_blocks, pandoc.RawBlock("openxml",
+        string.format(
+          '<w:p><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:rFonts w:eastAsia="仿宋_GB2312"/><w:sz w:val="32"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+          subtitle
+        )
+      ))
     end
-    -- DOCX: subtitle 由 Pandoc 默认处理
   end
 
   -- ============================================================
@@ -257,9 +242,9 @@ function Pandoc(doc)
         string.format("\\signature{%s}", signature)
       ))
     elseif is_context then
-      -- 模块 \issuingsignature 是 flushleft+固定缩进，非真正右对齐
+      -- 右对齐 + 2字符右缩进
       table.insert(post_blocks, raw_context(
-        string.format("\\startalignment[right]{\\switchtobodyfont[16pt]\\FangSong %s}\\stopalignment", signature)
+        string.format("\\startalignment[right]{\\switchtobodyfont[16pt]\\FangSong %s\\hskip2em}\\stopalignment", signature)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
@@ -284,9 +269,9 @@ function Pandoc(doc)
         string.format("\\signdate{%s}", signdate)
       ))
     elseif is_context then
-      -- 模块 \documentdate 是 flushleft+固定缩进，非真正右对齐
+      -- 右对齐 + 2字符右缩进
       table.insert(post_blocks, raw_context(
-        string.format("\\startalignment[right]{\\switchtobodyfont[16pt]\\FangSong %s}\\stopalignment", signdate)
+        string.format("\\startalignment[right]{\\switchtobodyfont[16pt]\\FangSong %s\\hskip2em}\\stopalignment", signdate)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
