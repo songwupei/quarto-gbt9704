@@ -59,13 +59,31 @@ function Pandoc(doc)
   local h_num = escape(meta["header-number"])
   local h_sig = escape(meta["header-signatory"])
 
+  -- 检测 classoption 中是否包含 redline
+  local classopts = meta["classoption"]
+  local has_redline = false
+  if classopts then
+    if classopts.t == "MetaList" then
+      for _, opt in ipairs(classopts) do
+        if escape(opt) == "redline" then
+          has_redline = true
+          break
+        end
+      end
+    elseif classopts.t == "MetaInlines" or classopts.t == "MetaString" then
+      if escape(classopts):find("redline") then
+        has_redline = true
+      end
+    end
+  end
+
   if h_org ~= "" then
     if is_latex then
       table.insert(pre_blocks, raw_latex(
         string.format("\\makeheader{%s}{%s}{%s}", h_org, h_num, h_sig)
       ))
     elseif is_context then
-      -- 红头：居中、红色、22pt大标宋（匹配 LaTeX \makeheader）
+      -- 红头：居中、红色、22pt大标宋
       if h_org ~= "" then
         table.insert(pre_blocks, raw_context(
           string.format("\\startalignment[middle]{\\switchtobodyfont[22pt]\\DaBiaoSong\\color[officialred]{%s}}\\stopalignment", h_org)
@@ -81,25 +99,36 @@ function Pandoc(doc)
           string.format("\\startalignment[middle]{\\switchtobodyfont[15pt]\\SimSun %s}\\stopalignment", h_sig)
         ))
       end
-      -- 红头红线
-      local classopts = meta["classoption"]
-      local has_redline = false
-      if classopts then
-        if classopts.t == "MetaList" then
-          for _, opt in ipairs(classopts) do
-            if escape(opt) == "redline" then
-              has_redline = true
-              break
-            end
-          end
-        elseif classopts.t == "MetaInlines" or classopts.t == "MetaString" then
-          if escape(classopts):find("redline") then
-            has_redline = true
-          end
-        end
-      end
       if has_redline then
         table.insert(pre_blocks, raw_context("\\redseparator"))
+      end
+    elseif is_docx then
+      -- 红头：居中、红色、22pt 粗体
+      table.insert(pre_blocks, pandoc.RawBlock("openxml",
+        string.format(
+          '<w:p><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:rFonts w:eastAsia="方正小标宋简体"/><w:sz w:val="44"/><w:color w:val="C8102E"/><w:b/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+          h_org
+        )
+      ))
+      if h_num ~= "" then
+        table.insert(pre_blocks, pandoc.RawBlock("openxml",
+          string.format(
+            '<w:p><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:rFonts w:eastAsia="宋体"/><w:sz w:val="28"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+            h_num
+          )
+        ))
+      end
+      if h_sig ~= "" then
+        table.insert(pre_blocks, pandoc.RawBlock("openxml",
+          string.format(
+            '<w:p><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:rFonts w:eastAsia="宋体"/><w:sz w:val="28"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+            h_sig
+          )
+        ))
+      end
+      -- 红头红线：DOCX 用 HorizontalRule 模拟（Pandoc 无法插入原生红色段落边框）
+      if has_redline then
+        table.insert(pre_blocks, pandoc.HorizontalRule())
       end
     end
   end
