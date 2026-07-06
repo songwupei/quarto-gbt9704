@@ -20,7 +20,9 @@ format:
     classoption:
       - redline
       - zhlineskip
-  gbt9704-docx: default
+  gbt9704-docx:
+    metadata:
+      redline: true
   gbt9704-context:
     keep-tex: true
     metadata:

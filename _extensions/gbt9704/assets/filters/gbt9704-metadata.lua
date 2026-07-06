@@ -108,6 +108,12 @@ function Pandoc(doc)
           )
         ))
       end
+      -- 红线：红色底纹细段落
+      if meta["redline"] and escape(meta["redline"]) == "true" then
+        table.insert(pre_blocks, pandoc.RawBlock("openxml",
+          '<w:p><w:pPr><w:ind w:firstLine="0"/><w:shd w:val="clear" w:color="auto" w:fill="C8102E"/></w:pPr><w:r><w:rPr><w:sz w:val="4"/></w:rPr><w:t xml:space="preserve"> </w:t></w:r></w:p>'
+        ))
+      end
     end
   end
 
@@ -246,9 +252,9 @@ function Pandoc(doc)
         string.format("\\signature{%s}", signature)
       ))
     elseif is_context then
-      -- 右对齐 + 2字符右缩进
+      -- 右对齐 + 2字符右缩进 (\hfill 前推 + \hskip2em 右留白)
       table.insert(post_blocks, raw_context(
-        string.format("\\startalignment[right]{\\switchtobodyfont[16pt]\\FangSong %s\\hskip2em}\\stopalignment", signature)
+        string.format("{\\hfill\\switchtobodyfont[16pt]\\FangSong %s\\hskip2em}", signature)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
@@ -275,7 +281,7 @@ function Pandoc(doc)
     elseif is_context then
       -- 右对齐 + 2字符右缩进
       table.insert(post_blocks, raw_context(
-        string.format("\\startalignment[right]{\\switchtobodyfont[16pt]\\FangSong %s\\hskip2em}\\stopalignment", signdate)
+        string.format("{\\hfill\\switchtobodyfont[16pt]\\FangSong %s\\hskip2em}", signdate)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",

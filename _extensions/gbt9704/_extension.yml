@@ -25,7 +25,7 @@ contributes:
         - assets/filters/natural-table.lua
         - assets/filters/gbt9704-metadata.lua
       variables:
-        gbtfontpreset: "modern"
+        gbtfontpreset: "reference"
     pdf:
       keep-tex: true
       documentclass: gbt9704
