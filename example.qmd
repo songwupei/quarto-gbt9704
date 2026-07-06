@@ -23,6 +23,10 @@ format:
     keep-tex: true
 ---
 
+::: {.content-visible when-format="docx"}
+各有关单位：
+:::
+
 全面推进公文格式标准化，根据 GB/T 9704—2012《党政机关公文格式》国家标准，特编制本示例文档。请各级单位认真组织学习，确保正确执行公文格式规范。
 
 一、正文格式
@@ -52,3 +56,28 @@ format:
 三、附件
 
 附件是公文正文的补充说明材料，是公文的重要组成部分。附件应当另页编排，并在版记之前、成文日期之后标注。
+
+::: {.content-visible when-format="docx"}
+
+附件：1. 关于印发《公文处理办法》的通知
+
+　　2. 公文格式标准对照表
+
+:::
+
+::: {.content-visible when-format="docx"}
+
+XX单位办公室
+202X年X月X日
+
+（此件公开发布）
+
+:::
+
+::: {.content-visible when-format="docx"}
+
+抄送：XX部门、XX委员会
+
+XX单位办公室　　202X年X月X日
+
+:::
