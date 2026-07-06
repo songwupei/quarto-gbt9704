@@ -1,6 +1,8 @@
 ---
 title: 关于印发《公文格式示例》的通知
-classoption: redline
+classoption:
+  - redline
+  - zhlineskip
 header-org: XX单位办公室
 header-number: XX发〔202X〕X号
 header-signatory: 张三

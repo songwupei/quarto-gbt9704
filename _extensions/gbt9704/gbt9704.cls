@@ -13,15 +13,32 @@
 \@gbt@redlinefalse
 \newif\if@gbt@titleindent
 \@gbt@titleindentfalse
+\newif\if@gbt@zhlineskip
+\@gbt@zhlineskipfalse
 
 \DeclareOption{redline}{\@gbt@redlinetrue}
 \DeclareOption{noredline}{\@gbt@redlinefalse}
 \DeclareOption{titleindent}{\@gbt@titleindenttrue}
+\DeclareOption{zhlineskip}{\@gbt@zhlineskiptrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{memoir}}
 \ProcessOptions\relax
 
 % ------------------ 基础设置 ------------------
 \LoadClass[article, a4paper, 12pt, oneside]{memoir}
+
+% ------------------ zhlineskip 行距支持 ------------------
+% GB/T 9704 要求正文三号（16pt）行距 28pt
+%   bodytextleadingratio = 28pt / 16pt = 1.75
+%   footnoteleadingratio 与正文保持一致
+%   数学公式恢复西文行距（restoremathleading）
+\if@gbt@zhlineskip
+  \RequirePackage[
+    bodytextleadingratio = 1.75,
+    footnoteleadingratio = 1.75,
+    restoremathleading,
+    quiet
+  ]{zhlineskip}
+\fi
 
 % ------------------ 中文支持 ------------------
 \RequirePackage[UTF8, scheme=plain, heading=true, fontset=none]{ctex}
