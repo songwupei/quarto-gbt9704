@@ -12,6 +12,19 @@ Quarto 扩展：GB/T 9704 党政机关公文格式。
 quarto add songwupei/quarto-gbt9704
 ```
 
+## 快速开始 · Quick Start
+
+参考示例文档 [`example.qmd`](example.qmd)，其中展示了标题、正文、多级标题、表格等公文要素。
+<br><small>See [`example.qmd`](example.qmd) for a complete reference document with title, body, headings, tables, and more.</small>
+
+```bash
+quarto render example.qmd --to gbt9704-pdf     # PDF (XeLaTeX)
+quarto render example.qmd --to gbt9704-docx    # DOCX
+quarto render example.qmd --to gbt9704-context # ConTeXt
+```
+
+预渲染的输出文件：`example.pdf`、`example.docx`、`example-context.pdf`。
+
 ## 使用 · Usage
 
 在 Quarto 项目的 `_quarto.yml` 中：
@@ -22,6 +35,8 @@ format:
   gbt9704-pdf:
     keep-tex: true
   gbt9704-docx: default
+  gbt9704-context:
+    keep-tex: true
 ```
 
 或在文档 YAML 头中：

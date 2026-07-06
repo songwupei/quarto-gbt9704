@@ -3,7 +3,7 @@
 %   reference  — GB/T 9704 参考文档（SimHei/楷体国标/仿宋国标）
 %   fangzheng  — 方正全套（方正黑体/方正楷体/朱雀仿宋）
 %   modern     — 现代简洁（文泉等宽正黑/楷体国标/朱雀仿宋）
-\def\gbtfontpreset{%(fontpreset)s}
+$if(gbtfontpreset)$\def\gbtfontpreset{$gbtfontpreset$}$else$\def\gbtfontpreset{modern}$endif$
 
 % 加载 gbt9704 模块（字体/CJK断行/标题样式已由模块统一管理）
 \usemodule[gbt9704]
@@ -122,12 +122,12 @@
 % 文档开始
 % ==========================================================
 
-\officialtitle{%(title)s}
+$if(title)$\officialtitle{$title$}$endif$
 
-\mainrecipient{%(mainreceiver)s}
+$if(mainreceiver)$\mainrecipient{$mainreceiver$}$endif$
 
 \starttext
 
-%(TEXT)s
+$body$
 
 \stoptext
