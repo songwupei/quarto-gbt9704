@@ -108,10 +108,10 @@ function Pandoc(doc)
           )
         ))
       end
-      -- 红线：无边框单格表格 + 红色底边框（Pandoc 不剥离表格属性）
+      -- 红线：最小行高单格表格 + 红色底边框 1.5pt
       if meta["redline"] and escape(meta["redline"]) == "true" then
         table.insert(pre_blocks, pandoc.RawBlock("openxml",
-          '<w:tbl><w:tblPr><w:tblBorders><w:bottom w:val="single" w:sz="6" w:space="0" w:color="C8102E"/></w:tblBorders><w:tblW w:w="5000" w:type="pct"/></w:tblPr><w:tblGrid><w:gridCol w:w="9072"/></w:tblGrid><w:tr><w:tc><w:tcPr><w:tcW w:w="9072" w:type="dxa"/></w:tcPr><w:p><w:r><w:t xml:space="preserve"> </w:t></w:r></w:p></w:tc></w:tr></w:tbl>'
+          '<w:tbl><w:tblPr><w:tblBorders><w:bottom w:val="single" w:sz="12" w:space="0" w:color="C8102E"/></w:tblBorders><w:tblW w:w="5000" w:type="pct"/></w:tblPr><w:tblGrid><w:gridCol w:w="9072"/></w:tblGrid><w:tr><w:tc><w:tcPr><w:tcW w:w="9072" w:type="dxa"/></w:tcPr><w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="atLeast"/></w:pPr><w:r><w:rPr><w:sz w:val="2"/></w:rPr><w:t xml:space="preserve"> </w:t></w:r></w:p></w:tc></w:tr></w:tbl>'
         ))
       end
     end
