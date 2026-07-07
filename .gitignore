@@ -1,7 +1,12 @@
 # Build outputs
-*.pdf
-*.docx
+/example.docx
+/example.pdf
+/example.tex
+/document-context.pdf
+/document-context.tex
 *.tex.bak
+*.log
+*.tuc
 
 # OS
 .DS_Store
@@ -12,6 +17,3 @@ Thumbs.db
 .claude/
 issue.md
 reply.md
-*.tex
-gbt9704.cls
-zhlineskip.sty
