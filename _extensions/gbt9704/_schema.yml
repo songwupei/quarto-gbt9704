@@ -1,0 +1,158 @@
+$schema: https://m.canouil.dev/quarto-wizard/assets/schema/v1/extension-schema.json
+
+# ---------------------------------------------------------------------------
+# Quarto Wizard 支持：GB/T 9704 党政机关公文格式扩展
+# ---------------------------------------------------------------------------
+# 本文件提供编辑器自动补全、悬停文档和 YAML 校验功能。
+# 支持三种输出格式：gbt9704-pdf (XeLaTeX)、gbt9704-docx、gbt9704-context
+
+# ---------------------------------------------------------------------------
+# formats — 格式专属选项
+# ---------------------------------------------------------------------------
+formats:
+  gbt9704-pdf:
+    keep-tex:
+      type: boolean
+      default: false
+      description: 保留中间 LaTeX 文件 (.tex) 以便调试。
+    classoption:
+      type: array
+      description: LaTeX 文档类选项（可多选 redline, zhlineskip, titleindent）。
+      items:
+        type: string
+        enum:
+          - redline
+          - noredline
+          - zhlineskip
+          - titleindent
+      default: []
+    pdf-engine:
+      type: string
+      const: xelatex
+      description: PDF 引擎（固定为 xelatex）。
+    documentclass:
+      type: string
+      const: gbt9704
+      description: 文档类（固定为 gbt9704.cls）。
+
+  gbt9704-docx:
+    keep-tex:
+      type: boolean
+      default: false
+      description: 保留中间文件以便调试。
+    reference-doc:
+      type: string
+      description: 自定义参考文档模板路径。
+      completion:
+        type: file
+        extensions:
+          - .docx
+    metadata:
+      type: object
+      description: DOCX 格式专属元数据。
+      properties:
+        redline:
+          type: boolean
+          default: false
+          description: 是否显示红色分隔线（红头文件模式）。
+
+  gbt9704-context:
+    keep-tex:
+      type: boolean
+      default: false
+      description: 保留中间 ConTeXt 文件 (.tex) 以便调试。
+    pdf-engine:
+      type: string
+      const: context
+      description: PDF 引擎（固定为 ConTeXt）。
+    metadata:
+      type: object
+      description: ConTeXt 格式专属元数据。
+      properties:
+        redline:
+          type: boolean
+          default: false
+          description: 是否显示红色分隔线。
+    gbtfontpreset:
+      type: string
+      default: modern
+      description: 字体方案预设。
+      enum:
+        - reference
+        - fangzheng
+        - modern
+    notesfontpreset:
+      type: string
+      default: song
+      description: 版记字体方案。
+      enum:
+        - song
+        - hei
+
+# ---------------------------------------------------------------------------
+# options — 文档级 YAML 元数据选项
+# ---------------------------------------------------------------------------
+# 用户在文档 YAML 头部设置的字段，所有格式通用。
+options:
+  header-org:
+    type: string
+    description: 发文机关全称（红头位置）。
+    aliases:
+      - header_org
+  header-number:
+    type: string
+    description: 发文字号，如 "XX发〔202X〕X号"。
+    aliases:
+      - header_number
+  header-signatory:
+    type: string
+    description: 签发人姓名。
+    aliases:
+      - header_signatory
+  subtitle:
+    type: string
+    description: 副标题（大标题下方，如 "——关于xxx的通知"）。
+  mainreceiver:
+    type: string
+    description: 主送机关（正文之前、标题之后）。
+    aliases:
+      - main_receiver
+  signature:
+    type: string
+    description: 发文机关署名（成文日期上方）。
+  signdate:
+    type: string
+    description: 成文日期，如 "202X年X月X日"。
+    aliases:
+      - sign_date
+  notes:
+    type: string
+    description: 附注（版记之前，如 "此件公开发布"）。
+  copyto:
+    type: string
+    description: 抄送机关列表。
+    aliases:
+      - copy_to
+  issue-author:
+    type: string
+    description: 印发机关名称。
+    aliases:
+      - issue_author
+  issue-date:
+    type: string
+    description: 印发日期，如 "202X年X月X日"。
+    aliases:
+      - issue_date
+  attachments:
+    type: array
+    description: 附件列表。
+    items:
+      type: string
+    min-items: 0
+
+# ---------------------------------------------------------------------------
+# classes — CSS 类（供过滤器使用）
+# ---------------------------------------------------------------------------
+classes:
+  financial:
+    description: 为表格启用财务列格式（fcolumn：千分位分隔、小数点对齐、\sumline 合计线）。

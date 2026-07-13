@@ -1,0 +1,88 @@
+{
+  "GB/T 9704 PDF (XeLaTeX)": {
+    "prefix": "gbt9704-pdf",
+    "body": [
+      "---",
+      "title: ${1:关于印发<通知标题>的通知}",
+      "header-org: ${2:XX单位办公室}",
+      "header-number: ${3:XX发〔202X〕X号}",
+      "mainreceiver: ${4:各有关单位：}",
+      "signature: ${5:XX单位办公室}",
+      "signdate: ${6:202X年X月X日}",
+      "format:",
+      "  gbt9704-pdf:",
+      "    keep-tex: true",
+      "    classoption:",
+      "      - redline",
+      "      - zhlineskip",
+      "---",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 PDF 文档（红头文件，XeLaTeX 引擎）"
+  },
+  "GB/T 9704 PDF (XeLaTeX) minimal": {
+    "prefix": "gbt9704-pdf-min",
+    "body": [
+      "---",
+      "title: ${1:文档标题}",
+      "format:",
+      "  gbt9704-pdf: default",
+      "---",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 PDF 最小配置"
+  },
+  "GB/T 9704 DOCX": {
+    "prefix": "gbt9704-docx",
+    "body": [
+      "---",
+      "title: ${1:文档标题}",
+      "format:",
+      "  gbt9704-docx: default",
+      "---",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 DOCX 格式"
+  },
+  "GB/T 9704 ConTeXt": {
+    "prefix": "gbt9704-context",
+    "body": [
+      "---",
+      "title: ${1:文档标题}",
+      "format:",
+      "  gbt9704-context:",
+      "    keep-tex: true",
+      "---",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 ConTeXt 格式"
+  },
+  "GB/T 9704 project config (all formats)": {
+    "prefix": "gbt9704-project",
+    "body": [
+      "format:",
+      "  gbt9704-pdf:",
+      "    keep-tex: true",
+      "  gbt9704-docx: default",
+      "  gbt9704-context:",
+      "    keep-tex: true"
+    ],
+    "description": "项目级 _quarto.yml 配置（三种格式全部启用）"
+  },
+  "GB/T 9704 financial table": {
+    "prefix": "gbt9704-fintable",
+    "body": [
+      "| 项目             | 预算金额（元） | 实际支出（元） | 备注           |",
+      "|------------------|---------------|---------------|----------------|",
+      "| ${1:办公设备购置} | ${2:150000.00} | ${3:148235.50} | ${4:已完成}    |",
+      "| ${5:信息化建设}   | ${6:350000.00} | ${7:328900.00} | ${8:持续进行}  |",
+      "| \\sumline         |               |               |                |",
+      "| 合计             |               |               |                |"
+    ],
+    "description": "GB/T 9704 财务表格（fcolumn 千分位/小数点对齐/合计线）"
+  }
+}
