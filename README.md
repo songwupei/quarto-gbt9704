@@ -129,8 +129,9 @@ format:
 [`scripts/md2png.sh`](scripts/md2png.sh) — 将 Markdown / Quarto 文档渲染为 PNG 长图，支持 emoji 和 CJK 字体。
 
 ```bash
-./scripts/md2png.sh document.md               # HTML 模式（默认，emoji 好）
+./scripts/md2png.sh document.md               # HTML 模式（默认，emoji/CJK 好）
 ./scripts/md2png.sh document.md --width 1200   # 指定宽度
+./scripts/md2png.sh document.md --margin 40     # 白边大小（默认 20px）
 ./scripts/md2png.sh document.md --mode pdf     # LaTeX PDF 模式
 ```
 
