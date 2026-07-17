@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1994665,
+    "name": "bug",
+    "color": "d73a4a",
+    "description": "",
+    "exclusive": false,
+    "url": "https://codeberg.org/api/v1/repos/songwupei/quarto-gbt9704/labels/1994665"
+  },
+  {
+    "id": 1994662,
+    "name": "enhancement",
+    "color": "0e8a16",
+    "description": "",
+    "exclusive": false,
+    "url": "https://codeberg.org/api/v1/repos/songwupei/quarto-gbt9704/labels/1994662"
+  }
+]

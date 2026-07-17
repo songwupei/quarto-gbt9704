@@ -3,8 +3,8 @@
 Quarto 扩展：GB/T 9704 党政机关公文格式。
 <br><small>Quarto extension: GB/T 9704 Chinese government document format.</small>
 
-支持三种输出格式：**PDF**（XeLaTeX）、**DOCX**、**ConTeXt**。
-<br><small>Supports three output formats: PDF (XeLaTeX), DOCX, ConTeXt.</small>
+支持四种输出格式：**PDF**（XeLaTeX）、**DOCX**、**ConTeXt**、**HTML**。
+<br><small>Supports four output formats: PDF (XeLaTeX), DOCX, ConTeXt, HTML.</small>
 
 ## 安装 · Install
 
@@ -24,7 +24,7 @@ quarto render example.qmd --to gbt9704-context # ConTeXt
 quarto render example.qmd --to gbt9704-html    # HTML (公文 CSS，可截图转 PNG)
 ```
 
-预渲染的输出文件：`example.pdf`、`example.docx`、`example-context.pdf`。
+预渲染的输出文件：`example.pdf`、`example.docx`。
 
 ## 标题自动提取 · Title Fallback
 
