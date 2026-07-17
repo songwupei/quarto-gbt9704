@@ -46,6 +46,20 @@ function Pandoc(doc)
   -- ============================================================
   -- 标题 (所有格式: 抑制默认输出，由 filter 在红头之后注入)
   -- ============================================================
+  -- Fallback: meta["title"] 为空时，从正文第一个 H1 提取标题
+  if not meta["title"] or escape(meta["title"]) == "" then
+    for i, block in ipairs(doc.blocks) do
+      if block.t == "Header" and block.level == 1 then
+        local h1_text = pandoc.utils.stringify(block)
+        if h1_text ~= "" then
+          meta["title"] = h1_text
+          table.remove(doc.blocks, i)
+        end
+        break
+      end
+    end
+  end
+
   local title_text = meta["title"] and escape(meta["title"]) or ""
 
   if title_text ~= "" then

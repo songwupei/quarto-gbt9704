@@ -25,6 +25,30 @@ quarto render example.qmd --to gbt9704-context # ConTeXt
 
 预渲染的输出文件：`example.pdf`、`example.docx`、`example-context.pdf`。
 
+## 标题自动提取 · Title Fallback
+
+当文档 YAML 头未指定 `title` 时，自动提取正文第一个一级标题（`# 标题`）作为公文大标题。
+<br><small>When no `title` is specified in YAML frontmatter, the first H1 heading is automatically used as the document title.</small>
+
+```markdown
+# 关于加强xxx工作的通知
+
+正文内容...
+```
+
+等价于显式指定：
+
+```yaml
+---
+title: 关于加强xxx工作的通知
+---
+# 关于加强xxx工作的通知
+
+正文内容...
+```
+
+> 注意：YAML `title` 优先级更高，显式指定时会覆盖 H1 提取。
+
 ## 使用 · Usage
 
 在 Quarto 项目的 `_quarto.yml` 中：

@@ -51,7 +51,8 @@
       AutoFakeSlant=0.2,
 ]
 \setCJKsansfont{SimHei}
-\setCJKmonofont{FangSong}
+\setCJKmonofont{Sarasa Mono SC}
+\setmonofont{DejaVu Sans Mono}   % box-drawing 字符支持
 \setCJKfamilyfont{zhfs}{FangSong}
 \setCJKfamilyfont{zhkai}{KaiTi}
 \setCJKfamilyfont{zhsong}{SimSun}          % 宋体备用
@@ -377,6 +378,8 @@
 
 
 \AtBeginDocument{%
+    % --- 确保 monofont 在 lmodern 等模板包之后仍生效 ---
+    \setmonofont{DejaVu Sans Mono}%
     % --- 全局正文字体、行距、缩进 ---
     \zihao{3}%
     \setlength{\baselineskip}{28pt}%
