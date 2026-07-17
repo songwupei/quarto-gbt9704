@@ -124,6 +124,18 @@ format:
 
 可用列类型：`l`（文本左对齐）、`f`（欧式财务列）、`C`（中式财务列，逗号千分位）、`N`（无千分位数字列）
 
+## 工具脚本 · Scripts
+
+[`scripts/md2png.sh`](scripts/md2png.sh) — 将 Markdown / Quarto 文档渲染为 PNG 长图，支持 emoji 和 CJK 字体。
+
+```bash
+./scripts/md2png.sh document.md               # HTML 模式（默认，emoji 好）
+./scripts/md2png.sh document.md --width 1200   # 指定宽度
+./scripts/md2png.sh document.md --mode pdf     # LaTeX PDF 模式
+```
+
+详见 [`scripts/README.md`](scripts/README.md)。
+
 ## 许可证 · License
 
 MIT
