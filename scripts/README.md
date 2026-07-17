@@ -46,7 +46,7 @@ HTML mode uses the **browser's native rendering engine**:
 | Tool | Package | Used by |
 |------|---------|---------|
 | `quarto` | [quarto.org](https://quarto.org) | both modes |
-| `google-chrome-stable` | `google-chrome` | html mode |
+| `google-chrome-stable` or `chromium` | `google-chrome` / `chromium` | html mode (auto-detected) |
 | `magick` / `convert` | `imagemagick` | trim + margin |
 | `pdftoppm` | `poppler` | pdf mode |
 

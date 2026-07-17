@@ -17,3 +17,6 @@ Thumbs.db
 .claude/
 issue.md
 reply.md
+
+/.quarto/
+**/*.quarto_ipynb

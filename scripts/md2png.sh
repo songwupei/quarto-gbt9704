@@ -39,7 +39,7 @@ md2png.sh — Markdown / Quarto 文档 → PNG 长图
   ./md2png.sh xforge.md --mode pdf --dpi 300
 
 依赖:
-  quarto, google-chrome-stable, magick（ImageMagick）
+  quarto, google-chrome-stable 或 chromium, magick（ImageMagick）
 EOF
   exit 0
 }
@@ -92,9 +92,20 @@ process_margin() {
   "$cmd" "$img" -trim +repage -bordercolor white -border "${m}x${m}" "$img"
 }
 
-# ---- HTML 模式（默认）：Quarto → HTML → Chrome 全页截图 ----
+# ---- HTML 模式（默认）：Quarto → HTML → 浏览器全页截图 ----
 render_html() {
-  check_cmd google-chrome-stable "sudo pacman -S google-chrome"
+  # 自动检测浏览器：优先 google-chrome-stable，其次 chromium
+  local browser=""
+  if command -v google-chrome-stable &>/dev/null; then
+    browser="google-chrome-stable"
+  elif command -v chromium &>/dev/null; then
+    browser="chromium"
+  else
+    echo "❌ 缺少浏览器依赖"
+    echo "   请安装 google-chrome-stable 或 chromium"
+    echo "   Arch: sudo pacman -S google-chrome  或  sudo pacman -S chromium"
+    exit 1
+  fi
 
   echo "📄 Step 1/2: Quarto → HTML..."
   echo "   输入: $INPUT"
@@ -109,7 +120,7 @@ render_html() {
   echo "🖼️  Step 2/2: Chrome 全页截图 → PNG..."
   echo "   宽度: ${WIDTH}px"
 
-  google-chrome-stable \
+  "$browser" \
     --headless --disable-gpu --no-sandbox \
     --screenshot="$OUTPUT" \
     --window-size="${WIDTH},${MAX_HEIGHT}" \
