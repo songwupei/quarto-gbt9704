@@ -28,6 +28,10 @@ HTML mode uses the **browser's native rendering engine**:
 
 # PDF mode — LaTeX typesetting, crisp text
 ./md2png.sh document.md --mode pdf --dpi 300
+
+# Extension formats — GB/T 9704 styled output
+./md2png.sh example.qmd --format gbt9704-html   # HTML with official document CSS → PNG
+./md2png.sh example.qmd --format gbt9704-pdf    # PDF with gbt9704.cls → PNG
 ```
 
 ### Options
@@ -39,6 +43,7 @@ HTML mode uses the **browser's native rendering engine**:
 | `--dpi N` | `150` | PDF render DPI (pdf mode only) |
 | `--output FILE` | same as input `.png` | Output path |
 | `--mode MODE` | `html` | `html` (browser) or `pdf` (LaTeX) |
+| `--format NAME` | (none) | Quarto format name, e.g. `gbt9704-html` |
 | `-h, --help` | | Show help |
 
 ### Dependencies

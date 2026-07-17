@@ -26,6 +26,10 @@ local function raw_context(text)
   return pandoc.RawBlock("context", text)
 end
 
+local function raw_html(text)
+  return pandoc.RawBlock("html", text)
+end
+
 local function para_text(text)
   return pandoc.Para({pandoc.Str(text)})
 end
@@ -35,8 +39,9 @@ function Pandoc(doc)
   local is_latex   = FORMAT:match("latex")
   local is_docx    = FORMAT:match("docx")
   local is_context = FORMAT:match("context")
+  local is_html    = FORMAT:match("html")
 
-  if not is_latex and not is_docx and not is_context then
+  if not is_latex and not is_docx and not is_context and not is_html then
     return doc
   end
 
@@ -128,6 +133,24 @@ function Pandoc(doc)
           '<w:tbl><w:tblPr><w:tblBorders><w:bottom w:val="single" w:sz="12" w:space="0" w:color="C8102E"/></w:tblBorders><w:tblW w:w="5000" w:type="pct"/></w:tblPr><w:tblGrid><w:gridCol w:w="9072"/></w:tblGrid><w:tr><w:tc><w:tcPr><w:tcW w:w="9072" w:type="dxa"/></w:tcPr><w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="atLeast"/></w:pPr><w:r><w:rPr><w:sz w:val="2"/></w:rPr><w:t xml:space="preserve"> </w:t></w:r></w:p></w:tc></w:tr></w:tbl>'
         ))
       end
+    elseif is_html then
+      table.insert(pre_blocks, raw_html(
+        string.format('<div class="gbt-header"><p class="gbt-header-org">%s</p>', h_org)
+      ))
+      if h_num ~= "" then
+        table.insert(pre_blocks, raw_html(
+          string.format('<p class="gbt-header-number">%s</p>', h_num)
+        ))
+      end
+      if h_sig ~= "" then
+        table.insert(pre_blocks, raw_html(
+          string.format('<p class="gbt-header-signatory">%s</p>', h_sig)
+        ))
+      end
+      if meta["redline"] and escape(meta["redline"]) == "true" then
+        table.insert(pre_blocks, raw_html('<hr class="gbt-redrule">'))
+      end
+      table.insert(pre_blocks, raw_html('</div>'))
     end
   end
 
@@ -149,6 +172,10 @@ function Pandoc(doc)
           '<w:p><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:rFonts w:eastAsia="方正小标宋简体"/><w:sz w:val="44"/><w:b/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
           title_text
         )
+      ))
+    elseif is_html then
+      table.insert(pre_blocks, raw_html(
+        string.format('<h1 class="gbt-title">%s</h1>', title_text)
       ))
     end
   end
@@ -174,6 +201,10 @@ function Pandoc(doc)
           subtitle
         )
       ))
+    elseif is_html then
+      table.insert(pre_blocks, raw_html(
+        string.format('<p class="gbt-subtitle">%s</p>', subtitle)
+      ))
     end
   end
 
@@ -197,6 +228,10 @@ function Pandoc(doc)
           '<w:p><w:pPr><w:ind w:firstLine="0" w:firstLineChars="0"/></w:pPr><w:r><w:rPr><w:rFonts w:ascii="仿宋_GB2312" w:hAnsi="仿宋_GB2312" w:eastAsia="仿宋_GB2312"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
           mainreceiver
         )
+      ))
+    elseif is_html then
+      table.insert(pre_blocks, raw_html(
+        string.format('<p class="gbt-mainreceiver">%s</p>', mainreceiver)
       ))
     end
   end
@@ -252,6 +287,17 @@ function Pandoc(doc)
             else
               table.insert(post_blocks, para_text("　　　" .. text))
             end
+          elseif is_html then
+            if first then
+              table.insert(post_blocks, raw_html(
+                string.format('<p class="gbt-attachment"><span class="gbt-attachment-label">附件：</span>%s</p>', text)
+              ))
+              first = false
+            else
+              table.insert(post_blocks, raw_html(
+                string.format('<p class="gbt-attachment">%s</p>', text)
+              ))
+            end
           end
         end
       end
@@ -278,6 +324,10 @@ function Pandoc(doc)
           '<w:p><w:pPr><w:jc w:val="right"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
           signature
         )
+      ))
+    elseif is_html then
+      table.insert(post_blocks, raw_html(
+        string.format('<p class="gbt-signature">%s</p>', signature)
       ))
     end
   end
@@ -306,6 +356,10 @@ function Pandoc(doc)
           signdate
         )
       ))
+    elseif is_html then
+      table.insert(post_blocks, raw_html(
+        string.format('<p class="gbt-signdate">%s</p>', signdate)
+      ))
     end
   end
 
@@ -328,6 +382,10 @@ function Pandoc(doc)
           '<w:p><w:pPr><w:ind w:firstLine="0"/></w:pPr><w:r><w:t xml:space="preserve">（%s）</w:t></w:r></w:p>',
           notes
         )
+      ))
+    elseif is_html then
+      table.insert(post_blocks, raw_html(
+        string.format('<p class="gbt-notes">（%s）</p>', notes)
       ))
     end
   end
@@ -379,6 +437,20 @@ function Pandoc(doc)
           '<w:p><w:pPr><w:ind w:firstLine="0"/><w:tabs><w:tab w:val="right" w:pos="9072"/></w:tabs></w:pPr><w:r><w:t xml:space="preserve">%s</w:t></w:r><w:r><w:tab/></w:r><w:r><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
           issue_author, issue_date
         )
+      ))
+    end
+  elseif is_html then
+    if copyto ~= "" or issue_author ~= "" then
+      table.insert(post_blocks, raw_html('<hr class="gbt-seprule">'))
+    end
+    if copyto ~= "" then
+      table.insert(post_blocks, raw_html(
+        string.format('<p class="gbt-copyto">抄送：%s</p>', copyto)
+      ))
+    end
+    if issue_author ~= "" then
+      table.insert(post_blocks, raw_html(
+        string.format('<p class="gbt-issueinfo"><span class="gbt-issue-author">%s</span><span class="gbt-issue-date">%s</span></p>', issue_author, issue_date)
       ))
     end
   end

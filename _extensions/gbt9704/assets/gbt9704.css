@@ -1,0 +1,231 @@
+/* ============================================================
+ * gbt9704.css — GB/T 9704-2012 党政机关公文格式 HTML 样式
+ * ============================================================ */
+
+/* ---- Page Setup ---- */
+@page {
+  size: A4;
+  margin: 37mm 26mm 35mm 28mm; /* top right bottom left */
+}
+
+html {
+  font-size: 16pt;
+}
+
+body {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", "SimSun", serif;
+  font-size: 1em;
+  line-height: 28pt;
+  color: #000;
+  background: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---- 红头 ----
+ * gbt-header       : 红头版头容器
+ * gbt-header-org   : 发文机关名称（红色，22pt，大标宋，居中）
+ * gbt-header-number: 发文字号（15pt 宋体，居中）
+ * gbt-header-signatory: 签发人（15pt 宋体，居中）
+ * gbt-redrule      : 红色分隔线
+ */
+.gbt-header {
+  text-align: center;
+}
+
+.gbt-header-org {
+  font-family: "FZDaBiaoSong-B06", "方正大标宋简体", "SimHei", "黑体", sans-serif;
+  font-size: 22pt;
+  font-weight: bold;
+  color: #C8102E;
+  text-align: center;
+  margin: 0 0 0.5em 0;
+  text-indent: 0;
+  line-height: 1.5;
+}
+
+.gbt-header-number,
+.gbt-header-signatory {
+  font-family: "SimSun", "宋体", "Noto Serif CJK SC", serif;
+  font-size: 15pt;
+  text-align: center;
+  margin: 0.25em 0;
+  text-indent: 0;
+}
+
+.gbt-redrule {
+  border: none;
+  border-top: 1.5pt solid #C8102E;
+  margin: 0.5em 0 1em 0;
+}
+
+/* ---- 大标题 ---- */
+.gbt-title {
+  font-family: "FZDaBiaoSong-B06", "方正大标宋简体", "SimHei", "黑体", sans-serif;
+  font-size: 22pt;
+  font-weight: bold;
+  text-align: center;
+  text-indent: 0;
+  margin: 1em 0 0.5em 0;
+  line-height: 1.5;
+}
+
+/* ---- 副标题 ---- */
+.gbt-subtitle {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
+  text-align: center;
+  text-indent: 0;
+  margin: 0.5em 0 1em 0;
+}
+
+/* ---- 主送机关 ---- */
+.gbt-mainreceiver {
+  font-family: inherit;
+  font-size: inherit;
+  text-indent: 0;
+  margin: 1em 0 0.5em 0;
+}
+
+/* ---- 正文段落 ---- */
+p {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", "SimSun", serif;
+  font-size: 16pt;
+  line-height: 28pt;
+  text-indent: 2em;
+  text-align: justify;
+  margin: 0;
+  word-spacing: 0;
+  letter-spacing: 0;
+}
+
+/* ---- 标题 ---- */
+h1 {
+  font-family: "SimHei", "黑体", "Noto Sans CJK SC", sans-serif;
+  font-size: 16pt;
+  font-weight: bold;
+  line-height: 28pt;
+  text-indent: 2em;
+  margin: 0.5em 0 0 0;
+}
+
+h2 {
+  font-family: "KaiTi", "楷体", "STKaiti", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
+  font-weight: bold;
+  line-height: 28pt;
+  text-indent: 2em;
+  margin: 0.5em 0 0 0;
+}
+
+h3 {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
+  font-weight: bold;
+  line-height: 28pt;
+  text-indent: 2em;
+  margin: 0.5em 0 0 0;
+}
+
+/* ---- 署名 ---- */
+.gbt-signature {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
+  text-align: right;
+  padding-right: 2em;
+  text-indent: 0;
+  margin: 1.5em 0 0 0;
+}
+
+/* ---- 成文日期 ---- */
+.gbt-signdate {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
+  text-align: right;
+  padding-right: 2em;
+  text-indent: 0;
+  margin: 0.25em 0 0 0;
+}
+
+/* ---- 附件 ---- */
+.gbt-attachment {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
+  text-indent: 2em;
+  margin: 0.25em 0 0 0;
+}
+
+.gbt-attachment-label {
+  font-weight: bold;
+}
+
+/* ---- 附注 ---- */
+.gbt-notes {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
+  text-indent: 0;
+  margin: 1em 0 0 0;
+}
+
+/* ---- 版记 ---- */
+.gbt-seprule {
+  border: none;
+  border-top: 1pt solid #000;
+  margin: 2em 0 0.5em 0;
+}
+
+.gbt-copyto {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
+  text-indent: 0;
+  margin: 0.25em 0;
+}
+
+.gbt-issueinfo {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
+  text-indent: 0;
+  display: flex;
+  justify-content: space-between;
+  margin: 0.25em 0 0 0;
+}
+
+/* ---- 表格 ---- */
+table {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 15pt;
+  border-collapse: collapse;
+  margin: 0.5em auto;
+  width: auto;
+  text-indent: 0;
+}
+
+th {
+  font-family: "SimHei", "黑体", "Noto Sans CJK SC", sans-serif;
+  font-weight: bold;
+  text-align: center;
+  padding: 0.25em 0.5em;
+  border: 1px solid #000;
+}
+
+td {
+  padding: 0.25em 0.5em;
+  border: 1px solid #000;
+  text-indent: 0;
+}
+
+/* ---- 复位类 ---- */
+.gbt-title,
+.gbt-subtitle,
+.gbt-mainreceiver,
+.gbt-signature,
+.gbt-signdate,
+.gbt-notes,
+.gbt-copyto,
+.gbt-issueinfo,
+.gbt-header-org,
+.gbt-header-number,
+.gbt-header-signatory,
+.gbt-attachment {
+  max-width: 100%;
+}

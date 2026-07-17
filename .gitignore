@@ -20,3 +20,4 @@ reply.md
 
 /.quarto/
 **/*.quarto_ipynb
+/*.html

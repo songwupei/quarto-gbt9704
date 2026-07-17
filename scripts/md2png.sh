@@ -16,6 +16,7 @@ MODE="html"       # html（默认）或 pdf
 INPUT=""
 MAX_HEIGHT=24000  # 全页截图最大高度
 MARGIN=20         # 四边白边 px
+FORMAT=""         # Quarto 格式名（如 gbt9704-html），空则用 --mode
 
 # ---- 帮助 ----
 usage() {
@@ -31,12 +32,15 @@ md2png.sh — Markdown / Quarto 文档 → PNG 长图
   --output FILE   输出文件路径，默认与输入同名 .png
   --mode MODE     html（默认，emoji/CJK 好）| pdf（LaTeX 排版）
   --margin N      四边白边 px（默认 20）
+  --format NAME   Quarto 格式名，如 gbt9704-html、gbt9704-pdf
   -h, --help      显示帮助
 
 示例:
   ./md2png.sh xforge.md
   ./md2png.sh xforge.md --width 1200
   ./md2png.sh xforge.md --mode pdf --dpi 300
+  ./md2png.sh example.qmd --format gbt9704-html   # 使用扩展 HTML 格式
+  ./md2png.sh example.qmd --format gbt9704-pdf    # 使用扩展 PDF 格式
 
 依赖:
   quarto, google-chrome-stable 或 chromium, magick（ImageMagick）
@@ -53,6 +57,7 @@ while [[ $# -gt 0 ]]; do
     --output)   OUTPUT="$2"; shift 2 ;;
     --mode)     MODE="$2";   shift 2 ;;
     --margin)   MARGIN="$2"; shift 2 ;;
+    --format)   FORMAT="$2"; shift 2 ;;
     -*)
       echo "❌ 未知选项: $1"
       usage
@@ -107,11 +112,13 @@ render_html() {
     exit 1
   fi
 
+  local qformat="${FORMAT:-html}"
+
   echo "📄 Step 1/2: Quarto → HTML..."
-  echo "   输入: $INPUT"
+  echo "   输入: $INPUT  (格式: $qformat)"
 
   HTML_OUT="${INPUT_DIR}/${INPUT_NAME}.html"
-  quarto render "$INPUT" --to html --output-dir "$INPUT_DIR" 2>&1 | grep -v '^$' | sed 's/^/   /'
+  quarto render "$INPUT" --to "$qformat" --output-dir "$INPUT_DIR" 2>&1 | grep -v '^$' | sed 's/^/   /'
 
   [[ ! -f "$HTML_OUT" ]] && [[ -f "${INPUT_NAME}.html" ]] && HTML_OUT="$(pwd)/${INPUT_NAME}.html"
   [[ ! -f "$HTML_OUT" ]] && { echo "❌ HTML 生成失败"; exit 1; }
@@ -145,11 +152,13 @@ render_html() {
 render_pdf() {
   check_cmd pdftoppm "sudo pacman -S poppler"
 
+  local qformat="${FORMAT:-pdf}"
+
   echo "📄 Step 1/2: Quarto → PDF..."
-  echo "   输入: $INPUT  (DPI: ${DPI})"
+  echo "   输入: $INPUT  (格式: $qformat, DPI: ${DPI})"
 
   PDF_OUT="${INPUT_DIR}/${INPUT_NAME}.pdf"
-  quarto render "$INPUT" --to pdf --output-dir "$INPUT_DIR" 2>&1 | grep -v '^$' | sed 's/^/   /'
+  quarto render "$INPUT" --to "$qformat" --output-dir "$INPUT_DIR" 2>&1 | grep -v '^$' | sed 's/^/   /'
   [[ ! -f "$PDF_OUT" ]] && { echo "❌ PDF 生成失败"; exit 1; }
   echo "   ✅ $PDF_OUT"
 
@@ -181,8 +190,20 @@ render_pdf() {
 
 # ---- 执行 ----
 echo ""
-case "$MODE" in
-  html) render_html ;;
-  pdf)  render_pdf ;;
-  *)    echo "❌ 无效模式: $MODE (可选: html, pdf)"; exit 1 ;;
-esac
+if [[ -n "$FORMAT" ]]; then
+  # 根据格式名自动选择管线：含 html → 截图，含 pdf → pdftoppm
+  if [[ "$FORMAT" == *html* ]]; then
+    render_html
+  elif [[ "$FORMAT" == *pdf* ]]; then
+    render_pdf
+  else
+    echo "❌ 无法判断 $FORMAT 格式的渲染管线（格式名需含 html 或 pdf）"
+    exit 1
+  fi
+else
+  case "$MODE" in
+    html) render_html ;;
+    pdf)  render_pdf ;;
+    *)    echo "❌ 无效模式: $MODE (可选: html, pdf)"; exit 1 ;;
+  esac
+fi

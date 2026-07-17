@@ -21,6 +21,7 @@ quarto add songwupei/quarto-gbt9704
 quarto render example.qmd --to gbt9704-pdf     # PDF (XeLaTeX)
 quarto render example.qmd --to gbt9704-docx    # DOCX
 quarto render example.qmd --to gbt9704-context # ConTeXt
+quarto render example.qmd --to gbt9704-html    # HTML (公文 CSS，可截图转 PNG)
 ```
 
 预渲染的输出文件：`example.pdf`、`example.docx`、`example-context.pdf`。
@@ -76,6 +77,8 @@ format:
 
 ## 格式特点 · Features
 
+支持四种输出格式：**PDF**、**DOCX**、**ConTeXt**、**HTML**。
+
 | 特性 Feature | 说明 Description |
 |---|---|
 | 正文字体 Body font | 仿宋 16pt，行距 28pt，首行缩进 2 字符 |
@@ -129,10 +132,12 @@ format:
 [`scripts/md2png.sh`](scripts/md2png.sh) — 将 Markdown / Quarto 文档渲染为 PNG 长图，支持 emoji 和 CJK 字体。
 
 ```bash
-./scripts/md2png.sh document.md               # HTML 模式（默认，emoji/CJK 好）
-./scripts/md2png.sh document.md --width 1200   # 指定宽度
-./scripts/md2png.sh document.md --margin 40     # 白边大小（默认 20px）
-./scripts/md2png.sh document.md --mode pdf     # LaTeX PDF 模式
+./scripts/md2png.sh document.md                      # HTML 模式（默认，emoji/CJK 好）
+./scripts/md2png.sh document.md --width 1200          # 指定宽度
+./scripts/md2png.sh document.md --margin 40           # 白边大小（默认 20px）
+./scripts/md2png.sh document.md --mode pdf            # LaTeX PDF 模式
+./scripts/md2png.sh example.qmd --format gbt9704-html # 扩展 HTML（公文 CSS）→ PNG
+./scripts/md2png.sh example.qmd --format gbt9704-pdf  # 扩展 PDF（公文 LaTeX）→ PNG
 ```
 
 详见 [`scripts/README.md`](scripts/README.md)。
