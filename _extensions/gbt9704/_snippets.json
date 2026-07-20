@@ -9,6 +9,7 @@
       "mainreceiver: ${4:各有关单位：}",
       "signature: ${5:XX单位办公室}",
       "signdate: ${6:202X年X月X日}",
+      "emoji: true",
       "format:",
       "  gbt9704-pdf:",
       "    keep-tex: true",
@@ -20,6 +21,91 @@
       "${0}"
     ],
     "description": "GB/T 9704 PDF 文档（红头文件，XeLaTeX 引擎）"
+  },
+  "GB/T 9704 PDF with emoji": {
+    "prefix": "gbt9704-pdf-emoji",
+    "body": [
+      "---",
+      "title: ${1:关于印发<通知标题>的通知}",
+      "emoji: true",
+      "format:",
+      "  gbt9704-pdf: default",
+      "---",
+      "",
+      "正文中可以直接使用 😊🎉✅⚠️📝 等 emoji 表情。",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 PDF 文档（开启 emoji 支持）"
+  },
+  "GB/T 9704 PDF (XeLaTeX) minimal": {
+    "prefix": "gbt9704-pdf-min",
+    "body": [
+      "---",
+      "title: ${1:文档标题}",
+      "format:",
+      "  gbt9704-pdf: default",
+      "---",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 PDF 最小配置"
+  },
+  "GB/T 9704 DOCX": {
+    "prefix": "gbt9704-docx",
+    "body": [
+      "---",
+      "title: ${1:文档标题}",
+      "format:",
+      "  gbt9704-docx: default",
+      "---",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 DOCX 格式"
+  },
+  "GB/T 9704 DOCX with emoji": {
+    "prefix": "gbt9704-docx-emoji",
+    "body": [
+      "---",
+      "title: ${1:文档标题}",
+      "emoji: true",
+      "format:",
+      "  gbt9704-docx: default",
+      "---",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 DOCX 格式（开启 emoji 支持）"
+  },
+  "GB/T 9704 ConTeXt": {
+    "prefix": "gbt9704-context",
+    "body": [
+      "---",
+      "title: ${1:文档标题}",
+      "format:",
+      "  gbt9704-context:",
+      "    keep-tex: true",
+      "---",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 ConTeXt 格式"
+  },
+  "GB/T 9704 ConTeXt with emoji": {
+    "prefix": "gbt9704-context-emoji",
+    "body": [
+      "---",
+      "title: ${1:文档标题}",
+      "emoji: true",
+      "format:",
+      "  gbt9704-context:",
+      "    keep-tex: true",
+      "---",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 ConTeXt 格式（开启 emoji 支持）"
   },
   "GB/T 9704 PDF (XeLaTeX) minimal": {
     "prefix": "gbt9704-pdf-min",

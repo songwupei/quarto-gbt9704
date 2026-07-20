@@ -370,6 +370,16 @@
 \makeoddhead{gongwen}{}{}{}
 \pagestyle{gongwen}
 
+% ------------------ emoji 支持 ------------------
+% 提供 \emoji{} 命令以便 Pandoc Lua filter 调用
+% 要求系统安装 Noto Color Emoji 字体
+% Renderer=Harfbuzz 开启彩色 emoji 渲染
+\newfontfamily{\gbtemojifont}{Noto Color Emoji}[
+  Renderer=Harfbuzz,
+  Scale=MatchUppercase,
+]
+\newcommand{\emoji}[1]{{\gbtemojifont #1}}
+
 % ------------------ 辅助命令 ------------------
 \newcommand{\setgongwenlinespread}{%
     \setlength{\baselineskip}{28pt}

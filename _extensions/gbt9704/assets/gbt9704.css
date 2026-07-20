@@ -13,13 +13,23 @@ html {
 }
 
 body {
-  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", "SimSun", serif;
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", "SimSun",
+               "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji",
+               "Twemoji Mozilla", "EmojiOne Color", "Android Emoji", sans-serif;
   font-size: 1em;
   line-height: 28pt;
   color: #000;
   background: #fff;
   margin: 0;
   padding: 0;
+}
+
+/* ---- Emoji ---- */
+span.emoji {
+  font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji",
+               "Twemoji Mozilla", "EmojiOne Color", "Android Emoji", sans-serif;
+  font-style: normal;
+  font-weight: normal;
 }
 
 /* ---- 红头 ----

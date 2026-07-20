@@ -149,6 +149,10 @@ options:
     items:
       type: string
     min-items: 0
+  emoji:
+    type: boolean
+    default: false
+    description: 启用 emoji 支持。启用后 😊🎉✅ 等字符在 PDF/DOCX/ConTeXt/HTML 中正确渲染彩色。需要系统安装 Noto Color Emoji 字体。
 
 # ---------------------------------------------------------------------------
 # classes — CSS 类（供过滤器使用）

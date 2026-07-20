@@ -14,6 +14,12 @@ $if(gbtfontpreset)$\def\gbtfontpreset{$gbtfontpreset$}$else$\def\gbtfontpreset{m
 \definefont[SimSun][name:simsun*default]
 
 % ==========================================================
+% emoji 支持 — Pandoc Lua filter 调用 \emoji{} 时使用
+% ==========================================================
+\definefont[EmojiFont][name:notocoloremoji*default]
+\def\emoji#1{{\EmojiFont #1}}
+
+% ==========================================================
 % 修复 \redseparator — 模块用了 LaTeX 语法，ConTeXt 不支持
 % ==========================================================
 \def\redseparator{%

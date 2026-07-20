@@ -127,6 +127,68 @@ format:
 
 可用列类型：`l`（文本左对齐）、`f`（欧式财务列）、`C`（中式财务列，逗号千分位）、`N`（无千分位数字列）
 
+## Emoji 支持 · Emoji Support
+
+支持在文档中直接使用 emoji 字符（😊🎉✅⚠️📝），四种输出格式均可正确渲染。
+<br><small>Use emoji characters directly in documents. All four output formats render them correctly.</small>
+
+### 启用方法
+
+在文档 YAML 头中设置 `emoji: true`:
+
+```yaml
+---
+title: 关于加强xxx工作的通知
+emoji: true
+format:
+  gbt9704-pdf: default
+---
+
+各位同仁 📞：
+
+项目推进顺利 👍🏽，已达成以下里程碑 🏆：
+- 软件开发 ✅ 已完成
+- 硬件采购 ⏳ 进行中
+```
+
+### 使用 Pandoc 短码（可选）
+
+如果你习惯使用 `:smile:` 风格的短码，可在项目配置中启用 Pandoc 的 `+emoji` 扩展：
+
+`_quarto.yml`:
+```yaml
+format:
+  gbt9704-pdf:
+    from: markdown+emoji
+```
+
+或文档 YAML:
+```yaml
+---
+title: 通知
+emoji: true
+from: markdown+emoji
+---
+:white_check_mark: 已完成
+:warning: 请留意
+```
+
+> 注意：直接输入 Unicode emoji（😊）无需任何额外配置，`emoji: true` 即可。
+> 短码方式需 Pandoc 3.0+ 支持（当前环境 Pandoc 3.6.1 ✅）。
+
+### 各格式渲染效果
+
+| 格式 | 渲染引擎 | emoji 效果 |
+|------|---------|-----------|
+| **PDF** (gbt9704-pdf) | XeLaTeX + Harfbuzz | 彩色 ✅（驱动不支持时自动降级黑白） |
+| **DOCX** (gbt9704-docx) | Word OpenXML | 彩色 ✅（Segoe UI Emoji） |
+| **ConTeXt** (gbt9704-context) | ConTeXt | 彩色 ✅（Noto Color Emoji） |
+| **HTML** (gbt9704-html) | 浏览器 | 彩色 ✅（原生支持） |
+
+### 关闭 emoji
+
+设置 `emoji: false` 或直接省略该字段即可关闭（默认关闭，向后兼容）。
+
 ## 工具脚本 · Scripts
 
 [`scripts/md2png.sh`](scripts/md2png.sh) — 将 Markdown / Quarto 文档渲染为 PNG 长图，支持 emoji 和 CJK 字体。
