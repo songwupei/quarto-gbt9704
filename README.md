@@ -216,6 +216,10 @@ from: markdown+emoji
 
 详见 [`scripts/README.md`](scripts/README.md)。
 
+## 最近修复 · Recent Fixes
+
+- **2026-07-20** — 修复 ConTeXt 黑体（SimHei）在 PDF 中未嵌入导致一级标题乱码的问题。根因是 ConTeXt LMTX 的 `\definefont` 独立字体 ID 污染 bug——当 `\DaBiaoSong` 等独立字体先于 `\SimHei` 使用时，会破坏黑体字体映射。修复方案：模板中增加 `\definefontfamily[mainface][ss][simhei]` 注册 + `\starttext` 后 `\SimHei` 预初始化。
+
 ## 许可证 · License
 
 MIT

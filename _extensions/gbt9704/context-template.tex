@@ -10,7 +10,11 @@ $if(gbtfontpreset)$\def\gbtfontpreset{$gbtfontpreset$}$else$\def\gbtfontpreset{m
 
 % ==========================================================
 % 补充字体定义 — 与 LaTeX gbt9704.cls 字体一致
+% 通过 \definefontfamily 体系定义黑体（ss 通道），确保 CJK 字体正确嵌入 PDF。
+% \definefont 独立定义在 ConTeXt heading 中会导致字体未嵌入（PDF 乱码）。
 % ==========================================================
+\definefontfamily[mainface][ss][simhei][features=default]
+\setupbodyfont[mainface, 16pt]  % 刷新以加载 ss（黑体）通道
 \definefont[SimSun][name:simsun*default]
 
 % ==========================================================
@@ -38,13 +42,9 @@ $if(gbtfontpreset)$\def\gbtfontpreset{$gbtfontpreset$}$else$\def\gbtfontpreset{m
   align=middle,
   number=no,
 ]
-\setuphead[section][
-  style={\SimHei},
-  number=no,
-  align=flushleft,
-  indentnext=yes,
-  margin=2em,
-]
+% section 一级标题由模块 gbt9704-headings 通过 \gbt@@sectionfont 管理
+% 不在此覆盖——ConTeXt 存在 \definefont 字体 ID 污染 bug，
+% 样式覆盖无法解决黑体未嵌入 PDF 的问题，修复见上方 \definefontfamily + 下方 \SimHei 预初始化
 \definefont[GBKaiBold][name:kaitigb2312*fakebold]
 \setuphead[subsection][
   style={\GBKaiBold},
@@ -174,6 +174,12 @@ $if(gbtfontpreset)$\def\gbtfontpreset{$gbtfontpreset$}$else$\def\gbtfontpreset{m
 % ==========================================================
 
 \starttext
+
+% 预初始化 SimHei（黑体）—— 修复 ConTeXt 字体 ID 污染：
+% 若在其他 \definefont 独立字体（如 \DaBiaoSong）之后才首次使用
+% \SimHei，其字体 ID 被错误映射，导致标题乱码且字体未嵌入 PDF。
+% 此命令必须在所有正文内容之前执行。
+{\SimHei\relax}
 
 $body$
 
