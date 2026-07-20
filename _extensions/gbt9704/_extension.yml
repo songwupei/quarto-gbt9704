@@ -1,7 +1,7 @@
 name: gbt9704
 title: GB/T 9704 文档格式
 author: songwupei
-version: 0.3.1
+version: 0.4.0
 quarto-required: ">=1.4.0"
 contributes:
   formats:
