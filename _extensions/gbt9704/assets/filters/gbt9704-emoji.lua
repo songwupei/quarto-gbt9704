@@ -16,6 +16,7 @@
 --   - 支持 ZWJ 序列（👨‍👩‍👧）、肤色修饰（👍🏽）、国旗对（🇨🇳）
 --   - 每个格式以最合适的方式包裹 emoji
 --   - 关闭 emoji: false 时不影响已有文档
+--   - 支持正文 (Str)、行内代码 (Code)、代码块 (CodeBlock)
 
 -- ============================================================
 -- 全局开关（从 YAML 元数据读取）
@@ -187,6 +188,55 @@ function wrap_emoji(text)
 end
 
 -- ============================================================
+-- 文本扫描：检测并解析 text 中的 emoji，返回处理后的 inline 列表
+-- create_inline_fn(s) -- 为非 emoji 文本创建 inline
+-- ============================================================
+local function scan_and_wrap(text, create_inline_fn)
+  local codepoints = {}
+  local has_emoji = false
+  for _, cp in utf8.codes(text) do
+    table.insert(codepoints, cp)
+    if not has_emoji then
+      if is_emoji_base(cp) or is_regional_indicator(cp) then
+        has_emoji = true
+      end
+    end
+  end
+
+  if not has_emoji then
+    for i, cp in ipairs(codepoints) do
+      if is_keycap_base(cp, codepoints, i) then
+        has_emoji = true
+        break
+      end
+    end
+  end
+
+  if not has_emoji then return nil end
+
+  local result = {}
+  local i = 1
+  while i <= #codepoints do
+    local cp = codepoints[i]
+    if is_emoji_base(cp) or is_regional_indicator(cp) or is_keycap_base(cp, codepoints, i) then
+      local seq, next_i = parse_emoji_sequence(codepoints, i)
+      if seq and #seq > 0 then
+        local emoji_str = utf8.char(table.unpack(seq))
+        table.insert(result, wrap_emoji(emoji_str))
+        i = next_i
+      else
+        table.insert(result, create_inline_fn(utf8.char(cp)))
+        i = i + 1
+      end
+    else
+      table.insert(result, create_inline_fn(utf8.char(cp)))
+      i = i + 1
+    end
+  end
+  return result
+end
+
+-- ============================================================
 -- Pandoc 过滤器钩子
 -- ============================================================
 
@@ -199,63 +249,63 @@ function Meta(meta)
   return meta
 end
 
---- 逐个处理 Str 元素，拆解并包裹 emoji
+--- 逐个处理 Str 元素（正文），拆解并包裹 emoji
 function Str(elem)
   if not ENABLED then return nil end
+  return scan_and_wrap(elem.text, function(s) return pandoc.Str(s) end)
+end
 
-  local text = elem.text
+--- 逐个处理 Code 元素（行内代码），拆解并包裹 emoji
+function Code(elem)
+  if not ENABLED then return nil end
+  return scan_and_wrap(elem.text, function(s) return pandoc.Str(s) end)
+end
 
-  -- 将字符串拆成 codepoint 数组，同时检测是否有 emoji
-  local codepoints = {}
-  local has_emoji = false
-  for _, cp in utf8.codes(text) do
-    table.insert(codepoints, cp)
-    if not has_emoji then
-      if is_emoji_base(cp) or is_regional_indicator(cp) then
-        has_emoji = true
-      end
-    end
-  end
+--- 处理 CodeBlock 元素（代码块）
+function CodeBlock(elem)
+  if not ENABLED then return nil end
+  local result = scan_and_wrap(elem.text, function(s) return pandoc.Str(s) end)
+  if not result then return nil end
 
-  -- 检查键帽基字符（# * 0-9）后跟 VS16+键帽
-  if not has_emoji then
-    for i, cp in ipairs(codepoints) do
-      if is_keycap_base(cp, codepoints, i) then
-        has_emoji = true
-        break
-      end
-    end
-  end
-
-  if not has_emoji then return nil end
-
-  -- 逐个 codepoint 处理，拆解 emoji 序列
-  local result = {}
-  local i = 1
-
-  while i <= #codepoints do
-    local cp = codepoints[i]
-
-    if is_emoji_base(cp) or is_regional_indicator(cp) or is_keycap_base(cp, codepoints, i) then
-      local seq, next_i = parse_emoji_sequence(codepoints, i)
-      if seq and #seq > 0 then
-        local emoji_str = utf8.char(table.unpack(seq))
-        table.insert(result, wrap_emoji(emoji_str))
-        i = next_i
+  if FORMAT:match("latex") then
+    -- alltt 环境支持 \emoji{} 命令，同时保留空白和换行
+    local parts = {}
+    for _, il in ipairs(result) do
+      if il.t == "RawInline" then
+        table.insert(parts, il.text)
       else
-        table.insert(result, pandoc.Str(utf8.char(cp)))
-        i = i + 1
+        table.insert(parts, pandoc.utils.stringify(il))
       end
-    else
-      table.insert(result, pandoc.Str(utf8.char(cp)))
-      i = i + 1
     end
+    return pandoc.RawBlock("latex",
+      "\\begin{alltt}\n" .. table.concat(parts, "") .. "\n\\end{alltt}")
+  elseif FORMAT:match("html") then
+    local parts = {}
+    for _, il in ipairs(result) do
+      if il.t == "RawInline" then
+        table.insert(parts, il.text)
+      else
+        table.insert(parts, pandoc.utils.stringify(il))
+      end
+    end
+    return pandoc.RawBlock("html",
+      "<pre><code>" .. table.concat(parts, "") .. "</code></pre>")
+  elseif FORMAT:match("docx") or FORMAT:match("openxml") then
+    local plain_text = pandoc.utils.stringify(result)
+    return pandoc.RawBlock("openxml",
+      '<w:p><w:pPr><w:pStyle w:val="VerbatimChar"/></w:pPr>'
+      .. '<w:r><w:rPr>'
+      .. '<w:rFonts w:ascii="Segoe UI Symbol" w:hAnsi="Segoe UI Symbol"/>'
+      .. '</w:rPr>'
+      .. '<w:t xml:space="preserve">' .. escape_xml(plain_text) .. '</w:t></w:r></w:p>'
+    )
   end
-
-  return result
+  return nil
 end
 
 return {
   { Meta = Meta },
   { Str  = Str },
+  { Code = Code },
+  { CodeBlock = CodeBlock },
 }

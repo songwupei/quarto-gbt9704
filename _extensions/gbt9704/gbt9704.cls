@@ -88,6 +88,7 @@
 \emergencystretch=\maxdimen
 
 \RequirePackage[normalem]{ulem}  % CJK 安全的删除线（替代 soul）
+\RequirePackage{alltt}           % alltt 环境 — 保留空白且支持 \emoji{} 命令
 
 % ------------------ 颜色定义 ------------------
 \RequirePackage{xcolor}

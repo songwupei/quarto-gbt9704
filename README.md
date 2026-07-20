@@ -185,9 +185,17 @@ from: markdown+emoji
 | **ConTeXt** (gbt9704-context) | ConTeXt | 彩色 ✅ | Noto Color Emoji |
 | **HTML** (gbt9704-html) | 浏览器 | 彩色 ✅ | 原生支持 |
 
-> **技术说明**：XeTeX 的 CID 字体嵌入会剥离 COLR 颜色表，因此 PDF 端选择 COLRv0 字体（Segoe UI Emoji）——其基础轮廓有实体 glyph，剥离颜色后仍可黑白渲染。COLRv1 字体（如 Noto Color Emoji）因 glyph 轮廓为 0-contours（完全依赖 COLR 层），嵌入后不可见。
+> **技术说明**：
 >
-> DOCX 端选择 Segoe UI Symbol（纯 glyf 轮廓字体），WPS / Office 均内置，无需额外安装，兼容性最佳。
+> **PDF**：XeTeX 的 CID 字体嵌入会剥离 COLR 颜色表。因此选择 COLRv0 字体（Segoe UI Emoji）——其基础轮廓有实体 glyph，剥离颜色后仍可黑白渲染。COLRv1 字体（如 Noto Color Emoji）因 glyph 轮廓为 0-contours，嵌入后不可见。
+>
+> **DOCX**：选择 Segoe UI Symbol（纯 glyf 轮廓字体），WPS / Office 均内置，无需额外安装，兼容性最佳。
+>
+> **ConTeXt**：LuaMetaTeX 引擎原生支持 COLR 彩色字体，emoji 为彩色渲染。但需要设置 `OSFONTDIR` 环境变量才能找到系统字体：
+> ```bash
+> export OSFONTDIR="/usr/share/fonts:/usr/local/share/fonts:$HOME/.fonts:$HOME/.local/share/fonts"
+> ```
+> 建议写入 `~/.zshrc` 或 `~/.bashrc`，否则 ConTeXt 会因找不到 `notocoloremoji` 而编译失败。
 
 ### 关闭 emoji
 
