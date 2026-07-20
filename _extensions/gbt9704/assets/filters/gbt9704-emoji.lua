@@ -174,7 +174,7 @@ function wrap_emoji(text)
   elseif FORMAT:match("docx") or FORMAT:match("openxml") then
     return pandoc.RawInline("openxml",
       '<w:r><w:rPr>'
-      .. '<w:rFonts w:ascii="Segoe UI Emoji" w:hAnsi="Segoe UI Emoji" w:eastAsia="Segoe UI Emoji"/>'
+      .. '<w:rFonts w:ascii="Segoe UI Symbol" w:hAnsi="Segoe UI Symbol"/>'
       .. '<w:sz w:val="32"/><w:szCs w:val="32"/>'
       .. '<w:color w:val="000000"/>'
       .. '</w:rPr>'

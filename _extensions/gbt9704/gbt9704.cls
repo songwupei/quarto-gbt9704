@@ -372,12 +372,19 @@
 
 % ------------------ emoji 支持 ------------------
 % 提供 \emoji{} 命令以便 Pandoc Lua filter 调用
-% 要求系统安装 Noto Color Emoji 字体
-% Renderer=Harfbuzz 开启彩色 emoji 渲染
-\newfontfamily{\gbtemojifont}{Noto Color Emoji}[
-  Renderer=Harfbuzz,
-  Scale=MatchUppercase,
-]
+% 多字体回退策略（按优先级）：
+%   1. Segoe UI Emoji — COLRv0 彩色矢量，基础轮廓有实体，XeTeX 剥离 COLR 后仍可黑白渲染
+%      （Windows / WPS 自带；v1.29+ 覆盖完整包括 🗂️📞📧）
+%   2. NotoEmoji-Regular — B&W 轮廓字体，TeX Live noto-emoji 包自带
+%
+% 注意：Noto Color Emoji COLRv1 不适用于 XeTeX！
+%   XeTeX 的 CID 字体嵌入会剥离 COLR/CPAL 表，而 COLRv1 字形的 glyf 轮廓为 0-contours
+%   （完全依赖 COLR 层），导致 emoji 不可见。如需彩色 emoji，请使用 LuaHBTeX。
+\IfFontExistsTF{Segoe UI Emoji}{%
+  \newfontfamily{\gbtemojifont}{Segoe UI Emoji}[Scale=MatchUppercase]%
+}{%
+  \newfontfamily{\gbtemojifont}{NotoEmoji-Regular.ttf}[Extension=.ttf, Scale=MatchUppercase]%
+}
 \newcommand{\emoji}[1]{{\gbtemojifont #1}}
 
 % ------------------ 辅助命令 ------------------
