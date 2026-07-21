@@ -1,7 +1,7 @@
 name: gbt9704
 title: GB/T 9704 文档格式
 author: songwupei
-version: 0.4.1
+version: 0.5.0
 quarto-required: ">=1.4.0"
 contributes:
   formats:
@@ -23,22 +23,6 @@ contributes:
         - assets/filters/title-promotion.lua
         - assets/filters/normalize-styles.lua
         - assets/filters/gbt9704-emoji.lua
-    context:
-      keep-tex: true
-      pdf-engine: context
-      template: context-template.tex
-      top-level-division: section
-      output-file: document-context
-      filters:
-        - assets/filters/gbt9704-metadata.lua
-        - assets/filters/heading-demotion.lua
-        - assets/filters/title-promotion.lua
-        - assets/filters/fakebold.lua
-        - assets/filters/context-support.lua
-        - assets/filters/natural-table.lua
-        - assets/filters/gbt9704-emoji.lua
-      variables:
-        gbtfontpreset: "reference"
     pdf:
       keep-tex: true
       documentclass: gbt9704

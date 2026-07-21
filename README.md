@@ -3,8 +3,8 @@
 Quarto 扩展：GB/T 9704 党政机关公文格式。
 <br><small>Quarto extension: GB/T 9704 Chinese government document format.</small>
 
-支持四种输出格式：**PDF**（XeLaTeX）、**DOCX**、**ConTeXt**、**HTML**。
-<br><small>Supports four output formats: PDF (XeLaTeX), DOCX, ConTeXt, HTML.</small>
+支持三种输出格式：**PDF**（XeLaTeX）、**DOCX**、**HTML**。
+<br><small>Supports three output formats: PDF (XeLaTeX), DOCX, HTML.</small>
 
 ## 安装 · Install
 
@@ -20,7 +20,6 @@ quarto add songwupei/quarto-gbt9704
 ```bash
 quarto render example.qmd --to gbt9704-pdf     # PDF (XeLaTeX)
 quarto render example.qmd --to gbt9704-docx    # DOCX
-quarto render example.qmd --to gbt9704-context # ConTeXt
 quarto render example.qmd --to gbt9704-html    # HTML (公文 CSS，可截图转 PNG)
 ```
 
@@ -60,8 +59,6 @@ format:
   gbt9704-pdf:
     keep-tex: true
   gbt9704-docx: default
-  gbt9704-context:
-    keep-tex: true
 ```
 
 或在文档 YAML 头中：
@@ -77,7 +74,7 @@ format:
 
 ## 格式特点 · Features
 
-支持四种输出格式：**PDF**、**DOCX**、**ConTeXt**、**HTML**。
+支持三种输出格式：**PDF**、**DOCX**、**HTML**。
 
 | 特性 Feature | 说明 Description |
 |---|---|
@@ -129,8 +126,8 @@ format:
 
 ## Emoji 支持 · Emoji Support
 
-支持在文档中直接使用 emoji 字符（😊🎉✅⚠️📝），四种输出格式均可正确渲染。
-<br><small>Use emoji characters directly in documents. All four output formats render them correctly.</small>
+支持在文档中直接使用 emoji 字符（😊🎉✅⚠️📝），三种输出格式均可正确渲染。
+<br><small>Use emoji characters directly in documents. All three output formats render them correctly.</small>
 
 ### 启用方法
 
@@ -182,7 +179,6 @@ from: markdown+emoji
 |------|---------|-----------|---------|
 | **PDF** (gbt9704-pdf) | XeLaTeX | 黑白 ✅ | Segoe UI Emoji (COLRv0) → NotoEmoji-Regular |
 | **DOCX** (gbt9704-docx) | Word / WPS | 黑白 ✅ | Segoe UI Symbol (纯 glyf，无 COLR 依赖) |
-| **ConTeXt** (gbt9704-context) | ConTeXt | 彩色 ✅ | Noto Color Emoji |
 | **HTML** (gbt9704-html) | 浏览器 | 彩色 ✅ | 原生支持 |
 
 > **技术说明**：
@@ -191,11 +187,6 @@ from: markdown+emoji
 >
 > **DOCX**：选择 Segoe UI Symbol（纯 glyf 轮廓字体），WPS / Office 均内置，无需额外安装，兼容性最佳。
 >
-> **ConTeXt**：LuaMetaTeX 引擎原生支持 COLR 彩色字体，emoji 为彩色渲染。但需要设置 `OSFONTDIR` 环境变量才能找到系统字体：
-> ```bash
-> export OSFONTDIR="/usr/share/fonts:/usr/local/share/fonts:$HOME/.fonts:$HOME/.local/share/fonts"
-> ```
-> 建议写入 `~/.zshrc` 或 `~/.bashrc`，否则 ConTeXt 会因找不到 `notocoloremoji` 而编译失败。
 
 ### 关闭 emoji
 
@@ -216,9 +207,9 @@ from: markdown+emoji
 
 详见 [`scripts/README.md`](scripts/README.md)。
 
-## 最近修复 · Recent Fixes
+## 破坏性变更 · Breaking Changes
 
-- **2026-07-20** — 修复 ConTeXt 黑体（SimHei）在 PDF 中未嵌入导致一级标题乱码的问题。根因是 ConTeXt LMTX 的 `\definefont` 独立字体 ID 污染 bug——当 `\DaBiaoSong` 等独立字体先于 `\SimHei` 使用时，会破坏黑体字体映射。修复方案：模板中增加 `\definefontfamily[mainface][ss][simhei]` 注册 + `\starttext` 后 `\SimHei` 预初始化。
+- **v0.5.0** — 放弃 ConTeXt 支持。移除 `gbt9704-context` 格式、`context-template.tex` 模板以及 `context-support.lua` / `fakebold.lua` / `natural-table.lua` 三个 ConTeXt 专用 filter。如果仍需要 ConTeXt 输出，请使用 v0.4.x 版本。
 
 ## 许可证 · License
 
