@@ -25,13 +25,19 @@ local function promote(text)
   end
 
   -- Rule 3: 1.、2.、... → Heading 3
+  --   NOT 1.1 / 2.1 — multi-level numbers are biaozhun pattern,
+  --   handled by numbering-to-headings.lua
   if len >= 2 then
     local fc = pandoc.text.sub(text, 1, 1)
     local sc = pandoc.text.sub(text, 2, 2)
     if (fc == "0" or fc == "1" or fc == "2" or fc == "3"
         or fc == "4" or fc == "5" or fc == "6" or fc == "7"
         or fc == "8" or fc == "9") and (sc == "." or sc == "、") then
-      return pandoc.Header(3, pandoc.Str(text))
+      -- 第三个字符不是数字时才算（排除 1.1, 2.1 等）
+      local tc = len >= 3 and pandoc.text.sub(text, 3, 3) or ""
+      if not (tc >= "0" and tc <= "9") then
+        return pandoc.Header(3, pandoc.Str(text))
+      end
     end
   end
 

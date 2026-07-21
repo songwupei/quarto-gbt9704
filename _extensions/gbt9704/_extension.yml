@@ -12,6 +12,7 @@ contributes:
       top-level-division: section
       filters:
         - assets/filters/gbt9704-metadata.lua
+        - assets/filters/numbering-to-headings.lua
         - assets/filters/heading-demotion.lua
         - assets/filters/title-promotion.lua
         - assets/filters/gbt9704-emoji.lua
@@ -19,6 +20,7 @@ contributes:
       reference-doc: assets/reference-gbt9704.docx
       filters:
         - assets/filters/gbt9704-metadata.lua
+        - assets/filters/numbering-to-headings.lua
         - assets/filters/heading-demotion.lua
         - assets/filters/title-promotion.lua
         - assets/filters/normalize-styles.lua
@@ -32,6 +34,7 @@ contributes:
         - assets/zhlineskip.sty
       filters:
         - assets/filters/gbt9704-metadata.lua
+        - assets/filters/numbering-to-headings.lua
         - assets/filters/heading-demotion.lua
         - assets/filters/title-promotion.lua
         - assets/filters/format-legal.lua
