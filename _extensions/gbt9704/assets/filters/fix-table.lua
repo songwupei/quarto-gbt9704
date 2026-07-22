@@ -200,7 +200,7 @@ return {
     Table = function(tbl)
       local is_latex = FORMAT:match("^latex") or FORMAT == "beamer"
       fix_cells(tbl, is_latex)
-      return nil
+      return tbl
     end,
   },
 
@@ -211,7 +211,7 @@ return {
       if FORMAT:match("^latex") or FORMAT == "beamer" then
         replace_checkbox(para.content)
       end
-      return nil
+      return para
     end,
   },
   {
@@ -220,7 +220,7 @@ return {
       if FORMAT:match("^latex") or FORMAT == "beamer" then
         replace_checkbox(plain.content)
       end
-      return nil
+      return plain
     end,
   },
 }
