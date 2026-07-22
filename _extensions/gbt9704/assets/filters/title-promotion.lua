@@ -1,17 +1,17 @@
 -- ============================================================================
 -- title-promotion.lua — 中文编号纯文本行 → Markdown 标题
 -- ============================================================================
--- 受 YAML 元数据 `title-type` 控制：
---   none     → 不转换，保留原始 Markdown 结构
---   tongzhi  → 通知模式：一、→H1  （一）→H2  1.→H3
---   biaozhun → 跳过（由 numbering-to-headings.lua 处理）
---   auto     → 全部启用（默认，向后兼容）
+-- 受 YAML 元数据 `title-type` 控制（支持 + 组合）：
+--   none              → 不转换
+--   tongzhi           → 中文编号：一、→H1  （一）→H2
+--   tongzhi+biaozhun  → 中文 + 数字
+--   未设置             → 默认 tongzhi（向后兼容）
 -- ============================================================================
 
-local mode = "auto"
+local has_tongzhi = true   -- 默认启用
 
 -- ============================================================================
--- 标题提升规则
+-- 标题提升规则（仅中文编号）
 -- ============================================================================
 
 local function promote(text)
@@ -39,27 +39,11 @@ local function promote(text)
     end
   end
 
-  -- Rule 3: 1.、2.、... → Heading 3
-  --   注意：仅在 tongzhi 或 auto 模式下生效
-  --   NOT 1.1 / 2.1 — 多级数字编号由 numbering-to-headings.lua 处理
-  if len >= 2 then
-    local fc = pandoc.text.sub(text, 1, 1)
-    local sc = pandoc.text.sub(text, 2, 2)
-    if (fc == "0" or fc == "1" or fc == "2" or fc == "3"
-        or fc == "4" or fc == "5" or fc == "6" or fc == "7"
-        or fc == "8" or fc == "9") and (sc == "." or sc == "、") then
-      local tc = len >= 3 and pandoc.text.sub(text, 3, 3) or ""
-      if not (tc >= "0" and tc <= "9") then
-        return pandoc.Header(3, pandoc.Str(text))
-      end
-    end
-  end
-
   return nil
 end
 
 -- ============================================================================
--- 表格式返回：确保 Meta → Pandoc → Para 按序执行
+-- 表格式返回：确保 Meta → Para 按序执行
 -- ============================================================================
 
 return {
@@ -67,22 +51,20 @@ return {
     Meta = function(meta)
       local tt = meta["title-type"]
       if tt then
-        mode = pandoc.utils.stringify(tt):lower()
+        local mode = pandoc.utils.stringify(tt):lower()
+        -- 检查是否包含 tongzhi（支持 tongzhi+biaozhun 组合）
+        has_tongzhi = mode:match("tongzhi") ~= nil
       end
       return nil
     end,
   },
   {
     Para = function(el)
-      if mode == "none" or mode == "biaozhun" then
-        return nil
-      end
+      if not has_tongzhi then return nil end
       return promote(pandoc.utils.stringify(el))
     end,
     Plain = function(el)
-      if mode == "none" or mode == "biaozhun" then
-        return nil
-      end
+      if not has_tongzhi then return nil end
       return promote(pandoc.utils.stringify(el))
     end,
   },
