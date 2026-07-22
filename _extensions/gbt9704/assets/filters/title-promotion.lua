@@ -1,4 +1,19 @@
--- title-promotion.lua (pandoc.text UTF-8 安全)
+-- ============================================================================
+-- title-promotion.lua — 中文编号纯文本行 → Markdown 标题
+-- ============================================================================
+-- 受 YAML 元数据 `title-type` 控制：
+--   none     → 不转换，保留原始 Markdown 结构
+--   tongzhi  → 通知模式：一、→H1  （一）→H2  1.→H3
+--   biaozhun → 跳过（由 numbering-to-headings.lua 处理）
+--   auto     → 全部启用（默认，向后兼容）
+-- ============================================================================
+
+local mode = "auto"
+
+-- ============================================================================
+-- 标题提升规则
+-- ============================================================================
+
 local function promote(text)
   if not text then return nil end
   local len = pandoc.text.len(text)
@@ -25,15 +40,14 @@ local function promote(text)
   end
 
   -- Rule 3: 1.、2.、... → Heading 3
-  --   NOT 1.1 / 2.1 — multi-level numbers are biaozhun pattern,
-  --   handled by numbering-to-headings.lua
+  --   注意：仅在 tongzhi 或 auto 模式下生效
+  --   NOT 1.1 / 2.1 — 多级数字编号由 numbering-to-headings.lua 处理
   if len >= 2 then
     local fc = pandoc.text.sub(text, 1, 1)
     local sc = pandoc.text.sub(text, 2, 2)
     if (fc == "0" or fc == "1" or fc == "2" or fc == "3"
         or fc == "4" or fc == "5" or fc == "6" or fc == "7"
         or fc == "8" or fc == "9") and (sc == "." or sc == "、") then
-      -- 第三个字符不是数字时才算（排除 1.1, 2.1 等）
       local tc = len >= 3 and pandoc.text.sub(text, 3, 3) or ""
       if not (tc >= "0" and tc <= "9") then
         return pandoc.Header(3, pandoc.Str(text))
@@ -44,40 +58,32 @@ local function promote(text)
   return nil
 end
 
--- 检查段落是否为混合格式（如 **1. 问题：** 答案）
--- 混合格式段落不应当作标题提升
-local function is_mixed_format(content)
-  if #content <= 1 then
-    return false
-  end
-  local first = content[1]
-  -- 第一个行内元素是 Strong/Emph/Underline/SmallCaps
-  if first.tag == "Strong" or first.tag == "Emph"
-     or first.tag == "Underline" or first.tag == "SmallCaps" then
-    -- 检查后面是否有非空白内容
-    for i = 2, #content do
-      local tag = content[i].tag
-      if tag ~= "Space" and tag ~= "SoftBreak" then
-        return true
+-- ============================================================================
+-- 表格式返回：确保 Meta → Pandoc → Para 按序执行
+-- ============================================================================
+
+return {
+  {
+    Meta = function(meta)
+      local tt = meta["title-type"]
+      if tt then
+        mode = pandoc.utils.stringify(tt):lower()
       end
-    end
-  end
-  return false
-end
-
-function Para(el)
-  -- 混合格式段落（如 **1. 问题：** 答案）不提升为标题
-  if is_mixed_format(el.content) then
-    return nil
-  end
-  return promote(pandoc.utils.stringify(el))
-end
-
--- Plain handler: 处理列表项等非段落块中的标题模式
-function Plain(el)
-  -- 混合格式段落不提升为标题
-  if is_mixed_format(el.content) then
-    return nil
-  end
-  return promote(pandoc.utils.stringify(el))
-end
+      return nil
+    end,
+  },
+  {
+    Para = function(el)
+      if mode == "none" or mode == "biaozhun" then
+        return nil
+      end
+      return promote(pandoc.utils.stringify(el))
+    end,
+    Plain = function(el)
+      if mode == "none" or mode == "biaozhun" then
+        return nil
+      end
+      return promote(pandoc.utils.stringify(el))
+    end,
+  },
+}

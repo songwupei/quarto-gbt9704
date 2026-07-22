@@ -6,16 +6,19 @@
 --   2.1 xxx     → ## 2.1 xxx     (二级)
 --   3.1.2 xxx   → ### 3.1.2 xxx  (三级)
 --
--- 仅转换纯文本段落（Para）中的编号行，已有的 Header 不受影响。
--- 要求行首严格匹配数字编号模式，正文不会误触发。
+-- 受 YAML 元数据 `title-type` 控制：
+--   none     → 不转换
+--   tongzhi  → 跳过（由 title-promotion.lua 处理）
+--   biaozhun → 启用数字编号规则
+--   auto     → 启用（默认，向后兼容）
 --
--- 与 title-promotion.lua 互补：
---   title-promotion → 中文编号（一、、（一）、1.）
---   numbering-to-headings → 数字编号（1 xx、2.1 xx、3.1.2 xx）
+-- 仅转换纯文本段落（Para）中的编号行，已有的 Header 不受影响。
 -- ============================================================================
 
+local mode = "auto"
+
 -- ============================================================================
--- 1. 层级检测
+-- 层级检测
 -- ============================================================================
 
 local function detect_level(text)
@@ -35,21 +38,37 @@ local function detect_level(text)
 end
 
 -- ============================================================================
--- 2. 主流程
+-- 表格式返回：确保 Meta → Para 按序执行
 -- ============================================================================
 
-function Para(el)
-  local text = pandoc.utils.stringify(el.content)
+return {
+  {
+    Meta = function(meta)
+      local tt = meta["title-type"]
+      if tt then
+        mode = pandoc.utils.stringify(tt):lower()
+      end
+      return nil
+    end,
+  },
+  {
+    Para = function(el)
+      if mode == "none" or mode == "tongzhi" then
+        return nil
+      end
 
-  -- 跳过空行
-  if #text == 0 then
-    return nil
-  end
+      local text = pandoc.utils.stringify(el.content)
 
-  local level = detect_level(text)
-  if level then
-    return pandoc.Header(level, el.content)
-  end
+      if #text == 0 then
+        return nil
+      end
 
-  return nil
-end
+      local level = detect_level(text)
+      if level then
+        return pandoc.Header(level, el.content)
+      end
+
+      return nil
+    end,
+  },
+}

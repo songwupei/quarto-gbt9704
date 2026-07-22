@@ -90,6 +90,23 @@ title: 关于加强xxx工作的通知
 
 > 检测逻辑：扫描全文 Header 编号模式。命中文编号 `一、`/`（一）` → 通知模式；命中数字编号 `1`/`2.1` → 标准模式。两种模式下均可混合使用纯文本和 Markdown 标题。
 
+### 显式指定模式
+
+不想依赖自动检测？在 YAML 头中设置 `title-type`，直接告诉引擎你想要什么模式：
+
+```yaml
+---
+title-type: none     # 禁用标题自动转换，保留原始 Markdown 结构
+---
+```
+
+| 取值 | 行为 | 适用场景 |
+|------|------|---------|
+| `none` | 全部不转换，纯 Markdown `#` `##` `###` 标题 | 考试试卷、普通文档 |
+| `tongzhi` | 通知模式：`一、`→H1 `（一）`→H2 `1.`→H3 | 通知、报告、请示 |
+| `biaozhun` | 标准模式：`1`→H1 `2.1`→H2 `3.1.2`→H3 | 标准、规范、指南 |
+| `auto` | 自动检测（默认，无需显式设置） | 通用，向后兼容 |
+
 ## 使用 · Usage
 
 在 Quarto 项目的 `_quarto.yml` 中：
@@ -262,7 +279,7 @@ from: markdown+emoji
 
 ## 破坏性变更 · Breaking Changes
 
-- **v0.5.4** — 修复 `title-promotion.lua` 误判：`**1. 问题：** 答案` 这类混合格式段落不再被提升为标题，避免整段变粗体。
+- **v0.5.5** — 新增 YAML `title-type` 元数据字段，显式控制标题引擎模式（`none`/`tongzhi`/`biaozhun`/`auto`），替代被动猜测。
 - **v0.5.1** — 重构标题引擎。新增 `numbering-to-headings.lua`（数字编号自动转换）+ 重构 `heading-demotion.lua`（双模式自动识别）。标准/规范类文档（`1`/`2.1` 编号）开箱即用，通知类文档向后兼容。
 - **v0.5.0** — 放弃 ConTeXt 支持。移除 `gbt9704-context` 格式、`context-template.tex` 模板以及 `context-support.lua` / `fakebold.lua` / `natural-table.lua` 三个 ConTeXt 专用 filter。如果仍需要 ConTeXt 输出，请使用 v0.4.x 版本。
 
