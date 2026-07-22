@@ -165,6 +165,18 @@ format:
 
 可用列类型：`l`（文本左对齐）、`f`（欧式财务列）、`C`（中式财务列，逗号千分位）、`N`（无千分位数字列）
 
+## 表格修复 · Table Fixes
+
+`fix-table.lua` 自动修复 Pipe Table 的三个常见问题：
+
+| 问题 | 修复方式 |
+|------|---------|
+| `<br>` 不换行 | `RawInline html` → `LineBreak` |
+| `tbl-colwidths` 列宽不生效 | 将 Div 属性传播到 Table `colspecs` |
+| `□` (U+25A1) 字体缺失 | LaTeX 输出时回退到 Sarasa Mono SC |
+
+> 所有格式（HTML/DOCX/PDF）均自动启用，无需额外配置。
+
 ## Emoji 支持 · Emoji Support
 
 支持在文档中直接使用 emoji 字符（😊🎉✅⚠️📝），三种输出格式均可正确渲染。
