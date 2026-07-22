@@ -44,11 +44,40 @@ local function promote(text)
   return nil
 end
 
+-- 检查段落是否为混合格式（如 **1. 问题：** 答案）
+-- 混合格式段落不应当作标题提升
+local function is_mixed_format(content)
+  if #content <= 1 then
+    return false
+  end
+  local first = content[1]
+  -- 第一个行内元素是 Strong/Emph/Underline/SmallCaps
+  if first.tag == "Strong" or first.tag == "Emph"
+     or first.tag == "Underline" or first.tag == "SmallCaps" then
+    -- 检查后面是否有非空白内容
+    for i = 2, #content do
+      local tag = content[i].tag
+      if tag ~= "Space" and tag ~= "SoftBreak" then
+        return true
+      end
+    end
+  end
+  return false
+end
+
 function Para(el)
+  -- 混合格式段落（如 **1. 问题：** 答案）不提升为标题
+  if is_mixed_format(el.content) then
+    return nil
+  end
   return promote(pandoc.utils.stringify(el))
 end
 
 -- Plain handler: 处理列表项等非段落块中的标题模式
 function Plain(el)
+  -- 混合格式段落不提升为标题
+  if is_mixed_format(el.content) then
+    return nil
+  end
   return promote(pandoc.utils.stringify(el))
 end

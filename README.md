@@ -262,6 +262,7 @@ from: markdown+emoji
 
 ## 破坏性变更 · Breaking Changes
 
+- **v0.5.4** — 修复 `title-promotion.lua` 误判：`**1. 问题：** 答案` 这类混合格式段落不再被提升为标题，避免整段变粗体。
 - **v0.5.1** — 重构标题引擎。新增 `numbering-to-headings.lua`（数字编号自动转换）+ 重构 `heading-demotion.lua`（双模式自动识别）。标准/规范类文档（`1`/`2.1` 编号）开箱即用，通知类文档向后兼容。
 - **v0.5.0** — 放弃 ConTeXt 支持。移除 `gbt9704-context` 格式、`context-template.tex` 模板以及 `context-support.lua` / `fakebold.lua` / `natural-table.lua` 三个 ConTeXt 专用 filter。如果仍需要 ConTeXt 输出，请使用 v0.4.x 版本。
 
