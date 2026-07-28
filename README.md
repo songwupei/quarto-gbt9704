@@ -3,8 +3,8 @@
 Quarto 扩展：GB/T 9704 党政机关公文格式。
 <br><small>Quarto extension: GB/T 9704 Chinese government document format.</small>
 
-支持三种输出格式：**PDF**（XeLaTeX）、**DOCX**、**HTML**。
-<br><small>Supports three output formats: PDF (XeLaTeX), DOCX, HTML.</small>
+支持三种输出格式：**PDF**（LuaLaTeX，推荐）、**DOCX**、**HTML**。
+<br><small>Supports three output formats: PDF (LuaLaTeX recommended), DOCX, HTML.</small>
 
 ## 安装 · Install
 
@@ -18,7 +18,7 @@ quarto add songwupei/quarto-gbt9704
 <br><small>See [`example.qmd`](example.qmd) for a complete reference document with title, body, headings, tables, and more.</small>
 
 ```bash
-quarto render example.qmd --to gbt9704-pdf     # PDF (XeLaTeX)
+quarto render example.qmd --to gbt9704-pdf     # PDF (LuaLaTeX)
 quarto render example.qmd --to gbt9704-docx    # DOCX
 quarto render example.qmd --to gbt9704-html    # HTML (公文 CSS，可截图转 PNG)
 ```
@@ -162,7 +162,7 @@ title-type: zhidu
 正文内容……
 ```
 
-> 支持 PDF（XeLaTeX）、DOCX、HTML 三种输出格式。
+> 支持 PDF（LuaLaTeX）、DOCX、HTML 三种输出格式。
 
 ## 使用 · Usage
 
@@ -304,15 +304,18 @@ from: markdown+emoji
 
 | 格式 | 渲染引擎 | emoji 效果 | 字体策略 |
 |------|---------|-----------|---------|
+| **PDF** (gbt9704-pdf) | LuaLaTeX | 彩色矢量 ✅ | bxcoloremoji → twemojis（PDF 彩色矢量图形） |
 | **PDF** (gbt9704-pdf) | XeLaTeX | 黑白 ✅ | Segoe UI Emoji (COLRv0) → NotoEmoji-Regular |
 | **DOCX** (gbt9704-docx) | Word / WPS | 黑白 ✅ | Segoe UI Symbol (纯 glyf，无 COLR 依赖) |
 | **HTML** (gbt9704-html) | 浏览器 | 彩色 ✅ | 原生支持 |
 
 > **技术说明**：
 >
-> **PDF**：XeTeX 的 CID 字体嵌入会剥离 COLR 颜色表。因此选择 COLRv0 字体（Segoe UI Emoji）——其基础轮廓有实体 glyph，剥离颜色后仍可黑白渲染。COLRv1 字体（如 Noto Color Emoji）因 glyph 轮廓为 0-contours，嵌入后不可见。
+> **LuaLaTeX（推荐）**：bxcoloremoji → twemojis 渲染管线，emoji 以 PDF 彩色矢量图形输出，无需系统 emoji 字体。安装方式：`tlmgr install bxcoloremoji twemojis`。
 >
-> **DOCX**：选择 Segoe UI Symbol（纯 glyf 轮廓字体），WPS / Office 均内置，无需额外安装，兼容性最佳。
+> **XeLaTeX**：CID 字体嵌入会剥离 COLR 颜色表。选择 COLRv0 字体（Segoe UI Emoji）——其基础轮廓有实体 glyph，剥离颜色后仍可黑白渲染。
+>
+> **DOCX**：选择 Segoe UI Symbol（纯 glyf 轮廓字体），WPS / Office 均内置。
 >
 
 ### 关闭 emoji
@@ -336,6 +339,7 @@ from: markdown+emoji
 
 ## 破坏性变更 · Breaking Changes
 
+- **v0.6.1** — PDF 引擎切换为 LuaLaTeX（彩色 emoji 矢量渲染）。gbt9704.cls 统一为 v0.1.3（支持 LuaLaTeX/XeLaTeX 双引擎）。zhlineskip.sty 不再随扩展分发，改为依赖系统 TeX Live 安装（`tlmgr install zhlineskip`）。根目录 `gbt9704.cls` 和 `zhlineskip.sty` 改为软链接指向 `_extensions/` 下副本。
 - **v0.6.0** — 重构 `title-type`：删除 `auto`/`shijuan`，改为 `none`/`tongzhi`/`biaozhun` 三个独立规则，支持 `+` 组合（如 `tongzhi+biaozhun`）。
 - **v0.5.1** — 重构标题引擎。新增 `numbering-to-headings.lua`（数字编号自动转换）+ 重构 `heading-demotion.lua`（双模式自动识别）。标准/规范类文档（`1`/`2.1` 编号）开箱即用，通知类文档向后兼容。
 - **v0.5.0** — 放弃 ConTeXt 支持。移除 `gbt9704-context` 格式、`context-template.tex` 模板以及 `context-support.lua` / `fakebold.lua` / `natural-table.lua` 三个 ConTeXt 专用 filter。如果仍需要 ConTeXt 输出，请使用 v0.4.x 版本。

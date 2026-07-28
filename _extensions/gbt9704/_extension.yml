@@ -34,10 +34,9 @@ contributes:
     pdf:
       keep-tex: true
       documentclass: gbt9704
-      pdf-engine: xelatex
+      pdf-engine: lualatex
       format-resources:
         - gbt9704.cls
-        - assets/zhlineskip.sty
       filters:
         - assets/filters/gbt9704-metadata.lua
         - assets/filters/numbering-to-headings.lua
