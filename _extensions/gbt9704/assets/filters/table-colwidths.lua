@@ -61,16 +61,9 @@ function Pandoc(doc)
           end
           local width_str = "[" .. table.concat(parts, ",") .. "]"
 
-          -- 注入可见注释（fix-table.lua 会移除 Div 包裹，此注释保留）
-          local comment = pandoc.RawBlock(
-            "html",
-            "<!-- tbl-colwidths=" .. width_str .. " -->"
-          )
-          table.insert(new_blocks, comment)
-
           local div = pandoc.Div(
             {blk},
-            {["tbl-colwidths"] = width_str}
+            {class = "tbl-colwidths", ["tbl-colwidths"] = width_str}
           )
           table.insert(new_blocks, div)
         else
