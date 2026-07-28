@@ -159,6 +159,32 @@
     ],
     "description": "项目级 _quarto.yml 配置（三种格式全部启用）"
   },
+  "GB/T 9704 制度文档 (zhidu)": {
+    "prefix": "gbt9704-zhidu",
+    "body": [
+      "---",
+      "title: ${1:制度名称}",
+      "title-type: zhidu",
+      "format:",
+      "  gbt9704-docx: default",
+      "---",
+      "",
+      "# ${1:制度名称}",
+      "",
+      "## 第一章 ${2:总则}",
+      "",
+      "### 第一条 ${3:制定目的}",
+      "",
+      "${4:正文内容……}",
+      "",
+      "### 第二条 ${5:适用范围}",
+      "",
+      "${6:正文内容……}",
+      "",
+      "${0}"
+    ],
+    "description": "GB/T 9704 制度文档（第X章居中黑体，第X条黑体前缀）"
+  },
   "GB/T 9704 financial table": {
     "prefix": "gbt9704-fintable",
     "body": [

@@ -224,6 +224,30 @@ td {
   text-indent: 0;
 }
 
+/* ---- 制度文档 (zhidu) ---- */
+.gbt-zhidu-chapter {
+  font-family: "SimHei", "黑体", "Noto Sans CJK SC", sans-serif;
+  font-size: 16pt;
+  font-weight: bold;
+  text-align: center;
+  text-indent: 0;
+  line-height: 28pt;
+  margin: 1em 0 0.5em 0;
+}
+
+.gbt-zhidu-article {
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
+  text-indent: 2em;
+  line-height: 28pt;
+  margin: 0.25em 0;
+}
+
+.gbt-zhidu-article strong {
+  font-family: "SimHei", "黑体", "Noto Sans CJK SC", sans-serif;
+  font-weight: bold;
+}
+
 /* ---- 复位类 ---- */
 .gbt-title,
 .gbt-subtitle,
@@ -236,6 +260,8 @@ td {
 .gbt-header-org,
 .gbt-header-number,
 .gbt-header-signatory,
-.gbt-attachment {
+.gbt-attachment,
+.gbt-zhidu-chapter,
+.gbt-zhidu-article {
   max-width: 100%;
 }

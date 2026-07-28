@@ -149,6 +149,19 @@ options:
     items:
       type: string
     min-items: 0
+  title-type:
+    type: string
+    default: tongzhi
+    description: |
+      标题识别模式。可选值：none（不转换）、tongzhi（中文编号 一、→H1）、
+      biaozhun（数字编号 1 →H1）、zhidu（制度文档 第X章/第X条）。
+      支持 + 组合，如 tongzhi+biaozhun。
+    enum:
+      - none
+      - tongzhi
+      - biaozhun
+      - zhidu
+      - tongzhi+biaozhun
   emoji:
     type: boolean
     default: false
@@ -160,3 +173,7 @@ options:
 classes:
   financial:
     description: 为表格启用财务列格式（fcolumn：千分位分隔、小数点对齐、\sumline 合计线）。
+  gbt-zhidu-chapter:
+    description: 制度文档章标题样式（居中、黑体加粗）。
+  gbt-zhidu-article:
+    description: 制度文档条款项样式（条号黑体加粗、正文仿宋）。

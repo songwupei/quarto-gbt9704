@@ -1,7 +1,7 @@
 name: gbt9704
 title: GB/T 9704 文档格式
 author: songwupei
-version: 0.6.0
+version: 0.6.1
 quarto-required: ">=1.4.0"
 contributes:
   formats:
@@ -15,6 +15,7 @@ contributes:
         - assets/filters/numbering-to-headings.lua
         - assets/filters/heading-demotion.lua
         - assets/filters/title-promotion.lua
+        - assets/filters/format-zhidu.lua
         - assets/filters/table-colwidths.lua
         - assets/filters/fix-table.lua
         - assets/filters/gbt9704-emoji.lua
@@ -25,6 +26,7 @@ contributes:
         - assets/filters/numbering-to-headings.lua
         - assets/filters/heading-demotion.lua
         - assets/filters/title-promotion.lua
+        - assets/filters/format-zhidu.lua
         - assets/filters/table-colwidths.lua
         - assets/filters/normalize-styles.lua
         - assets/filters/fix-table.lua
@@ -41,6 +43,7 @@ contributes:
         - assets/filters/numbering-to-headings.lua
         - assets/filters/heading-demotion.lua
         - assets/filters/title-promotion.lua
+        - assets/filters/format-zhidu.lua
         - assets/filters/table-colwidths.lua
         - assets/filters/format-legal.lua
         - assets/filters/fcolumn.lua
