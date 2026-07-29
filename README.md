@@ -339,7 +339,7 @@ from: markdown+emoji
 
 ## 破坏性变更 · Breaking Changes
 
-- **v0.6.1** — PDF 引擎切换为 LuaLaTeX（彩色 emoji 矢量渲染）。gbt9704.cls 统一为 v0.1.3（支持 LuaLaTeX/XeLaTeX 双引擎）。zhlineskip.sty 不再随扩展分发，改为依赖系统 TeX Live 安装（`tlmgr install zhlineskip`）。根目录 `gbt9704.cls` 和 `zhlineskip.sty` 改为软链接指向 `_extensions/` 下副本。
+- **v0.6.2** — 同步 gbt9704.cls v0.1.4：标题样式改用 ctex `\ctexset` 接口（修复 `heading=true` 时黑体不生效），中文序号排版（一、（一）、1.），附件间距修复。
 - **v0.6.0** — 重构 `title-type`：删除 `auto`/`shijuan`，改为 `none`/`tongzhi`/`biaozhun` 三个独立规则，支持 `+` 组合（如 `tongzhi+biaozhun`）。
 - **v0.5.1** — 重构标题引擎。新增 `numbering-to-headings.lua`（数字编号自动转换）+ 重构 `heading-demotion.lua`（双模式自动识别）。标准/规范类文档（`1`/`2.1` 编号）开箱即用，通知类文档向后兼容。
 - **v0.5.0** — 放弃 ConTeXt 支持。移除 `gbt9704-context` 格式、`context-template.tex` 模板以及 `context-support.lua` / `fakebold.lua` / `natural-table.lua` 三个 ConTeXt 专用 filter。如果仍需要 ConTeXt 输出，请使用 v0.4.x 版本。

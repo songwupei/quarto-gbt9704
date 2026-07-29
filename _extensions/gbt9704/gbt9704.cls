@@ -1,12 +1,12 @@
 % ==================================================
-%  gbt9704.cls  v0.1.3 20260728
+%  gbt9704.cls  v0.1.4 20260729
 %  SPDX-License-Identifier: LPPL-1.3c
 %  基于 memoir 文档类，符合 GB/T 9704-2012 公文格式标准
 %  支持 LuaLaTeX（推荐，彩色 emoji）和 XeLaTeX（字体回退）
 % ==================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{gbt9704}[2026-07-28 v0.1.3 GB/T 9704-2012 Document Class]
+\ProvidesClass{gbt9704}[2026-07-29 v0.1.4 GB/T 9704-2012 Document Class]
 
 % ------------------ 引擎检测 ------------------
 \RequirePackage{iftex}
@@ -229,7 +229,7 @@
   \begin{center}#1\par\end{center}\endgroup
 }
 
-% ------------------ 章节格式（使用 memoir 原生接口，兼容 hyperref） ------------------
+% ------------------ 章节格式（ctex 原生接口，heading=true 兼容） ------------------
 \setbeforesecskip{0pt}\setaftersecskip{0pt}
 \setbeforesubsecskip{0pt}\setaftersubsecskip{0pt}
 \setbeforesubsubsecskip{0pt}\setaftersubsubsecskip{0pt}
@@ -241,23 +241,38 @@
   % 确保 monofont 在 lmodern 等模板包之后仍生效
   \setmonofont{DejaVu Sans Mono}%
 
-  % 标题缩进控制（使用 memoir 原生接口）
+  % 标题样式（使用 ctex 原生接口，heading=true 时正确生效）
+  \ctexset{
+    section = {
+      format = \zihao{3}\heiti\raggedright,
+      beforeskip = 0pt,
+      afterskip = 0pt,
+    },
+    subsection = {
+      format = \zihao{3}\kaishu\bfseries\raggedright,
+      beforeskip = 0pt,
+      afterskip = 0pt,
+    },
+    subsubsection = {
+      format = \zihao{3}\normalfont\bfseries\raggedright,
+      beforeskip = 0pt,
+      afterskip = 0pt,
+    },
+  }
+  % 标题缩进控制
   \if@gbt@titleindent
-    \setsecindent{2\ccwd}%
-    \setsubsecindent{2\ccwd}%
-    \setsubsubsecindent{2\ccwd}%
+    \ctexset{
+      section/indent = 2\ccwd,
+      subsection/indent = 2\ccwd,
+      subsubsection/indent = 2\ccwd,
+    }
   \else
-    \setsecindent{0pt}%
-    \setsubsecindent{0pt}%
-    \setsubsubsecindent{0pt}%
+    \ctexset{
+      section/indent = 0pt,
+      subsection/indent = 0pt,
+      subsubsection/indent = 0pt,
+    }
   \fi
-
-  % 一级标题（黑体）
-  \setsecheadstyle{\zihao{3}\heiti\raggedright}%
-  % 二级标题（楷体加粗）
-  \setsubsecheadstyle{\zihao{3}\kaishu\bfseries\raggedright}%
-  % 三级标题（仿宋加粗）
-  \setsubsubsecheadstyle{\zihao{3}\normalfont\bfseries\raggedright}%
 
   % 修复 soul 包对 CJK 不兼容：重定义 \st \ul 为 ulem 版本
   \@ifpackageloaded{soul}{%
@@ -290,28 +305,31 @@
 }
 
 % 单附件（带"附件："前缀）
+% 按 GB/T 9704-2012 7.3.4，正文下空一行编排"附件"
 \newcommand{\attachmentHZ}[1]{%
-  \par\vspace{0.3cm}\begingroup\zihao{3}\fangsong
+  \par\vspace{\baselineskip}\begingroup\zihao{3}\fangsong
   \setlength{\baselineskip}{28pt}\setlength{\parindent}{2\ccwd}
   附件：#1\par\endgroup
 }
 
 % 单附件（不带"附件："前缀，适用于附件列表中的条目）
 \newcommand{\attachmentNOHZ}[1]{%
-  \par\vspace{0.3cm}\begingroup\zihao{3}\fangsong
+  \par\begingroup\zihao{3}\fangsong
   \setlength{\baselineskip}{28pt}\setlength{\parindent}{5\ccwd}
   #1\par\endgroup
 }
 
 % 多附件环境
+% 首个附件项前空一行（\baselineskip），后续项自然衔接无额外间距
 \newenvironment{attachments}{%
-  \par\vspace{0.3cm}\zihao{3}\fangsong\setlength{\baselineskip}{28pt}%
+  \par\vspace{\baselineskip}\zihao{3}\fangsong\setlength{\baselineskip}{28pt}%
   \setlength{\parindent}{2\ccwd}\noindent\hspace{2\ccwd}附件：%
 }{\par}
 
 % 多附件条目（可选参数控制缩进量，默认 4.9\ccwd）
+% 附件条目之间使用自然行距（28pt），无额外段间距
 \newcommand{\attachmentitem}[2][4.9]{%
-  \par\vspace{0.3cm}\noindent\hspace*{#1\ccwd}%
+  \par\noindent\hspace*{#1\ccwd}%
   \parbox[t]{\dimexpr\linewidth-#1\ccwd\relax}{\setlength{\baselineskip}{28pt}#2\strut}\par
 }
 
