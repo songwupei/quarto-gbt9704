@@ -1,1 +1,0 @@
-_extensions/gbt9704/gbt9704.cls
