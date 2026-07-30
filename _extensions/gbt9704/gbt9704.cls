@@ -1,5 +1,5 @@
 % ==================================================
-%  gbt9704.cls  v0.1.6 20260730
+%  gbt9704.cls  v0.1.8 20260730
 %  SPDX-License-Identifier: LPPL-1.3c
 %  基于 memoir 文档类，符合 GB/T 9704-2012 公文格式标准
 %  支持 LuaLaTeX（推荐，彩色 emoji）和 XeLaTeX（字体回退）
@@ -7,7 +7,7 @@
 % ==================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{gbt9704}[2026-07-30 v0.1.6 GB/T 9704-2012 Document Class]
+\ProvidesClass{gbt9704}[2026-07-30 v0.1.8 GB/T 9704-2012 Document Class]
 
 % ------------------ 引擎检测 ------------------
 \RequirePackage{iftex}
@@ -361,8 +361,8 @@
   \begin{center}\vspace*{1.2cm}
     \parbox{\textwidth}{\centering\zihao{0}\gbt@redheadfont\textcolor{chinese-red}{\scalebox{0.75}[1]{#1}}}%
     \vspace{0.5cm}
-    \parbox{\textwidth}{\centering\zihao{-3}\songti #2 \\[0.2cm] \zihao{-3}\songti #3}%
-    \vspace{0.5cm}
+    \parbox{\textwidth}{\centering\zihao{-3}\fangsong #2 \\[0.2cm] \zihao{-3}\fangsong #3}%
+    \vspace{0.1cm}
     \if@gbt@redline\textcolor{chinese-red}{\rule{\textwidth}{1.5pt}}\fi
     \vspace{0.3cm}
   \end{center}
