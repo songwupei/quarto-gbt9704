@@ -17,7 +17,7 @@ formats:
       description: 保留中间 LaTeX 文件 (.tex) 以便调试。
     classoption:
       type: array
-      description: LaTeX 文档类选项（可多选 redline, zhlineskip, titleindent）。
+      description: LaTeX 文档类选项（可多选 redline, zhlineskip, titleindent, fzfonts）。
       items:
         type: string
         enum:
@@ -25,6 +25,7 @@ formats:
           - noredline
           - zhlineskip
           - titleindent
+          - fzfonts
       default: []
     pdf-engine:
       type: string
@@ -162,6 +163,15 @@ options:
       - biaozhun
       - zhidu
       - tongzhi+biaozhun
+  pre-clean:
+    type: string
+    default: none
+    description: |
+      预处理清理模式。用于清除 PDF 转 MD 工具产生的格式问题。
+      markitdown — 清除页码标记（— N —）、破损表格碎片等。
+    enum:
+      - none
+      - markitdown
   emoji:
     type: boolean
     default: false
