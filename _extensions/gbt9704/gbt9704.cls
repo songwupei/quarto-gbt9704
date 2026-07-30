@@ -1,5 +1,5 @@
 % ==================================================
-%  gbt9704.cls  v0.1.9 20260730
+%  gbt9704.cls  v0.1.10 20260730
 %  SPDX-License-Identifier: LPPL-1.3c
 %  基于 memoir 文档类，符合 GB/T 9704-2012 公文格式标准
 %  支持 LuaLaTeX（推荐，彩色 emoji）和 XeLaTeX（字体回退）
@@ -7,7 +7,7 @@
 % ==================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{gbt9704}[2026-07-30 v0.1.9 GB/T 9704-2012 Document Class]
+\ProvidesClass{gbt9704}[2026-07-30 v0.1.10 GB/T 9704-2012 Document Class]
 
 % ------------------ 引擎检测 ------------------
 \RequirePackage{iftex}
@@ -86,7 +86,7 @@
 
   % --- 主字体：方正仿宋 ---
   \setCJKmainfont{FZFangSong-Z02}[AutoFakeBold=3.17, AutoFakeSlant=0.2]
-  \setCJKsansfont{FZHei-B01}
+  \setCJKsansfont{FZHei-B01}[Scale=1]  % 锁定 Scale，防止 unicode-math 全局缩放
   \setCJKfamilyfont{zhfs}{FZFangSong-Z02}
   \setCJKfamilyfont{zhkai}{FZKai-Z03}
   \setCJKfamilyfont{zhsong}{FZShuSong-Z01}
@@ -125,7 +125,7 @@
 
   % --- 主字体：仿宋 ---
   \setCJKmainfont{FangSong}[AutoFakeBold=3.17, AutoFakeSlant=0.2]
-  \setCJKsansfont{SimHei}
+  \setCJKsansfont{SimHei}[Scale=1]  % 锁定 Scale，防止 unicode-math 全局缩放
   \setCJKfamilyfont{zhfs}{FangSong}
   \setCJKfamilyfont{zhkai}{KaiTi}
   \setCJKfamilyfont{zhsong}{SimSun}
