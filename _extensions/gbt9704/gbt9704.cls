@@ -1,12 +1,13 @@
 % ==================================================
-%  gbt9704.cls  v0.1.4 20260729
+%  gbt9704.cls  v0.1.5 20260730
 %  SPDX-License-Identifier: LPPL-1.3c
 %  基于 memoir 文档类，符合 GB/T 9704-2012 公文格式标准
 %  支持 LuaLaTeX（推荐，彩色 emoji）和 XeLaTeX（字体回退）
+%  新增 fzfonts 选项：方正商用字体预设（小标宋/仿宋/黑体）
 % ==================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{gbt9704}[2026-07-29 v0.1.4 GB/T 9704-2012 Document Class]
+\ProvidesClass{gbt9704}[2026-07-30 v0.1.5 GB/T 9704-2012 Document Class]
 
 % ------------------ 引擎检测 ------------------
 \RequirePackage{iftex}
@@ -23,6 +24,8 @@
 \@gbt@zhlineskipfalse
 \newif\if@gbt@emoji
 \@gbt@emojitrue
+\newif\if@gbt@fzfonts
+\@gbt@fzfontsfalse  % 默认使用 fallback 开源字体
 
 \DeclareOption{redline}{\@gbt@redlinetrue}
 \DeclareOption{noredline}{\@gbt@redlinefalse}
@@ -31,6 +34,7 @@
 \DeclareOption{zhlineskip}{\@gbt@zhlineskiptrue}
 \DeclareOption{emoji}{\@gbt@emojitrue}
 \DeclareOption{noemoji}{\@gbt@emojifalse}
+\DeclareOption{fzfonts}{\@gbt@fzfontstrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{memoir}}
 \ProcessOptions\relax
 
@@ -55,33 +59,89 @@
 % ------------------ 字体设置 ------------------
 \RequirePackage{fontspec}
 
-% 大标宋字体回退（修复致命依赖：FZDaBiaoSong-B06 缺失时编译崩溃）
-\IfFontExistsTF{FZDaBiaoSong-B06}{
-  \setCJKfamilyfont{dabiaosong}{FZDaBiaoSong-B06}
-}{
-  \setCJKfamilyfont{dabiaosong}{SimHei}[AutoFakeBold=*]
-  \ClassWarning{gbt9704}{FZDaBiaoSong-B06 not found, using SimHei as fallback}
-}
+\if@gbt@fzfonts
+  % ================================================================
+  % fzfonts — 方正商用字体方案
+  % 匹配西文：Times New Roman（衬线）、Arial（无衬线）、Consolas（等宽）
+  % 数学字体：newtxmath（与 Times 完美匹配）
+  % ================================================================
 
-% 主字体：仿宋，伪粗体 3.17，伪斜体 0.2
-\setCJKmainfont{FangSong}[AutoFakeBold=3.17, AutoFakeSlant=0.2]
-\setCJKsansfont{SimHei}
-% 等宽字体：Sarasa Mono SC（CJK）+ DejaVu Sans Mono（box-drawing 字符支持）
-\setCJKmonofont{Sarasa Mono SC}
-\setmonofont{DejaVu Sans Mono}
-\setCJKfamilyfont{zhfs}{FangSong}
-\setCJKfamilyfont{zhkai}{KaiTi}
-\setCJKfamilyfont{zhsong}{SimSun}
+  % --- 红头字体：方正小标宋 → 大标宋 → SimHei ---
+  \IfFontExistsTF{FZXiaoBiaoSong-B05}{
+    \setCJKfamilyfont{xiaobiaosong}{FZXiaoBiaoSong-B05}
+  }{
+    \IfFontExistsTF{FZDaBiaoSong-B06}{
+      \setCJKfamilyfont{xiaobiaosong}{FZDaBiaoSong-B06}
+      \ClassWarning{gbt9704}{FZXiaoBiaoSong-B05 not found, using FZDaBiaoSong-B06}
+    }{
+      \setCJKfamilyfont{xiaobiaosong}{SimHei}[AutoFakeBold=*]
+      \ClassWarning{gbt9704}{FangZheng XiaoBiaoSong/DaBiaoSong not found, using SimHei}
+    }
+  }
 
+  % --- 主字体：方正仿宋 ---
+  \setCJKmainfont{FZFangSong-Z02}[AutoFakeBold=3.17, AutoFakeSlant=0.2]
+  \setCJKsansfont{FZHei-B01}
+  \setCJKfamilyfont{zhfs}{FZFangSong-Z02}
+  \setCJKfamilyfont{zhkai}{FZKai-Z03}
+  \setCJKfamilyfont{zhsong}{FZShuSong-Z01}
+
+  % --- 西文：Times New Roman 系 ---
+  \setmainfont{Times New Roman}
+  \setsansfont{Arial}
+  \setmonofont{Consolas}
+
+  % --- 数学字体 ---
+  % LuaLaTeX 下 newtxmath 可能冲突，公文场景极少数学公式
+  % 使用默认 Latin Modern Math（与 Times New Roman 的 x-height 接近）
+  \IfFileExists{amsmath.sty}{\RequirePackage{amsmath}}{}
+
+  % --- 字体切换命令 ---
+  \newcommand{\gbt@redheadfont}{\CJKfamily{xiaobiaosong}}
+  \newcommand{\heiti}{\sffamily}
+  \newcommand{\kaishu}{\CJKfamily{zhkai}}
+  \newcommand{\fangsong}{\CJKfamily{zhfs}}
+  \newcommand{\songti}{\CJKfamily{zhsong}}
+  \newcommand{\dabiaosong}{\CJKfamily{xiaobiaosong}}
+
+\else
+  % ================================================================
+  % fallback — 开源/系统字体方案（默认）
+  % 匹配西文：LMRoman（Latin Modern）
+  % ================================================================
+
+  % --- 红头字体：方正大标宋 → SimHei ---
+  \IfFontExistsTF{FZDaBiaoSong-B06}{
+    \setCJKfamilyfont{dabiaosong}{FZDaBiaoSong-B06}
+  }{
+    \setCJKfamilyfont{dabiaosong}{SimHei}[AutoFakeBold=*]
+    \ClassWarning{gbt9704}{FZDaBiaoSong-B06 not found, using SimHei as fallback}
+  }
+
+  % --- 主字体：仿宋 ---
+  \setCJKmainfont{FangSong}[AutoFakeBold=3.17, AutoFakeSlant=0.2]
+  \setCJKsansfont{SimHei}
+  \setCJKfamilyfont{zhfs}{FangSong}
+  \setCJKfamilyfont{zhkai}{KaiTi}
+  \setCJKfamilyfont{zhsong}{SimSun}
+
+  % --- 等宽字体 ---
+  \setCJKmonofont{Sarasa Mono SC}
+  \setmonofont{DejaVu Sans Mono}
+
+  % --- 字体切换命令 ---
+  \newcommand{\gbt@redheadfont}{\CJKfamily{dabiaosong}}
+  \newcommand{\heiti}{\sffamily}
+  \newcommand{\kaishu}{\CJKfamily{zhkai}}
+  \newcommand{\fangsong}{\CJKfamily{zhfs}}
+  \newcommand{\songti}{\CJKfamily{zhsong}}
+  \newcommand{\dabiaosong}{\CJKfamily{dabiaosong}}
+
+\fi
+
+% --- 跨主题通用 ---
 % 仿宋斜体（用于强调）
 \newCJKfontfamily{\FangSongItalic}[AutoFakeSlant=0.2]{FangSong}
-
-% 字体切换命令
-\newcommand{\heiti}{\sffamily}
-\newcommand{\kaishu}{\CJKfamily{zhkai}}
-\newcommand{\fangsong}{\CJKfamily{zhfs}}
-\newcommand{\songti}{\CJKfamily{zhsong}}
-\newcommand{\dabiaosong}{\CJKfamily{dabiaosong}}
 
 % ------------------ 彩色 Emoji 支持（双引擎） ------------------
 % LuaLaTeX：bxcoloremoji → twemojis 渲染管线，输出 PDF 彩色矢量图形
@@ -218,8 +278,9 @@
 }
 
 % 公文大标题（版头后、主送前，始终顶格居中）
+% 使用当前字体主题的红头字体（与 \makeheader 一致）
 \newcommand{\gongwentitle}[1]{%
-  \begingroup\zihao{2}\dabiaosong\setlength{\baselineskip}{28pt}
+  \begingroup\zihao{2}\gbt@redheadfont\setlength{\baselineskip}{28pt}
   \begin{center}#1\par\end{center}\endgroup
 }
 
@@ -287,10 +348,13 @@
 % ------------------ 公文组件命令 ------------------
 
 % 红头版头
+% #1 = 发文机关（自动使用当前字体主题的红头字体）
+% #2 = 发文字号
+% #3 = 签发人（可选，留空则不显示）
 \newcommand{\makeheader}[3]{%
   \thispagestyle{gongwen}%
   \begin{center}\vspace*{1.2cm}
-    \parbox{\textwidth}{\centering\zihao{2}\dabiaosong\textcolor{chinese-red}{\makebox[\textwidth][s]{#1}}}%
+    \parbox{\textwidth}{\centering\zihao{2}\gbt@redheadfont\textcolor{chinese-red}{#1}}%
     \vspace{0.5cm}
     \parbox{\textwidth}{\centering\zihao{-3}\songti #2 \\[0.2cm] \zihao{-3}\songti #3}%
     \vspace{0.5cm}
