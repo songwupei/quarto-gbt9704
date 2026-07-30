@@ -7,6 +7,7 @@
 --   1. 删除页码标记段落（"— N —"）
 --   2. 删除破损表格碎片（孤立的 |...| 行）
 --   3. 分割被 markitdown 合并的段落（在 第X章/节/条 前断开）
+--   4. 合并被页码切断的相邻段落
 --
 -- 支持所有输出格式（HTML、DOCX、PDF/LaTeX、ConTeXt）。
 -- 设计为 filter 链的第一道，确保后续 filter 拿到干净 AST。
@@ -278,6 +279,88 @@ local function clean_page_numbers_from_inlines(inlines)
 end
 
 -- ============================================================================
+-- 段落合并：页码删除后，合并不以句号结尾的相邻段落
+-- ============================================================================
+
+-- 检测文本是否以句末标点结尾
+-- 逐字 literal 比较，避免 Lua [。！？] 字符类无法匹配 UTF-8 多字节字符
+local function ends_with_sentence_end(text)
+  if #text < 3 then return false end
+  local tail = text:sub(-3)  -- 取最后 3 字节（一个中文字符 = 3 字节 UTF-8）
+  return tail == "。" or tail == "！" or tail == "？"
+end
+
+-- 判断块是否为"空白段落"（仅含空格/空内容）
+local function is_empty_para(blk)
+  if blk.t ~= "Para" and blk.t ~= "Plain" then return false end
+  local text = pandoc.utils.stringify(blk):gsub("%s+", "")
+  return text == ""
+end
+
+-- 在数组中查找第 start_idx 个非空的 Para/Plain 块
+-- 返回: next_idx, block  (若找不到返回 nil)
+local function find_next_nonempty(blocks, start_idx)
+  local j = start_idx
+  while j <= #blocks do
+    local b = blocks[j]
+    if b.t == "Para" or b.t == "Plain" then
+      if not is_empty_para(b) then
+        return j, b
+      end
+    else
+      -- 非 Para/Plain 块打断搜索
+      return nil, nil
+    end
+    j = j + 1
+  end
+  return nil, nil
+end
+
+local function merge_adjacent_paragraphs(blocks)
+  local result = {}
+  local i = 1
+  while i <= #blocks do
+    local blk = blocks[i]
+    -- 跳过空段落
+    if is_empty_para(blk) then
+      i = i + 1
+    elseif blk.t == "Para" or blk.t == "Plain" then
+      local text1 = pandoc.utils.stringify(blk):gsub("%s+$", "")
+      if ends_with_sentence_end(text1) then
+        -- 句末结束，不合并
+        table.insert(result, blk)
+        i = i + 1
+      else
+        -- 查找下一个可合并的段落（跳过空段落）
+        local next_idx, next_blk = find_next_nonempty(blocks, i + 1)
+        if next_idx and next_blk then
+          local text2 = pandoc.utils.stringify(next_blk):gsub("^%s+", "")
+          if not starts_with_structure(text2) then
+            -- 合并 blk + 中间的空段落 + next_blk
+            local merged = {}
+            for _, il in ipairs(blk.content) do table.insert(merged, il) end
+            for _, il in ipairs(next_blk.content) do table.insert(merged, il) end
+            blk.content = merged
+            table.insert(result, blk)
+            i = next_idx + 1
+          else
+            table.insert(result, blk)
+            i = i + 1
+          end
+        else
+          table.insert(result, blk)
+          i = i + 1
+        end
+      end
+    else
+      table.insert(result, blk)
+      i = i + 1
+    end
+  end
+  return result
+end
+
+-- ============================================================================
 -- Meta 阶段：读取 pre-clean 选项
 -- ============================================================================
 
@@ -313,7 +396,9 @@ function Pandoc(doc)
     end
   end
 
-  doc.blocks = new_blocks
+  -- Pass 4: 合并被页码切断的相邻段落（跳过空段落）
+  doc.blocks = merge_adjacent_paragraphs(new_blocks)
+
   return doc
 end
 
