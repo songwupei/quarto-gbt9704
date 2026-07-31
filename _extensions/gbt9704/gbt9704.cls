@@ -361,7 +361,7 @@
   \begin{center}\vspace*{1.2cm}
     \parbox{\textwidth}{\centering\zihao{0}\gbt@redheadfont\textcolor{chinese-red}{\scalebox{0.75}[1]{#1}}}%
     \vspace{0.5cm}
-    \parbox{\textwidth}{\centering\zihao{-3}\songti #2 \\[0.2cm] \zihao{-3}\fontsize{15pt}{20pt}\selectfont\fangsong #3}%
+    \parbox{\textwidth}{\centering\zihao{3}\fangsong #2 \\[0.2cm] \zihao{3}\fangsong #3}%
     \vspace{0.1cm}
     \if@gbt@redline\textcolor{chinese-red}{\rule{\textwidth}{1.5pt}}\fi
     \vspace{0.3cm}
