@@ -337,8 +337,21 @@ from: markdown+emoji
 
 详见 [`scripts/README.md`](scripts/README.md)。
 
+## 布局参数定制 · Layout Customization
+
+扩展内置 `gbt9704-layout.json` 控制红头、红线、字号等可变布局参数。修改 JSON 后重新生成 `.def` 并渲染即可生效：
+
+```bash
+python3 tools/json2def.py _extensions/gbt9704/gbt9704-layout.json \
+  > _extensions/gbt9704/gbt9704-layout.def
+quarto render document.qmd --to gbt9704-pdf
+```
+
+可定制参数包括红头字号/颜色/紧缩比例、红头与发文号间距、红线粗细、大标题字号、主送人字号、落款字号等。详见 JSON 文件内注释。
+
 ## 破坏性变更 · Breaking Changes
 
+- **v0.6.10** — 引入 `gbt9704-layout.json` 布局参数系统。`gbt9704.cls` 中的可变参数（红头字号/颜色/间距等）改为从 `.def` 常量读取，支持 JSON 驱动定制，无需编辑 `.cls`。
 - **v0.6.2** — 同步 gbt9704.cls v0.1.4：标题样式改用 ctex `\ctexset` 接口（修复 `heading=true` 时黑体不生效），中文序号排版（一、（一）、1.），附件间距修复。
 - **v0.6.0** — 重构 `title-type`：删除 `auto`/`shijuan`，改为 `none`/`tongzhi`/`biaozhun` 三个独立规则，支持 `+` 组合（如 `tongzhi+biaozhun`）。
 - **v0.5.1** — 重构标题引擎。新增 `numbering-to-headings.lua`（数字编号自动转换）+ 重构 `heading-demotion.lua`（双模式自动识别）。标准/规范类文档（`1`/`2.1` 编号）开箱即用，通知类文档向后兼容。

@@ -234,7 +234,34 @@
 
 % ------------------ 颜色定义 ------------------
 \RequirePackage{xcolor}
-\definecolor{chinese-red}{RGB}{200,16,46}
+% 布局参数（由 gbt9704-layout.json 自动生成）
+% 提供回退默认值，.def 文件存在时覆盖
+\def\gbt@layout@headerOrg@fontSize{\zihao{0}}
+\def\gbt@layout@headerOrg@horizontalScale{0.75}
+\def\gbt@layout@headerOrg@spaceAbove{1.2cm}
+\def\gbt@layout@headerOrg@strokeWidth{0pt}
+\def\gbt@layout@headerNumber@fontSize{\zihao{-3}}
+\def\gbt@layout@headerNumber@spaceAfterHeaderOrg{0.5cm}
+\def\gbt@layout@redline@thickness{1.5pt}
+\def\gbt@layout@redline@spaceBefore{0.1cm}
+\def\gbt@layout@redline@spaceAfter{0.3cm}
+\def\gbt@layout@title@fontSize{\zihao{2}}
+\def\gbt@layout@mainreceiver@fontSize{\zihao{3}}
+\def\gbt@layout@signature@fontSize{\zihao{3}}
+\def\gbt@layout@signature@rightPad{2\ccwd}
+\def\gbt@layout@signdate@fontSize{\zihao{3}}
+\def\gbt@layout@signdate@rightPad{2\ccwd}
+\def\gbt@layout@pageNumber@fontSize{\zihao{4}}
+
+\InputIfFileExists{gbt9704-layout.def}{}{%
+  \ClassWarning{gbt9704}{gbt9704-layout.def not found, using built-in defaults}
+}
+% Color must be defined AFTER .def load (so .def can override it)
+\@ifundefined{gbt@layout@color@chinese_red@model}{%
+  \definecolor{chinese-red}{RGB}{200,16,46}%
+}{%
+  \definecolor{chinese-red}{\gbt@layout@color@chinese_red@model}{\gbt@layout@color@chinese_red@value}%
+}
 
 % ------------------ 表格与图片支持 ------------------
 \RequirePackage{graphicx}
@@ -285,7 +312,10 @@
 % 公文大标题（版头后、主送前，始终顶格居中）
 % 使用当前字体主题的红头字体（与 \makeheader 一致）
 \newcommand{\gongwentitle}[1]{%
-  \begingroup\zihao{2}\gbt@redheadfont\setlength{\baselineskip}{28pt}
+  \begingroup
+  \gbt@layout@title@fontSize
+  \gbt@redheadfont
+  \setlength{\baselineskip}{28pt}
   \begin{center}#1\par\end{center}\endgroup
 }
 
@@ -358,19 +388,33 @@
 % #3 = 签发人（可选，留空则不显示）
 \newcommand{\makeheader}[3]{%
   \thispagestyle{gongwen}%
-  \begin{center}\vspace*{1.2cm}
-    \parbox{\textwidth}{\centering\zihao{0}\gbt@redheadfont\textcolor{chinese-red}{\scalebox{0.75}[1]{#1}}}%
-    \vspace{0.5cm}
-    \parbox{\textwidth}{\centering\zihao{-3}\songti #2 \\[0.2cm] \zihao{-3}\fontsize{15pt}{20pt}\selectfont\fangsong #3}%
-    \vspace{0.1cm}
-    \if@gbt@redline\textcolor{chinese-red}{\rule{\textwidth}{1.5pt}}\fi
-    \vspace{0.3cm}
+  \begin{center}\vspace*{\gbt@layout@headerOrg@spaceAbove}
+    \parbox{\textwidth}{\centering
+      \gbt@layout@headerOrg@fontSize
+      \gbt@redheadfont
+      \textcolor{chinese-red}{%
+        \scalebox{\gbt@layout@headerOrg@horizontalScale}[1]{#1}}}%
+    \vspace{\gbt@layout@headerNumber@spaceAfterHeaderOrg}
+    \parbox{\textwidth}{\centering
+      \gbt@layout@headerNumber@fontSize\songti #2
+      \\[0.2cm]
+      \gbt@layout@headerNumber@fontSize\fontsize{15pt}{20pt}\selectfont\fangsong #3}%
+    \vspace{\gbt@layout@redline@spaceBefore}
+    \if@gbt@redline
+      \textcolor{chinese-red}{%
+        \rule{\textwidth}{\gbt@layout@redline@thickness}}%
+    \fi
+    \vspace{\gbt@layout@redline@spaceAfter}
   \end{center}
 }
 
 % 主送机关
 \newcommand{\mainreceiver}[1]{%
-  \begingroup\zihao{3}\setlength{\baselineskip}{28pt}\noindent #1\par\endgroup
+  \begingroup
+  \gbt@layout@mainreceiver@fontSize
+  \setlength{\baselineskip}{28pt}%
+  \noindent #1\par
+  \endgroup
 }
 
 % 单附件（带"附件："前缀）
@@ -404,12 +448,20 @@
 
 % 发文机关署名
 \newcommand{\signature}[1]{%
-  \begingroup\zihao{3}\setlength{\baselineskip}{28pt}\flushright #1\hspace{2\ccwd}\endflushright\endgroup
+  \begingroup
+  \gbt@layout@signature@fontSize
+  \setlength{\baselineskip}{28pt}%
+  \flushright #1\hspace{\gbt@layout@signature@rightPad}\endflushright
+  \endgroup
 }
 
 % 成文日期
 \newcommand{\signdate}[1]{%
-  \begingroup\zihao{3}\setlength{\baselineskip}{28pt}\flushright #1\hspace{2\ccwd}\endflushright\endgroup
+  \begingroup
+  \gbt@layout@signdate@fontSize
+  \setlength{\baselineskip}{28pt}%
+  \flushright #1\hspace{\gbt@layout@signdate@rightPad}\endflushright
+  \endgroup
 }
 
 % 附注
@@ -445,8 +497,8 @@
 
 % ------------------ 页码格式 ------------------
 \makepagestyle{gongwen}
-\makeevenfoot{gongwen}{\zihao{4}\thepage}{}{}
-\makeoddfoot{gongwen}{}{}{\zihao{4}\thepage}
+\makeevenfoot{gongwen}{\gbt@layout@pageNumber@fontSize\thepage}{}{}
+\makeoddfoot{gongwen}{}{}{\gbt@layout@pageNumber@fontSize\thepage}
 \makeevenhead{gongwen}{}{}{}\makeoddhead{gongwen}{}{}{}
 \pagestyle{gongwen}
 
