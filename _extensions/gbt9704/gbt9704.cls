@@ -418,7 +418,7 @@
 }
 
 % 版记分隔线
-\newcommand{\seprule}{\noindent\rule{\textwidth}{0.5pt}\par}
+\newcommand{\seprule}{\noindent\rule{\textwidth}{1pt}\par}
 
 % 抄送机关
 \newcommand{\copyto}[1]{%
@@ -445,8 +445,8 @@
 
 % ------------------ 页码格式 ------------------
 \makepagestyle{gongwen}
-\makeevenfoot{gongwen}{\zihao{4}\thepage}{}{}
-\makeoddfoot{gongwen}{}{}{\zihao{4}\thepage}
+\makeevenfoot{gongwen}{\zihao{4}\songti\ —\ \thepage\ —}{}{}
+\makeoddfoot{gongwen}{}{}{\zihao{4}\songti\ —\ \thepage\ —}
 \makeevenhead{gongwen}{}{}{}\makeoddhead{gongwen}{}{}{}
 \pagestyle{gongwen}
 
