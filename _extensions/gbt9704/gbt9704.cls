@@ -422,12 +422,12 @@
 
 % 抄送机关
 \newcommand{\copyto}[1]{%
-  \begingroup\zihao{3}\setlength{\baselineskip}{28pt}\noindent 抄送：#1\par\endgroup
+  \begingroup\zihao{4}\setlength{\baselineskip}{28pt}\noindent 抄送：#1\par\endgroup
 }
 
 % 印发机关和印发日期
 \newcommand{\issueinfo}[2]{%
-  \begingroup\zihao{3}\setlength{\baselineskip}{28pt}\noindent #1\hfill #2\par\endgroup
+  \begingroup\zihao{4}\setlength{\baselineskip}{28pt}\noindent #1\hfill #2\par\endgroup
 }
 
 % ------------------ 正文环境 ------------------
