@@ -238,7 +238,7 @@
 % 提供回退默认值，.def 文件存在时覆盖
 \def\gbt@layout@headerOrg@fontSize{\zihao{0}}
 \def\gbt@layout@headerOrg@horizontalScale{0.75}
-\def\gbt@layout@headerOrg@spaceAbove{1.2cm}
+\def\gbt@layout@headerOrg@spaceAbove{10cm}
 \def\gbt@layout@headerOrg@strokeWidth{0pt}
 \def\gbt@layout@headerNumber@fontSize{\zihao{-3}}
 \def\gbt@layout@headerNumber@spaceAfterHeaderOrg{0.5cm}
