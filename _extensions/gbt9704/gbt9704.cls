@@ -1,5 +1,5 @@
 % ==================================================
-%  gbt9704.cls  v0.1.10 20260730
+%  gbt9704.cls  v0.1.11 20260731
 %  SPDX-License-Identifier: LPPL-1.3c
 %  基于 memoir 文档类，符合 GB/T 9704-2012 公文格式标准
 %  支持 LuaLaTeX（推荐，彩色 emoji）和 XeLaTeX（字体回退）
@@ -7,7 +7,7 @@
 % ==================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{gbt9704}[2026-07-30 v0.1.10 GB/T 9704-2012 Document Class]
+\ProvidesClass{gbt9704}[2026-07-31 v0.1.11 GB/T 9704-2012 Document Class]
 
 % ------------------ 引擎检测 ------------------
 \RequirePackage{iftex}
