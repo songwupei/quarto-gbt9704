@@ -3,12 +3,12 @@
 % Generator: tools/json2def.py
 \makeatletter
 
-\def\gbt@layout@color@chinese_red@model{RGB}
-\def\gbt@layout@color@chinese_red@value{200,16,46}
+\def\gbt@layout@color@chineseRed@model{RGB}
+\def\gbt@layout@color@chineseRed@value{255,0,0}
 \def\gbt@layout@headerOrg@fontSize{\zihao{0}}
 \def\gbt@layout@headerOrg@fontSizePt{42}
 \def\gbt@layout@headerOrg@horizontalScale{0.75}
-\def\gbt@layout@headerOrg@spaceAbove{10cm}
+\def\gbt@layout@headerOrg@spaceAbove{4cm}
 \def\gbt@layout@headerOrg@align{center}
 \def\gbt@layout@headerOrg@strokeWidth{0pt}
 \def\gbt@layout@headerNumber@fontSize{\zihao{-3}}

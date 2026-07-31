@@ -238,7 +238,7 @@
 % 提供回退默认值，.def 文件存在时覆盖
 \def\gbt@layout@headerOrg@fontSize{\zihao{0}}
 \def\gbt@layout@headerOrg@horizontalScale{0.75}
-\def\gbt@layout@headerOrg@spaceAbove{10cm}
+\def\gbt@layout@headerOrg@spaceAbove{4cm}
 \def\gbt@layout@headerOrg@strokeWidth{0pt}
 \def\gbt@layout@headerNumber@fontSize{\zihao{-3}}
 \def\gbt@layout@headerNumber@spaceAfterHeaderOrg{0.5cm}
@@ -257,10 +257,10 @@
   \ClassWarning{gbt9704}{gbt9704-layout.def not found, using built-in defaults}
 }
 % Color must be defined AFTER .def load (so .def can override it)
-\@ifundefined{gbt@layout@color@chinese_red@model}{%
+\@ifundefined{gbt@layout@color@chineseRed@model}{%
   \definecolor{chinese-red}{RGB}{200,16,46}%
 }{%
-  \definecolor{chinese-red}{\gbt@layout@color@chinese_red@model}{\gbt@layout@color@chinese_red@value}%
+  \definecolor{chinese-red}{\gbt@layout@color@chineseRed@model}{\gbt@layout@color@chineseRed@value}%
 }
 
 % ------------------ 表格与图片支持 ------------------

@@ -8,7 +8,7 @@ return {
   ["colors"] = {
     ["chinese_red"] = {
       ["model"] = 'RGB',
-      ["value"] = {200, 16, 46},
+      ["value"] = {255, 0, 0},
       ["description"] = '公文红头及红线颜色。标准大红 #FF0000 → RGB(255,0,0)；部分单位使用暗红 #C8102E → RGB(200,16,46)。',
     },
   },
@@ -17,7 +17,7 @@ return {
     ["font_size"] = '\\zihao{0}',
     ["font_size_pt"] = 42,
     ["horizontal_scale"] = 0.75,
-    ["space_above"] = '10cm',
+    ["space_above"] = '4cm',
     ["align"] = 'center',
     ["stroke_width"] = '0pt',
   },

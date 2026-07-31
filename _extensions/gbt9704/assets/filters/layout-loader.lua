@@ -44,10 +44,11 @@ local function generate_defs(layout)
   if colors then
     for color_key, color_spec in pairs(colors) do
       if type(color_spec) == "table" then
-        table.insert(defs, "\\def\\gbt@layout@color@" .. color_key .. "@model{" .. tostring(color_spec["model"]) .. "}")
+        local ck = to_camel(color_key)
+        table.insert(defs, "\\def\\gbt@layout@color@" .. ck .. "@model{" .. tostring(color_spec["model"]) .. "}")
         local vals = color_spec["value"]
         if type(vals) == "table" then
-          table.insert(defs, "\\def\\gbt@layout@color@" .. color_key .. "@value{" .. table.concat(vals, ",") .. "}")
+          table.insert(defs, "\\def\\gbt@layout@color@" .. ck .. "@value{" .. table.concat(vals, ",") .. "}")
         end
       end
     end
@@ -66,16 +67,18 @@ function Pandoc(doc)
   local defs = generate_defs(layout)
   if #defs == 0 then return doc end
 
+  -- Re-definecolor: color was already set during class load with old values.
+  -- We must re-define after our \def overrides take effect.
+  local ck = to_camel("chinese_red")
+  table.insert(defs, "\\definecolor{chinese-red}{\\gbt@layout@color@" .. ck .. "@model}{\\gbt@layout@color@" .. ck .. "@value}")
+
   local latex_block = "\\makeatletter\n" .. table.concat(defs, "\n") .. "\n\\makeatother\n"
 
-  -- header-includes: this is what Pandoc's LaTeX template writes
-  -- in the preamble via $header-includes$. Quarto respects this.
   local hi = doc.meta["header-includes"]
   if not hi then
     hi = pandoc.List()
     doc.meta["header-includes"] = hi
   end
-  -- MetaBlocks containing a RawBlock is the correct type for header-includes
   hi:insert(pandoc.MetaBlocks({pandoc.RawBlock("latex", latex_block)}))
 
   return doc
