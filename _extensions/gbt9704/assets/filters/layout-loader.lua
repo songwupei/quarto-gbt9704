@@ -56,13 +56,46 @@ local function generate_defs(layout)
   return defs
 end
 
+-- Directory of this filter script (as pandoc loaded it).
+-- Returns nil if it cannot be determined.
+local function filter_script_dir()
+  local info = debug.getinfo(1, "S")
+  local src = info and info.source or ""
+  src = src:gsub("^@", "")          -- strip '@' prefix added by pandoc
+  return src:match("^(.*)/[^/]+$")    -- drop the trailing filename
+end
+
+-- Candidate paths for gbt9704-layout.lua, tried in order until one loads.
+local function layout_candidates()
+  local list = {}
+  -- 1) Relative to this filter file — works regardless of the extension
+  --    directory name (repo: _extensions/gbt9704/, installed via
+  --    `quarto add songwupei/quarto-gbt9704`: _extensions/songwupei/gbt9704/)
+  local dir = filter_script_dir()
+  if dir and dir ~= "" then
+    table.insert(list, dir .. "/../../gbt9704-layout.lua")
+  end
+  -- 2) Repo / direct-install layout
+  table.insert(list, "_extensions/gbt9704/gbt9704-layout.lua")
+  -- 3) Installed via `quarto add songwupei/quarto-gbt9704`
+  table.insert(list, "_extensions/songwupei/gbt9704/gbt9704-layout.lua")
+  -- 4) format-resource staged next to the project being rendered
+  table.insert(list, "gbt9704-layout.lua")
+  return list
+end
+
 function Pandoc(doc)
   if FORMAT ~= "latex" and FORMAT ~= "pdf" then return doc end
 
-  local ok, layout = pcall(function()
-    return dofile("_extensions/gbt9704/gbt9704-layout.lua")
-  end)
-  if not ok then return doc end
+  local layout = nil
+  for _, path in ipairs(layout_candidates()) do
+    local ok, res = pcall(dofile, path)
+    if ok and type(res) == "table" then
+      layout = res
+      break
+    end
+  end
+  if not layout then return doc end
 
   local defs = generate_defs(layout)
   if #defs == 0 then return doc end
