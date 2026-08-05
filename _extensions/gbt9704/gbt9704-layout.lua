@@ -31,8 +31,8 @@ return {
   ["redline"] = {
     ["description"] = '红线 — 分隔版头与正文。红色、横贯版心。',
     ["thickness"] = '1.5pt',
-    ["space_before"] = '0cm',
-    ["space_after"] = '0cm',
+    ["space_before"] = '-2cm',
+    ["space_after"] = '-2cm',
     ["align"] = 'center',
   },
   ["title"] = {

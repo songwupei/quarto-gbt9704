@@ -1,15 +1,21 @@
 # quarto-gbt9704
 
-Quarto 扩展：GB/T 9704 党政机关公文格式。
-<br><small>Quarto extension: GB/T 9704 Chinese government document format.</small>
+Quarto 扩展集合：GB/T 9704 党政机关公文格式 + 教科书排版。
+<br><small>Quarto extension bundle: GB/T 9704 Chinese government document format + textbook layout.</small>
 
-支持三种输出格式：**PDF**（LuaLaTeX，推荐）、**DOCX**、**HTML**。
-<br><small>Supports three output formats: PDF (LuaLaTeX recommended), DOCX, HTML.</small>
+| 格式 | 安装 | 用途 |
+|------|------|------|
+| `gbt9704-pdf` / `gbt9704-docx` / `gbt9704-html` | 本仓库 | 党政机关公文 |
+| `textbook-pdf` | [`quarto-textbook`](https://codeberg.org/songwupei/quarto-textbook) | 繁体中文教科书 |
 
 ## 安装 · Install
 
 ```bash
+# 公文格式
 quarto add songwupei/quarto-gbt9704
+
+# 教科书格式
+quarto add songwupei/quarto-textbook
 ```
 
 ## 快速开始 · Quick Start
