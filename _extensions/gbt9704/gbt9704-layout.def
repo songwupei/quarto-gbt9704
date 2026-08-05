@@ -13,11 +13,11 @@
 \def\gbt@layout@headerOrg@strokeWidth{0pt}
 \def\gbt@layout@headerNumber@fontSize{\zihao{-3}}
 \def\gbt@layout@headerNumber@fontSizePt{15}
-\def\gbt@layout@headerNumber@spaceAfterHeaderOrg{0.5cm}
+\def\gbt@layout@headerNumber@spaceAfterHeaderOrg{1cm}
 \def\gbt@layout@headerNumber@align{center}
 \def\gbt@layout@redline@thickness{1.5pt}
-\def\gbt@layout@redline@spaceBefore{0.1cm}
-\def\gbt@layout@redline@spaceAfter{0.3cm}
+\def\gbt@layout@redline@spaceBefore{0cm}
+\def\gbt@layout@redline@spaceAfter{0cm}
 \def\gbt@layout@redline@align{center}
 \def\gbt@layout@title@fontSize{\zihao{2}}
 \def\gbt@layout@title@fontSizePt{22}

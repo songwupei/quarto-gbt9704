@@ -1,0 +1,4 @@
+project:
+  type: default
+  pre-render:
+    - ./tools/sync-layout.sh

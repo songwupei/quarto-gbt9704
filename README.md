@@ -339,19 +339,27 @@ from: markdown+emoji
 
 ## 布局参数定制 · Layout Customization
 
-扩展内置 `gbt9704-layout.json` 控制红头、红线、字号等可变布局参数。修改 JSON 后重新生成 `.def` 并渲染即可生效：
+扩展内置 `gbt9704-layout.json` 控制红头、红线、字号等可变布局参数。修改 JSON 后先运行 `tools/json2def.py` 重新生成 `.lua` 与 `.def`，再渲染：
 
 ```bash
+# 1) 由 JSON 重新生成布局文件（.lua 为 Quarto 渲染时生效，.def 为直接 LaTeX 编译的兜底）
+python3 tools/json2def.py _extensions/gbt9704/gbt9704-layout.json --lua \
+  > _extensions/gbt9704/gbt9704-layout.lua
 python3 tools/json2def.py _extensions/gbt9704/gbt9704-layout.json \
   > _extensions/gbt9704/gbt9704-layout.def
+
+# 2) 渲染
 quarto render document.qmd --to gbt9704-pdf
 ```
+
+> 注意：`.lua` / `.def` 均由 JSON 自动生成，请勿手改。渲染 PDF 时实际生效的是 `.lua`（由 `assets/filters/layout-loader.lua` 在渲染时读取并注入 LaTeX 覆盖）；`.def` 仅在直接使用 gbt9704.cls 编译（不走 Quarto）时被读取。`tools/json2def.py` 同步自 [latex-ctan-gbt9704](https://codeberg.org/songwupei/latex-ctan-gbt9704) 的 `gbt9704/tools/json2def.py`。
 
 可定制参数包括红头字号/颜色/紧缩比例、红头与发文号间距、红线粗细、大标题字号、主送人字号、落款字号等。详见 JSON 文件内注释。
 
 ## 破坏性变更 · Breaking Changes
 
-- **v0.6.10** — 引入 `gbt9704-layout.json` 布局参数系统。`gbt9704.cls` 中的可变参数（红头字号/颜色/间距等）改为从 `.def` 常量读取，支持 JSON 驱动定制，无需编辑 `.cls`。
+- **v0.6.13** — 新增 `tools/json2def.py` 布局生成器与渲染前自动同步：修改 `gbt9704-layout.json` 后，`quarto render` 会自动重新生成 `.lua` / `.def`（通过项目 `_quarto.yml` 的 pre-render 钩子调用）。
+- **v0.6.10** — 引入 `gbt9704-layout.json` 布局参数系统。`gbt9704.cls` 中的可变参数（红头字号/颜色/间距等）改为从 JSON 生成的 `.def` / `.lua` 常量读取（Quarto 渲染时以 `.lua` 生效），支持 JSON 驱动定制，无需编辑 `.cls`。
 - **v0.6.2** — 同步 gbt9704.cls v0.1.4：标题样式改用 ctex `\ctexset` 接口（修复 `heading=true` 时黑体不生效），中文序号排版（一、（一）、1.），附件间距修复。
 - **v0.6.0** — 重构 `title-type`：删除 `auto`/`shijuan`，改为 `none`/`tongzhi`/`biaozhun` 三个独立规则，支持 `+` 组合（如 `tongzhi+biaozhun`）。
 - **v0.5.1** — 重构标题引擎。新增 `numbering-to-headings.lua`（数字编号自动转换）+ 重构 `heading-demotion.lua`（双模式自动识别）。标准/规范类文档（`1`/`2.1` 编号）开箱即用，通知类文档向后兼容。

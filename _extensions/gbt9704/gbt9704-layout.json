@@ -26,15 +26,15 @@
     "description": "发文字号 — 红头下方、红线之上。仿宋体。",
     "font_size": "\\zihao{-3}",
     "font_size_pt": 15,
-    "space_after_header_org": "0.5cm",
+    "space_after_header_org": "1cm",
     "align": "center"
   },
 
   "redline": {
     "description": "红线 — 分隔版头与正文。红色、横贯版心。",
     "thickness": "1.5pt",
-    "space_before": "0.1cm",
-    "space_after": "0.3cm",
+    "space_before": "0cm",
+    "space_after": "0cm",
     "align": "center"
   },
 
