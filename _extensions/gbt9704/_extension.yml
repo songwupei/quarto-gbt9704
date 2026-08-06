@@ -1,7 +1,7 @@
 name: gbt9704
 title: GB/T 9704 文档格式
 author: songwupei
-version: 0.6.13
+version: 0.7.0
 quarto-required: ">=1.4.0"
 contributes:
   formats:
@@ -53,3 +53,17 @@ contributes:
         - assets/filters/fcolumn.lua
         - assets/filters/fix-table.lua
         - assets/filters/gbt9704-emoji.lua
+    pptx:
+      reference-doc: assets/reference-zhanshi.pptx
+      slide-level: 2
+      filters:
+        - assets/filters/lines-spacing.lua
+    beamer:
+      pdf-engine: xelatex
+      slide-level: 2
+      fontsize: 10pt
+      aspectratio: 169
+      include-in-header: assets/preambles/qs-beamer-preamble.tex
+      include-after: assets/preambles/qs-beamer-after.tex
+      filters:
+        - assets/filters/lines-spacing.lua

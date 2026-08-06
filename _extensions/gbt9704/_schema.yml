@@ -4,7 +4,7 @@ $schema: https://m.canouil.dev/quarto-wizard/assets/schema/v1/extension-schema.j
 # Quarto Wizard 支持：GB/T 9704 党政机关公文格式扩展
 # ---------------------------------------------------------------------------
 # 本文件提供编辑器自动补全、悬停文档和 YAML 校验功能。
-# 支持三种输出格式：gbt9704-pdf (XeLaTeX)、gbt9704-docx、gbt9704-context
+# 支持五种输出格式：gbt9704-pdf (XeLaTeX)、gbt9704-docx、gbt9704-context、gbt9704-pptx、gbt9704-beamer
 
 # ---------------------------------------------------------------------------
 # formats — 格式专属选项
@@ -89,6 +89,53 @@ formats:
       enum:
         - song
         - hei
+
+  gbt9704-pptx:
+    slide-level:
+      type: integer
+      default: 2
+      description: 幻灯片标题级别（1 = 一级标题为新幻灯片）。
+    reference-doc:
+      type: string
+      description: 自定义 PPTX 参考模板路径（蓝色商务风格）。
+      completion:
+        type: file
+        extensions:
+          - .pptx
+
+  gbt9704-beamer:
+    pdf-engine:
+      type: string
+      const: xelatex
+      description: PDF 引擎（固定为 xelatex）。
+    slide-level:
+      type: integer
+      default: 2
+      description: 幻灯片标题级别（1 = 一级标题为新幻灯片）。
+    fontsize:
+      type: string
+      default: 10pt
+      description: 正文字号。
+      enum:
+        - 8pt
+        - 9pt
+        - 10pt
+        - 11pt
+        - 12pt
+    aspectratio:
+      type: string
+      default: "169"
+      description: 屏幕宽高比。
+      enum:
+        - "169"
+        - "1610"
+        - "43"
+    include-in-header:
+      type: string
+      description: 自定义 beamer preamble 文件路径。
+    include-after:
+      type: string
+      description: 自定义结尾页文件路径。
 
 # ---------------------------------------------------------------------------
 # options — 文档级 YAML 元数据选项

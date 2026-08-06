@@ -6,6 +6,7 @@ Quarto 扩展集合：GB/T 9704 党政机关公文格式 + 教科书排版。
 | 格式 | 安装 | 用途 |
 |------|------|------|
 | `gbt9704-pdf` / `gbt9704-docx` / `gbt9704-html` | 本仓库 | 党政机关公文 |
+| `gbt9704-pptx` / `gbt9704-beamer` | 本仓库 | 幻灯片（蓝色商务 PPTX · 青山绿水 Beamer） |
 | `textbook-pdf` | [`quarto-textbook`](https://codeberg.org/songwupei/quarto-textbook) | 繁体中文教科书 |
 
 ## 安装 · Install
@@ -27,6 +28,8 @@ quarto add songwupei/quarto-textbook
 quarto render example.qmd --to gbt9704-pdf     # PDF (LuaLaTeX)
 quarto render example.qmd --to gbt9704-docx    # DOCX
 quarto render example.qmd --to gbt9704-html    # HTML (公文 CSS，可截图转 PNG)
+quarto render example.qmd --to gbt9704-pptx    # PPTX (蓝色商务)
+quarto render example.qmd --to gbt9704-beamer  # Beamer PDF (青山绿水)
 ```
 
 预渲染的输出文件：`example.pdf`、`example.docx`。
@@ -195,7 +198,7 @@ format:
 
 ## 格式特点 · Features
 
-支持三种输出格式：**PDF**、**DOCX**、**HTML**。
+支持五种输出格式：**PDF**、**DOCX**、**HTML**、**PPTX**、**Beamer**。
 
 | 特性 Feature | 说明 Description |
 |---|---|
@@ -328,6 +331,44 @@ from: markdown+emoji
 
 设置 `emoji: false` 或直接省略该字段即可关闭（默认关闭，向后兼容）。
 
+## 幻灯片 · Slides
+
+`gbt9704-pptx` 和 `gbt9704-beamer` 提供两种幻灯片格式，从 quarto-zhanshi 合并而来。
+
+### PPTX
+
+蓝色商务风格，基于 `reference.pptx` 模板。`slide-level: 2` 表示二级标题 (`##`) 开启新幻灯片。
+
+```yaml
+---
+title: "演示标题"
+author: "汇报人"
+format:
+  gbt9704-pptx: default
+---
+```
+
+### Beamer
+
+青山绿水中文模板——楷体 · 山水配色 · 手绘波纹装饰。
+
+```yaml
+---
+title: "演示标题"
+author: "汇报人"
+format:
+  gbt9704-beamer: default
+---
+```
+
+**特性**：
+- 中文字体：STKaiti（华文楷体）+ Times New Roman + unicode-math
+- 青山绿水配色：MountainGreen / BambooGreen / MistyTeal / StreamBlue
+- 自定义 beamer 主题：手绘波纹标题线、进度条、山坡背景
+- 章节转场页：每节开始自动插入水墨风格过渡页
+- 定理盒子：定义/定理/引理/推论/命题/例（tcolorbox）
+- 列表行间距：多行列表项自动增加间距
+
 ## 工具脚本 · Scripts
 
 [`scripts/md2png.sh`](scripts/md2png.sh) — 将 Markdown / Quarto 文档渲染为 PNG 长图，支持 emoji 和 CJK 字体。
@@ -364,6 +405,7 @@ quarto render document.qmd --to gbt9704-pdf
 
 ## 破坏性变更 · Breaking Changes
 
+- **v0.7.0** — 合并 quarto-zhanshi：新增 `gbt9704-pptx`（蓝色商务）和 `gbt9704-beamer`（青山绿水）幻灯片格式。
 - **v0.6.13** — 新增 `tools/json2def.py` 布局生成器与渲染前自动同步：修改 `gbt9704-layout.json` 后，`quarto render` 会自动重新生成 `.lua` / `.def`（通过项目 `_quarto.yml` 的 pre-render 钩子调用）。
 - **v0.6.10** — 引入 `gbt9704-layout.json` 布局参数系统。`gbt9704.cls` 中的可变参数（红头字号/颜色/间距等）改为从 JSON 生成的 `.def` / `.lua` 常量读取（Quarto 渲染时以 `.lua` 生效），支持 JSON 驱动定制，无需编辑 `.cls`。
 - **v0.6.2** — 同步 gbt9704.cls v0.1.4：标题样式改用 ctex `\ctexset` 接口（修复 `heading=true` 时黑体不生效），中文序号排版（一、（一）、1.），附件间距修复。
