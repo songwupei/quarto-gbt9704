@@ -337,7 +337,9 @@ from: markdown+emoji
 
 ### PPTX
 
-蓝色商务风格，基于 `reference.pptx` 模板。`slide-level: 2` 表示二级标题 (`##`) 开启新幻灯片。
+蓝色商务风格，基于 `reference-gbt9704.pptx` 模板。`slide-level: 2` 表示二级标题 (`##`) 开启新幻灯片。
+
+> **布局选择机制**：Quarto/Pandoc 不支持手动指定 slide layout（如 `::: {.layout-name}`）。Pandoc 根据内容结构**自动匹配**布局：文字+表格 → Content with Caption，纯文字 → Title and Content，两栏 → Two Content。控制布局的唯一方式是**修改 reference pptx 中对应 layout 的占位符位置和大小**。
 
 ```yaml
 ---
