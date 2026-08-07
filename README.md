@@ -12,12 +12,14 @@ Quarto 扩展集合：GB/T 9704 党政机关公文格式 + 教科书排版。
 ## 安装 · Install
 
 ```bash
-# 公文格式
-quarto add songwupei/quarto-gbt9704
+# 推荐：从 GitHub Release 安装（自包含，无需 submodule）
+quarto add https://github.com/songwupei/quarto-gbt9704/releases/latest/download/gbt9704.tar.gz
 
-# 教科书格式
-quarto add songwupei/quarto-textbook
+# 或从仓库安装（开发用，需 --recurse-submodules）
+quarto add songwupei/quarto-gbt9704
 ```
+
+> 从仓库直接安装时，`quarto add` 不会展开 git submodule，因此 `gbt9704.cls` 等文件缺失。推荐使用 Release 安装。详见[开发](#开发--development)章节。
 
 ## 快速开始 · Quick Start
 
@@ -428,6 +430,7 @@ git commit -m "chore: update latex-source submodule"
 
 ## 破坏性变更 · Breaking Changes
 
+- **v0.7.5** — 安装方式改为 GitHub Release (`quarto add <release-url>`)，CI 自动展开 submodule 打包。
 - **v0.7.4** — `gbt9704.cls` 和 `gbt9704-layout.*` 改为 git submodule (`latex-source`) 符号链接，不再手动复制。克隆时需 `--recurse-submodules`。
 - **v0.7.0** — 合并 quarto-zhanshi：新增 `gbt9704-pptx`（蓝色商务）和 `gbt9704-beamer`（青山绿水）幻灯片格式。
 - **v0.6.13** — 新增 `tools/json2def.py` 布局生成器与渲染前自动同步：修改 `gbt9704-layout.json` 后，`quarto render` 会自动重新生成 `.lua` / `.def`（通过项目 `_quarto.yml` 的 pre-render 钩子调用）。

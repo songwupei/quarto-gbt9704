@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Materialize extension (resolve symlinks)
+        run: ./tools/materialize.sh
+
+      - name: Package extension
+        run: |
+          mkdir -p dist
+          tar -czf dist/gbt9704.tar.gz -C _extensions gbt9704
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/gbt9704.tar.gz
+          generate_release_notes: true
