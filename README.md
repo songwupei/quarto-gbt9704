@@ -386,27 +386,49 @@ format:
 
 详见 [`scripts/README.md`](scripts/README.md)。
 
-## 布局参数定制 · Layout Customization
+## 开发 · Development
 
-扩展内置 `gbt9704-layout.json` 控制红头、红线、字号等可变布局参数。修改 JSON 后先运行 `tools/json2def.py` 重新生成 `.lua` 与 `.def`，再渲染：
+本仓库通过 git submodule 引用 [gbt9704-latex](https://github.com/songwupei/gbt9704-latex) 作为 LaTeX 源头。
 
 ```bash
-# 1) 由 JSON 重新生成布局文件（.lua 为 Quarto 渲染时生效，.def 为直接 LaTeX 编译的兜底）
-python3 tools/json2def.py _extensions/gbt9704/gbt9704-layout.json --lua \
-  > _extensions/gbt9704/gbt9704-layout.lua
-python3 tools/json2def.py _extensions/gbt9704/gbt9704-layout.json \
-  > _extensions/gbt9704/gbt9704-layout.def
+# 克隆时初始化 submodule
+git clone --recurse-submodules git@github.com:songwupei/quarto-gbt9704.git
 
-# 2) 渲染
-quarto render document.qmd --to gbt9704-pdf
+# 或克隆后手动拉取
+git submodule update --init --recursive
 ```
 
-> 注意：`.lua` / `.def` 均由 JSON 自动生成，请勿手改。渲染 PDF 时实际生效的是 `.lua`（由 `assets/filters/layout-loader.lua` 在渲染时读取并注入 LaTeX 覆盖）；`.def` 仅在直接使用 gbt9704.cls 编译（不走 Quarto）时被读取。`tools/json2def.py` 同步自 [latex-ctan-gbt9704](https://codeberg.org/songwupei/latex-ctan-gbt9704) 的 `gbt9704/tools/json2def.py`。
+`_extensions/gbt9704/` 下的以下文件为指向 `latex-source/gbt9704/` 的符号链接：
+
+| 文件 | 说明 |
+|------|------|
+| `gbt9704.cls` | LaTeX 文档类 |
+| `gbt9704-layout.json` | 布局参数定义 |
+| `gbt9704-layout.lua` | 布局参数（Lua 常量，Quarto 渲染时生效） |
+| `gbt9704-layout.def` | 布局参数（LaTeX 宏定义，直接编译时兜底） |
+
+### 更新 LaTeX 源头
+
+```bash
+cd latex-source && git pull origin main && cd ..
+git add latex-source && git commit -m "chore: update latex-source submodule"
+```
+
+### 本地修改布局参数
+
+如需本地调试布局参数，可直接修改 `latex-source/gbt9704/gbt9704-layout.json`，然后运行：
+
+```bash
+./tools/sync-layout.sh
+```
+
+> 注意：`.lua` / `.def` 均由 JSON 自动生成，请勿手改。渲染 PDF 时实际生效的是 `.lua`（由 `assets/filters/layout-loader.lua` 在渲染时读取并注入 LaTeX 覆盖）；`.def` 仅在直接使用 gbt9704.cls 编译（不走 Quarto）时被读取。`tools/json2def.py` 同步自 [gbt9704-latex](https://github.com/songwupei/gbt9704-latex)。
 
 可定制参数包括红头字号/颜色/紧缩比例、红头与发文号间距、红线粗细、大标题字号、主送人字号、落款字号等。详见 JSON 文件内注释。
 
 ## 破坏性变更 · Breaking Changes
 
+- **v0.7.4** — `gbt9704.cls` 和 `gbt9704-layout.*` 改为 git submodule (`latex-source`) 符号链接，不再手动复制。克隆时需 `--recurse-submodules`。
 - **v0.7.0** — 合并 quarto-zhanshi：新增 `gbt9704-pptx`（蓝色商务）和 `gbt9704-beamer`（青山绿水）幻灯片格式。
 - **v0.6.13** — 新增 `tools/json2def.py` 布局生成器与渲染前自动同步：修改 `gbt9704-layout.json` 后，`quarto render` 会自动重新生成 `.lua` / `.def`（通过项目 `_quarto.yml` 的 pre-render 钩子调用）。
 - **v0.6.10** — 引入 `gbt9704-layout.json` 布局参数系统。`gbt9704.cls` 中的可变参数（红头字号/颜色/间距等）改为从 JSON 生成的 `.def` / `.lua` 常量读取（Quarto 渲染时以 `.lua` 生效），支持 JSON 驱动定制，无需编辑 `.cls`。

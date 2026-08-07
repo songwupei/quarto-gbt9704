@@ -1,0 +1,3 @@
+[submodule "latex-source"]
+	path = latex-source
+	url = git@github.com:songwupei/gbt9704-latex.git
