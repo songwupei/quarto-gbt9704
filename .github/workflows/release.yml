@@ -18,13 +18,13 @@ jobs:
       - name: Materialize extension (resolve symlinks)
         run: ./tools/materialize.sh
 
-      - name: Package extension
+      - name: Package extension (zip)
         run: |
           mkdir -p dist
-          tar -czf dist/gbt9704.tar.gz -C _extensions gbt9704
+          (cd _extensions && zip -r ../dist/gbt9704.zip gbt9704)
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/gbt9704.tar.gz
+          files: dist/gbt9704.zip
           generate_release_notes: true

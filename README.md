@@ -13,7 +13,7 @@ Quarto 扩展集合：GB/T 9704 党政机关公文格式 + 教科书排版。
 
 ```bash
 # 推荐：从 GitHub Release 安装（自包含，无需 submodule）
-quarto add https://github.com/songwupei/quarto-gbt9704/releases/latest/download/gbt9704.tar.gz
+quarto add https://github.com/songwupei/quarto-gbt9704/releases/latest/download/gbt9704.zip
 
 # 或从仓库安装（开发用，需 --recurse-submodules）
 quarto add songwupei/quarto-gbt9704
