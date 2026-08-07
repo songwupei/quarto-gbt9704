@@ -169,30 +169,30 @@
       .. controls +(0.1,0.08) and +(-0.2,-0.1) ..
       ($(current page.center)+(0,2.35)$);
 
-    \node[text=MountainGreen, font=\fontsize{26}{30}\selectfont\bfseries,
-          align=center, text width=0.82\paperwidth]
-      at ($(current page.center)+(0,1.5)$)
+    \node[text=MountainGreen, font=\fontsize{24}{30}\selectfont\bfseries,
+          align=center, text width=0.85\paperwidth]
+      at ($(current page.center)+(0,2.2)$)
       {\inserttitle};
 
     \draw[BambooGreen, line width=0.7pt, opacity=0.5]
-      ($(current page.center)+(-3.2,0.6)$) -- ($(current page.center)+(-0.35,0.6)$);
+      ($(current page.center)+(-3.2,1.0)$) -- ($(current page.center)+(-0.35,1.0)$);
     \draw[BambooGreen, line width=0.7pt, opacity=0.5]
-      ($(current page.center)+(0.35,0.6)$) -- ($(current page.center)+(3.2,0.6)$);
+      ($(current page.center)+(0.35,1.0)$) -- ($(current page.center)+(3.2,1.0)$);
     \fill[BambooGreen, opacity=0.5, rotate=45]
-      ($(current page.center)+(0,0.6)$) rectangle ($(current page.center)+(0.12,0.72)$);
+      ($(current page.center)+(0,1.0)$) rectangle ($(current page.center)+(0.12,1.12)$);
 
-    \node[text=InkGrey, font=\fontsize{14}{17}\selectfont\itshape,
-          align=center, text width=0.6\paperwidth]
-      at ($(current page.center)+(0,0.1)$)
+    \node[text=InkGrey, font=\fontsize{13}{17}\selectfont\itshape,
+          align=center, text width=0.7\paperwidth]
+      at ($(current page.center)+(0,0.5)$)
       {\insertsubtitle};
 
-    \node[text=MountainGreen, font=\fontsize{12}{14}\selectfont\bfseries,
+    \node[text=MountainGreen, font=\fontsize{11}{14}\selectfont\bfseries,
           align=center]
-      at ($(current page.center)+(0,-0.75)$) {\insertauthor};
-    \node[text=InkGrey, font=\fontsize{9.5}{12}\selectfont, align=center]
-      at ($(current page.center)+(0,-1.55)$) {\insertinstitute};
-    \node[text=InkGrey, font=\fontsize{8.5}{10}\selectfont\itshape]
-      at ($(current page.center)+(0,-2.25)$) {\insertdate};
+      at ($(current page.center)+(0,-0.6)$) {\insertauthor};
+    \node[text=InkGrey, font=\fontsize{9}{12}\selectfont, align=center]
+      at ($(current page.center)+(0,-1.4)$) {\insertinstitute};
+    \node[text=InkGrey, font=\fontsize{8}{10}\selectfont\itshape]
+      at ($(current page.center)+(0,-2.1)$) {\insertdate};
   \end{tikzpicture}
 }
 
