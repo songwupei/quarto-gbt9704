@@ -410,8 +410,8 @@ git submodule update --init --recursive
 ### 更新 LaTeX 源头
 
 ```bash
-cd latex-source && git pull origin main && cd ..
-git add latex-source && git commit -m "chore: update latex-source submodule"
+./tools/update-latex-source.sh      # 拉取最新并暂存，打印变更日志
+git commit -m "chore: update latex-source submodule"
 ```
 
 ### 本地修改布局参数
