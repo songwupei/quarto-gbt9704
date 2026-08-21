@@ -114,7 +114,7 @@ function Pandoc(doc)
       if h_num ~= "" then
         table.insert(pre_blocks, pandoc.RawBlock("openxml",
           string.format(
-            '<w:p><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:rFonts w:eastAsia="宋体"/><w:sz w:val="28"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+            '<w:p><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:rFonts w:eastAsia="仿宋"/><w:sz w:val="32"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
             h_num
           )
         ))
@@ -122,7 +122,7 @@ function Pandoc(doc)
       if h_sig ~= "" then
         table.insert(pre_blocks, pandoc.RawBlock("openxml",
           string.format(
-            '<w:p><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:rFonts w:eastAsia="宋体"/><w:sz w:val="28"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+            '<w:p><w:pPr><w:jc w:val="center"/><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:rFonts w:eastAsia="仿宋"/><w:sz w:val="32"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
             h_sig
           )
         ))
@@ -426,7 +426,7 @@ function Pandoc(doc)
     if copyto ~= "" then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
         string.format(
-          '<w:p><w:pPr><w:ind w:firstLine="0"/></w:pPr><w:r><w:t xml:space="preserve">抄送：%s</w:t></w:r></w:p>',
+          '<w:p><w:pPr><w:ind w:firstLine="0"/></w:pPr><w:r><w:rPr><w:sz w:val="28"/></w:rPr><w:t xml:space="preserve">抄送：%s</w:t></w:r></w:p>',
           copyto
         )
       ))
@@ -434,7 +434,7 @@ function Pandoc(doc)
     if issue_author ~= "" then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
         string.format(
-          '<w:p><w:pPr><w:ind w:firstLine="0"/><w:tabs><w:tab w:val="right" w:pos="9072"/></w:tabs></w:pPr><w:r><w:t xml:space="preserve">%s</w:t></w:r><w:r><w:tab/></w:r><w:r><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
+          '<w:p><w:pPr><w:ind w:firstLine="0"/><w:tabs><w:tab w:val="right" w:pos="9072"/></w:tabs></w:pPr><w:r><w:rPr><w:sz w:val="28"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r><w:r><w:tab/></w:r><w:r><w:rPr><w:sz w:val="28"/></w:rPr><w:t xml:space="preserve">%s</w:t></w:r></w:p>',
           issue_author, issue_date
         )
       ))

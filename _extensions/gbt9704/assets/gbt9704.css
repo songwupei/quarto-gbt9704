@@ -56,8 +56,8 @@ span.emoji {
 
 .gbt-header-number,
 .gbt-header-signatory {
-  font-family: "SimSun", "宋体", "Noto Serif CJK SC", serif;
-  font-size: 15pt;
+  font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
+  font-size: 16pt;
   text-align: center;
   margin: 0.25em 0;
   text-indent: 0;
@@ -186,14 +186,14 @@ h3 {
 
 .gbt-copyto {
   font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
-  font-size: 16pt;
+  font-size: 14pt;
   text-indent: 0;
   margin: 0.25em 0;
 }
 
 .gbt-issueinfo {
   font-family: "FangSong", "仿宋", "STFangsong", "Noto Serif CJK SC", serif;
-  font-size: 16pt;
+  font-size: 14pt;
   text-indent: 0;
   display: flex;
   justify-content: space-between;
