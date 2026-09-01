@@ -43,6 +43,7 @@ jobs:
           # 推送 Codeberg(deploy key)
           echo "$CODEBERG_DEPLOY_KEY" > /tmp/codeberg_key
           chmod 600 /tmp/codeberg_key
+          mkdir -p "$HOME/.ssh"
           ssh-keyscan codeberg.org >> ~/.ssh/known_hosts
           export GIT_SSH_COMMAND="ssh -i /tmp/codeberg_key -o IdentitiesOnly=yes"
           git push -f ssh://git@codeberg.org/songwupei/quarto-gbt9704.git dist
