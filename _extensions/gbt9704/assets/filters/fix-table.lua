@@ -78,6 +78,37 @@ local function replace_checkbox(inlines)
   end
 end
 
+--- 在纯 ASCII 长串的每个字符后插入 \hspace{0pt}，允许 LaTeX 在词中断行
+--- （仅 LaTeX/PDF 输出；HTML/DOCX 有自己的断行规则）
+--- 例：CWJR_18 → C\hspace{0pt}W\hspace{0pt}J\hspace{0pt}R\hspace{0pt}\_\hspace{0pt}1\hspace{0pt}8
+--- 只产生断行机会，不强制断行：列宽足够时 token 仍保持完整一行
+local function insert_ascii_breaks(inlines)
+  local result = {}
+  for _, item in ipairs(inlines) do
+    if item.tag == "Str" then
+      local text = item.text
+      if text:match("^[A-Za-z0-9_]+$") and #text >= 6 then
+        for j = 1, #text do
+          local ch = text:sub(j, j)
+          if ch == "_" then
+            table.insert(result, pandoc.RawInline("tex", "\\_"))
+          else
+            table.insert(result, pandoc.Str(ch))
+          end
+          if j < #text then
+            table.insert(result, pandoc.RawInline("tex", "\\hspace{0pt}"))
+          end
+        end
+      else
+        table.insert(result, item)
+      end
+    else
+      table.insert(result, item)
+    end
+  end
+  return result
+end
+
 --- 遍历表格的所有单元格，转换 <br> → LineBreak，□ → 字体回退
 local function fix_cells(tbl, is_latex)
   local count = 0
@@ -90,6 +121,7 @@ local function fix_cells(tbl, is_latex)
         end
         if is_latex then
           replace_checkbox(block.content)
+          block.content = insert_ascii_breaks(block.content)
         end
       end
     end

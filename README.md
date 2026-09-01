@@ -429,6 +429,7 @@ git commit -m "chore: update latex-source submodule"
 
 ## 破坏性变更 · Breaking Changes
 
+- **v0.7.6** — 表格可断行修复：5 列表默认列宽改为 `[18,10,28,22,22]`，表格内 ≥6 位纯 ASCII 串（如规则代码）在 LaTeX/PDF 中可自动断行，不再溢出相邻列。
 - **v0.7.5** — 安装方式改为 dist 分支（`quarto add songwupei/quarto-gbt9704@dist`），CI 物化符号链接并推送 GitHub + Codeberg 双远程，不再打包 zip。
 - **v0.7.4** — `gbt9704.cls` 和 `gbt9704-layout.*` 改为 git submodule (`latex-source`) 符号链接，不再手动复制。克隆时需 `--recurse-submodules`。
 - **v0.7.0** — 合并 quarto-zhanshi：新增 `gbt9704-pptx`（蓝色商务）和 `gbt9704-beamer`（青山绿水）幻灯片格式。
