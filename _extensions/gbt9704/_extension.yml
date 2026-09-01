@@ -1,0 +1,69 @@
+name: gbt9704
+title: GB/T 9704 文档格式
+author: songwupei
+version: 0.7.6
+quarto-required: ">=1.4.0"
+contributes:
+  formats:
+    html:
+      template: gbt9704.html
+      css: assets/gbt9704.css
+      minimal: true
+      top-level-division: section
+      filters:
+        - assets/filters/pre-clean-markitdown.lua
+        - assets/filters/gbt9704-metadata.lua
+        - assets/filters/numbering-to-headings.lua
+        - assets/filters/heading-demotion.lua
+        - assets/filters/title-promotion.lua
+        - assets/filters/format-zhidu.lua
+        - assets/filters/table-colwidths.lua
+        - assets/filters/fix-table.lua
+        - assets/filters/gbt9704-emoji.lua
+    docx:
+      reference-doc: assets/reference-gbt9704.docx
+      filters:
+        - assets/filters/pre-clean-markitdown.lua
+        - assets/filters/gbt9704-metadata.lua
+        - assets/filters/numbering-to-headings.lua
+        - assets/filters/heading-demotion.lua
+        - assets/filters/title-promotion.lua
+        - assets/filters/format-zhidu.lua
+        - assets/filters/table-colwidths.lua
+        - assets/filters/normalize-styles.lua
+        - assets/filters/fix-table.lua
+        - assets/filters/gbt9704-emoji.lua
+    pdf:
+      keep-tex: true
+      documentclass: gbt9704
+      pdf-engine: lualatex
+      format-resources:
+        - gbt9704.cls
+        - gbt9704-layout.lua
+      filters:
+        - assets/filters/pre-clean-markitdown.lua
+        - assets/filters/layout-loader.lua
+        - assets/filters/gbt9704-metadata.lua
+        - assets/filters/numbering-to-headings.lua
+        - assets/filters/heading-demotion.lua
+        - assets/filters/title-promotion.lua
+        - assets/filters/format-zhidu.lua
+        - assets/filters/table-colwidths.lua
+        - assets/filters/format-legal.lua
+        - assets/filters/fcolumn.lua
+        - assets/filters/fix-table.lua
+        - assets/filters/gbt9704-emoji.lua
+    pptx:
+      reference-doc: assets/reference-gbt9704.pptx
+      slide-level: 2
+      filters:
+        - assets/filters/lines-spacing.lua
+    beamer:
+      pdf-engine: xelatex
+      slide-level: 2
+      fontsize: 10pt
+      aspectratio: 169
+      include-in-header: assets/preambles/qs-beamer-preamble.tex
+      include-after: assets/preambles/qs-beamer-after.tex
+      filters:
+        - assets/filters/lines-spacing.lua
