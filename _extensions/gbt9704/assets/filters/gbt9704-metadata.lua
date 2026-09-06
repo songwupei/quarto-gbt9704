@@ -18,6 +18,38 @@ local function escape(s)
   return pandoc.utils.stringify(s)
 end
 
+-- LaTeX 特殊字符安全转义：保留用于折行的 \\（连续两个反斜杠原样输出），
+-- 单个反斜杠与 $ & % # _ { } ^ ~ 等转为 LaTeX 安全写法
+local function latex_escape(s)
+  if not s then return "" end
+  local out, i, n = {}, 1, #s
+  while i <= n do
+    local c = s:sub(i, i)
+    if c == "\\" then
+      if s:sub(i + 1, i + 1) == "\\" then
+        out[#out + 1] = "\\\\"
+        i = i + 2
+      else
+        out[#out + 1] = "\\textbackslash{}"
+        i = i + 1
+      end
+    elseif c == "$" or c == "&" or c == "%" or c == "#" or c == "_" or c == "{" or c == "}" then
+      out[#out + 1] = "\\" .. c
+      i = i + 1
+    elseif c == "^" then
+      out[#out + 1] = "\\textasciicircum{}"
+      i = i + 1
+    elseif c == "~" then
+      out[#out + 1] = "\\textasciitilde{}"
+      i = i + 1
+    else
+      out[#out + 1] = c
+      i = i + 1
+    end
+  end
+  return table.concat(out)
+end
+
 local function raw_latex(text)
   return pandoc.RawBlock("latex", text)
 end
@@ -81,7 +113,7 @@ function Pandoc(doc)
   if h_org ~= "" then
     if is_latex then
       table.insert(pre_blocks, raw_latex(
-        string.format("\\makeheader{%s}{%s}{%s}", h_org, h_num, h_sig)
+        string.format("\\makeheader{%s}{%s}{%s}", latex_escape(h_org), latex_escape(h_num), latex_escape(h_sig))
       ))
     elseif is_context then
       if h_org ~= "" then
@@ -160,7 +192,7 @@ function Pandoc(doc)
   if title_text ~= "" then
     if is_latex then
       table.insert(pre_blocks, raw_latex(
-        string.format("\\gongwentitle{%s}", title_text)
+        string.format("\\gongwentitle{%s}", latex_escape(title_text))
       ))
     elseif is_context then
       table.insert(pre_blocks, raw_context(
@@ -188,7 +220,7 @@ function Pandoc(doc)
     doc.meta["subtitle"] = nil
     if is_latex then
       table.insert(pre_blocks, raw_latex(
-        string.format("\\gongwensubtitle{%s}", subtitle)
+        string.format("\\gongwensubtitle{%s}", latex_escape(subtitle))
       ))
     elseif is_context then
       table.insert(pre_blocks, raw_context(
@@ -215,7 +247,7 @@ function Pandoc(doc)
   if mainreceiver ~= "" then
     if is_latex then
       table.insert(pre_blocks, raw_latex(
-        string.format("\\mainreceiver{%s}", mainreceiver)
+        string.format("\\mainreceiver{%s}", latex_escape(mainreceiver))
       ))
     elseif is_context then
       doc.meta["mainreceiver"] = nil  -- 抑制模板重复输出
@@ -259,12 +291,12 @@ function Pandoc(doc)
           if is_latex then
             if first then
               table.insert(post_blocks, raw_latex(
-                string.format("\\attachmentHZ{%s}", text)
+                string.format("\\attachmentHZ{%s}", latex_escape(text))
               ))
               first = false
             else
               table.insert(post_blocks, raw_latex(
-                string.format("\\attachmentNOHZ{%s}", text)
+                string.format("\\attachmentNOHZ{%s}", latex_escape(text))
               ))
             end
           elseif is_context then
@@ -311,7 +343,7 @@ function Pandoc(doc)
   if signature ~= "" then
     if is_latex then
       table.insert(post_blocks, raw_latex(
-        string.format("\\signature{%s}", signature)
+        string.format("\\signature{%s}", latex_escape(signature))
       ))
     elseif is_context then
       -- 右对齐 + 2字符右缩进 (\hfill 前推 + \hskip2em 右留白)
@@ -342,7 +374,7 @@ function Pandoc(doc)
   if signdate ~= "" and signdate ~= "Invalid Date" then
     if is_latex then
       table.insert(post_blocks, raw_latex(
-        string.format("\\signdate{%s}", signdate)
+        string.format("\\signdate{%s}", latex_escape(signdate))
       ))
     elseif is_context then
       -- 右对齐 + 2字符右缩进
@@ -370,7 +402,7 @@ function Pandoc(doc)
   if notes ~= "" then
     if is_latex then
       table.insert(post_blocks, raw_latex(
-        string.format("\\notes{%s}", notes)
+        string.format("\\notes{%s}", latex_escape(notes))
       ))
     elseif is_context then
       table.insert(post_blocks, raw_context(
@@ -403,12 +435,12 @@ function Pandoc(doc)
     end
     if copyto ~= "" then
       table.insert(post_blocks, raw_latex(
-        string.format("\\copyto{%s}", copyto)
+        string.format("\\copyto{%s}", latex_escape(copyto))
       ))
     end
     if issue_author ~= "" then
       table.insert(post_blocks, raw_latex(
-        string.format("\\issueinfo{%s}{%s}", issue_author, issue_date)
+        string.format("\\issueinfo{%s}{%s}", latex_escape(issue_author), latex_escape(issue_date))
       ))
     end
   elseif is_context then

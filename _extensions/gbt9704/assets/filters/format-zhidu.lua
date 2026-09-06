@@ -21,6 +21,37 @@ local function escape_xml(s)
   return s:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;"):gsub('"', "&quot;"):gsub("'", "&apos;")
 end
 
+-- LaTeX 特殊字符安全转义（与 gbt9704-metadata.lua 同策略）
+local function latex_escape(s)
+  if not s then return "" end
+  local out, i, n = {}, 1, #s
+  while i <= n do
+    local c = s:sub(i, i)
+    if c == "\\" then
+      if s:sub(i + 1, i + 1) == "\\" then
+        out[#out + 1] = "\\\\"
+        i = i + 2
+      else
+        out[#out + 1] = "\\textbackslash{}"
+        i = i + 1
+      end
+    elseif c == "$" or c == "&" or c == "%" or c == "#" or c == "_" or c == "{" or c == "}" then
+      out[#out + 1] = "\\" .. c
+      i = i + 1
+    elseif c == "^" then
+      out[#out + 1] = "\\textasciicircum{}"
+      i = i + 1
+    elseif c == "~" then
+      out[#out + 1] = "\\textasciitilde{}"
+      i = i + 1
+    else
+      out[#out + 1] = c
+      i = i + 1
+    end
+  end
+  return table.concat(out)
+end
+
 -- 提取 "第X章" 或 "第X条" 编号词
 local function extract_number_word(text, suffix)
   -- 直接匹配：开头的 "第...章" 或 "第...条"
@@ -46,14 +77,14 @@ local function render_chapter_latex(number_word, text)
   local formatted = insert_double_fullwidth_space(text, number_word)
   return string.format(
     "\\begin{center}\n\\heiti\\bfseries\\fontsize{16pt}{20pt}\\selectfont %s\n\\end{center}",
-    formatted
+    latex_escape(formatted)
   )
 end
 
 local function render_chapter_latex_no_number(text)
   return string.format(
     "\\begin{center}\n\\heiti\\bfseries\\fontsize{16pt}{20pt}\\selectfont %s\n\\end{center}",
-    text
+    latex_escape(text)
   )
 end
 
@@ -61,12 +92,12 @@ local function render_article_latex(number_word, text)
   local rest = text:sub(#number_word + 1):gsub("^%s+", "")
   return string.format(
     "{\\heiti\\bfseries %s}　　%s",
-    number_word, rest
+    latex_escape(number_word), latex_escape(rest)
   )
 end
 
 local function render_article_latex_no_number(text)
-  return text
+  return latex_escape(text)
 end
 
 -- --- DOCX (OpenXML) ---
