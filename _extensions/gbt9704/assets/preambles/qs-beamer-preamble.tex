@@ -1,0 +1,368 @@
+% =============================================================================
+% 青山绿水 — Beamer 中文模板 Preamble
+% 用于 Quarto zhanshi-beamer-qs 格式
+% Compiler: XeLaTeX
+% =============================================================================
+
+% ---------------------------------------------------------------------------
+% Engine & Font Setup
+% ---------------------------------------------------------------------------
+\usepackage{fontspec}
+\usepackage[UTF8, fontset=none]{ctex}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{}
+\IfFontExistsTF{Times New Roman}{\setsansfont{Times New Roman}}{}
+\IfFontExistsTF{STKaiti}{%
+  \setCJKmainfont{STKaiti}%
+  \setCJKsansfont{STKaiti}%
+}{%
+  \IfFontExistsTF{KaiTi}{%
+    \setCJKmainfont{KaiTi}%
+    \setCJKsansfont{KaiTi}%
+  }{}%
+}
+\usepackage{unicode-math}
+\IfFontExistsTF{XITS Math}{\setmathfont{XITS Math}}{%
+  \IfFontExistsTF{TeX Gyre Termes Math}{\setmathfont{TeX Gyre Termes Math}}{}}
+
+% ---------------------------------------------------------------------------
+% Core Packages
+% ---------------------------------------------------------------------------
+\usepackage{amsmath, amssymb, mathtools}
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, arrows.meta, decorations.pathmorphing,
+  fadings, shadings, shapes.geometric, patterns, backgrounds, fit}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage[most]{tcolorbox}
+\usepackage{booktabs}
+\usepackage{microtype}
+
+% ---------------------------------------------------------------------------
+% Color Palette
+% ---------------------------------------------------------------------------
+\definecolor{MountainGreen}{HTML}{1B4332}
+\definecolor{BambooGreen}{HTML}{40916C}
+\definecolor{MistyTeal}{HTML}{74C69D}
+\definecolor{StreamBlue}{HTML}{0096C7}
+\definecolor{DeepWater}{HTML}{03045E}
+\definecolor{RicePaper}{HTML}{FDFCF8}
+\definecolor{InkGrey}{HTML}{1B2A1F}
+\definecolor{MistWhite}{HTML}{E8F5EE}
+\definecolor{GoldenLeaf}{HTML}{B8860B}
+
+% ---------------------------------------------------------------------------
+% Beamer Theme Configuration
+% ---------------------------------------------------------------------------
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=10mm, text margin right=10mm}
+
+\setbeamertemplate{background}{
+  \begin{tikzpicture}[overlay, remember picture]
+    \fill[RicePaper] (current page.south west) rectangle (current page.north east);
+    \begin{scope}[opacity=0.04]
+      \fill[MountainGreen] (current page.south east)
+        -- ($(current page.south east)+(-3,0)$)
+        -- ($(current page.south east)+(-2.2,1.0)$)
+        -- ($(current page.south east)+(-1.5,0.4)$)
+        -- ($(current page.south east)+(-0.8,1.4)$)
+        -- ($(current page.south east)+(-0.2,0.6)$)
+        -- (current page.south east) -- cycle;
+    \end{scope}
+  \end{tikzpicture}
+}
+
+\setbeamercolor{frametitle}{fg=MountainGreen, bg=}
+\setbeamerfont{frametitle}{size=\Large, series=\bfseries}
+\setbeamertemplate{frametitle}{
+  \nointerlineskip
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[anchor=west, text=MountainGreen, font=\Large\bfseries]
+      at ($(current page.north west)+(0.6,-0.88)$)
+      {\insertframetitle};
+    \draw[decorate, decoration={random steps, segment length=4mm, amplitude=0.5mm},
+          BambooGreen, line width=1.2pt, opacity=0.8]
+      ($(current page.north west)+(0.6,-1.15)$) --
+      ($(current page.north east)+(-0.6,-1.15)$);
+    \fill[BambooGreen, opacity=0.6]
+      ($(current page.north west)+(0.62,-1.0)$)
+      .. controls +(0.12,-0.06) and +(-0.05,0.05) ..
+      ($(current page.north west)+(0.85,-1.13)$)
+      .. controls +(0.05,-0.05) and +(-0.12,0.06) ..
+      ($(current page.north west)+(0.62,-1.0)$);
+  \end{tikzpicture}
+  \vspace{0.45cm}
+}
+
+\setbeamertemplate{footline}{
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[anchor=south east, text=InkGrey, font=\scriptsize]
+      at ($(current page.south east)+(-0.5,0.28)$)
+      {\insertframenumber\,/\,\inserttotalframenumber};
+    \begin{scope}[shift={($(current page.south west)+(0.5,0.25)$)}, scale=0.2]
+      \fill[MountainGreen, opacity=0.2] (0,0) -- (0.6,0.5) -- (1.2,0) -- cycle;
+      \fill[MountainGreen, opacity=0.14] (0.8,0) -- (1.5,0.7) -- (2.2,0) -- cycle;
+      \fill[MountainGreen, opacity=0.09] (1.8,0) -- (2.4,0.4) -- (3.0,0) -- cycle;
+    \end{scope}
+  \end{tikzpicture}
+}
+
+\setbeamertemplate{itemize item}{
+  \tikz[baseline=-0.55ex]{
+    \fill[BambooGreen] (0,0) ellipse (1.8pt and 3.5pt);
+    \fill[MistyTeal] (0,0.07) ellipse (1.8pt and 3.5pt);
+  }
+}
+\setbeamertemplate{itemize subitem}{
+  \tikz[baseline=-0.55ex]{\fill[StreamBlue] (0,0) circle (1.4pt);}
+}
+\setbeamertemplate{itemize subsubitem}{
+  \tikz[baseline=-0.55ex]{\fill[GoldenLeaf] (0,0) circle (1pt);}
+}
+
+\setbeamercolor{alerted text}{fg=DeepWater}
+\setbeamerfont{alerted text}{series=\bfseries}
+\setbeamercolor{block title}{fg=white, bg=MountainGreen}
+\setbeamercolor{block body}{fg=InkGrey, bg=MistyTeal!18}
+\setbeamerfont{block title}{series=\bfseries}
+\setbeamercolor{caption name}{fg=MountainGreen}
+\setbeamerfont{caption name}{series=\bfseries}
+\setbeamercolor{normal text}{fg=InkGrey}
+
+% ---------------------------------------------------------------------------
+% Title Page — uses beamer insertion commands
+% ---------------------------------------------------------------------------
+\setbeamertemplate{title page}{
+  \begin{tikzpicture}[overlay, remember picture]
+    \shade[top color=MistWhite, bottom color=MistyTeal!18]
+      (current page.south west) rectangle (current page.north east);
+    \fill[MountainGreen, opacity=0.07]
+      (current page.south west) --
+      ($(current page.south west)+(1,0)$) --
+      ($(current page.south west)+(3,2.3)$) --
+      ($(current page.south west)+(5.5,1.0)$) --
+      ($(current page.south west)+(8,2.8)$) --
+      ($(current page.south west)+(11,1.3)$) --
+      ($(current page.south west)+(14,2.0)$) --
+      ($(current page.south east)$) -- cycle;
+    \fill[MountainGreen, opacity=0.04]
+      (current page.south west) --
+      ($(current page.south west)+(2,0)$) --
+      ($(current page.south west)+(4,1.2)$) --
+      ($(current page.south west)+(6.5,0.5)$) --
+      ($(current page.south west)+(9.5,1.5)$) --
+      ($(current page.south west)+(12.5,0.6)$) --
+      ($(current page.south east)$) -- cycle;
+    \draw[decorate, decoration={random steps, segment length=20mm, amplitude=4mm},
+          StreamBlue, line width=5pt, opacity=0.12]
+      ($(current page.south west)+(0,1.1)$) -- ($(current page.south east)+(0,1.1)$);
+    \draw[decorate, decoration={random steps, segment length=16mm, amplitude=3mm},
+          StreamBlue, line width=2.5pt, opacity=0.18]
+      ($(current page.south west)+(0,0.8)$) -- ($(current page.south east)+(0,0.8)$);
+    \draw[decorate, decoration={random steps, segment length=25mm, amplitude=5mm},
+          white, line width=14pt, opacity=0.20]
+      ($(current page.center)+(-8,2.6)$) -- ($(current page.center)+(8,2.6)$);
+
+    \fill[BambooGreen, opacity=0.35]
+      ($(current page.center)+(0,2.35)$)
+      .. controls +(0.2,0.1) and +(-0.1,-0.08) ..
+      ($(current page.center)+(0.35,2.55)$)
+      .. controls +(0.1,0.08) and +(-0.2,-0.1) ..
+      ($(current page.center)+(0,2.35)$);
+
+    \node[text=MountainGreen, font=\fontsize{24}{30}\selectfont\bfseries,
+          align=center, text width=0.85\paperwidth]
+      at ($(current page.center)+(0,2.2)$)
+      {\inserttitle};
+
+    \draw[BambooGreen, line width=0.7pt, opacity=0.5]
+      ($(current page.center)+(-3.2,1.0)$) -- ($(current page.center)+(-0.35,1.0)$);
+    \draw[BambooGreen, line width=0.7pt, opacity=0.5]
+      ($(current page.center)+(0.35,1.0)$) -- ($(current page.center)+(3.2,1.0)$);
+    \fill[BambooGreen, opacity=0.5, rotate=45]
+      ($(current page.center)+(0,1.0)$) rectangle ($(current page.center)+(0.12,1.12)$);
+
+    \node[text=InkGrey, font=\fontsize{13}{17}\selectfont\itshape,
+          align=center, text width=0.7\paperwidth]
+      at ($(current page.center)+(0,0.5)$)
+      {\insertsubtitle};
+
+    \node[text=MountainGreen, font=\fontsize{11}{14}\selectfont\bfseries,
+          align=center]
+      at ($(current page.center)+(0,-0.6)$) {\insertauthor};
+    \node[text=InkGrey, font=\fontsize{9}{12}\selectfont, align=center]
+      at ($(current page.center)+(0,-1.4)$) {\insertinstitute};
+    \node[text=InkGrey, font=\fontsize{8}{10}\selectfont\itshape]
+      at ($(current page.center)+(0,-2.1)$) {\insertdate};
+  \end{tikzpicture}
+}
+
+% ---------------------------------------------------------------------------
+% Section Page — Dreamlike Transition
+% ---------------------------------------------------------------------------
+\setbeamertemplate{section page}{
+  \begin{tikzpicture}[overlay, remember picture]
+    \shade[top color=MistWhite, bottom color=MistyTeal!22]
+      (current page.south west) rectangle (current page.north east);
+    \begin{scope}
+      \fill[MountainGreen, opacity=0.08]
+        (current page.south west) --
+        ($(current page.south west)+(2,0)$) --
+        ($(current page.south west)+(3.5,1.8)$) --
+        ($(current page.south west)+(5.5,0.7)$) --
+        ($(current page.south west)+(7.5,2.2)$) --
+        ($(current page.south west)+(9.5,0.9)$) --
+        ($(current page.south west)+(12,1.6)$) --
+        ($(current page.south west)+(16,0)$) -- cycle;
+      \fill[MountainGreen, opacity=0.05]
+        (current page.south west) --
+        ($(current page.south west)+(1,0)$) --
+        ($(current page.south west)+(2.8,1.1)$) --
+        ($(current page.south west)+(4.8,0.4)$) --
+        ($(current page.south west)+(7,1.3)$) --
+        ($(current page.south west)+(10,0.5)$) --
+        ($(current page.south west)+(13,1.0)$) --
+        ($(current page.south west)+(16,0)$) -- cycle;
+    \end{scope}
+    \draw[decorate, decoration={random steps, segment length=15mm, amplitude=3mm},
+          white, line width=12pt, opacity=0.25]
+      ($(current page.west)+(0,1.5)$) -- ($(current page.east)+(0,1.5)$);
+    \draw[decorate, decoration={random steps, segment length=18mm, amplitude=2.5mm},
+          MistyTeal, line width=8pt, opacity=0.18]
+      ($(current page.west)+(0,-0.8)$) -- ($(current page.east)+(0,-0.8)$);
+    \node[text=MountainGreen, opacity=0.12, font=\fontsize{120}{120}\bfseries]
+      at ($(current page.center)+(0,0.8)$) {\insertsectionnumber};
+    \node[text=MountainGreen, font=\huge\bfseries, align=center,
+          text width=0.78\paperwidth]
+      at ($(current page.center)+(0,-0.6)$) {\insertsectionhead};
+    \draw[decorate, decoration={random steps, segment length=5mm, amplitude=0.8mm},
+          BambooGreen, line width=1.2pt, opacity=0.6]
+      ($(current page.center)+(-4,-1.6)$) -- ($(current page.center)+(4,-1.6)$);
+    \fill[StreamBlue, opacity=0.25] ($(current page.center)+(4.2,-1.6)$) circle (4pt);
+    \fill[GoldenLeaf, opacity=0.25] ($(current page.center)+(-4.2,-1.6)$) circle (3pt);
+  \end{tikzpicture}
+}
+
+\AtBeginSection[]{\frame[plain, noframenumbering]{\sectionpage}}
+
+% ---------------------------------------------------------------------------
+% Progress Bar
+% ---------------------------------------------------------------------------
+\newlength{\progressoffset}
+\setlength{\progressoffset}{0.6cm}
+
+\setbeamertemplate{headline}{
+  \begin{tikzpicture}[overlay, remember picture]
+    \fill[MistyTeal!25, rounded corners=1.2pt]
+      ($(current page.north west)+(\progressoffset,-0.26)$)
+      rectangle ($(current page.north east)+(-\progressoffset,-0.18)$);
+    \begin{scope}
+      \pgfmathsetmacro{\progressratio}{\insertframenumber/\inserttotalframenumber}
+      \ifdim\insertframenumber pt>\dimexpr0pt\relax
+        \pgfmathsetmacro{\barlen}{\paperwidth-1.2}
+        \fill[left color=BambooGreen, right color=StreamBlue, rounded corners=1.2pt,
+              opacity=0.9]
+          ($(current page.north west)+(\progressoffset,-0.26)$)
+          rectangle
+          ($(current page.north west)+({\progressoffset+\barlen*\progressratio},-0.18)$);
+        \fill[StreamBlue, opacity=0.65]
+          ($(current page.north west)+({\progressoffset+(\paperwidth-1.2)*\progressratio},-0.22)$)
+          circle (2.5pt);
+        \fill[white, opacity=0.5]
+          ($(current page.north west)+({\progressoffset+(\paperwidth-1.2)*\progressratio-0.04},-0.20)$)
+          circle (1pt);
+      \fi
+    \end{scope}
+  \end{tikzpicture}
+}
+
+% ---------------------------------------------------------------------------
+% Table of Contents — Card-style
+% ---------------------------------------------------------------------------
+\setbeamertemplate{section in toc}{%
+  \vspace{2.5mm}%
+  \begin{tcolorbox}[
+    enhanced, colback=MistyTeal!6, colframe=MountainGreen!60,
+    boxrule=0.6pt, arc=2.5mm,
+    left=2.8mm, right=2.8mm, top=2mm, bottom=2mm,
+    coltext=InkGrey, fontupper=\small,
+  ]
+    \textcolor{MountainGreen}{\textbf{\inserttocsectionnumber.\;}}\textbf{\inserttocsection}\\[2pt]
+    \textcolor{InkGrey!70}{\scriptsize \inserttocsectionnumber}
+  \end{tcolorbox}%
+}
+
+% ---------------------------------------------------------------------------
+% Theorem-like Environments (numbered by section)
+% ---------------------------------------------------------------------------
+\let\definition\relax\let\enddefinition\relax
+\let\theorem\relax\let\endtheorem\relax
+\let\lemma\relax\let\endlemma\relax
+\let\corollary\relax\let\endcorollary\relax
+\let\example\relax\let\endexample\relax
+\let\proposition\relax\let\endproposition\relax
+
+\newtcolorbox[auto counter, number within=section]{definition}[1][]{
+  enhanced, colback=MistyTeal!10, colframe=BambooGreen!70,
+  coltitle=white, fonttitle=\bfseries\small,
+  boxrule=0.5pt, arc=1.5mm, left=3mm, right=3mm, top=2mm, bottom=1.5mm,
+  drop fuzzy shadow=MistyTeal!30,
+  attach boxed title to top left={xshift=3mm, yshift=-2mm},
+  boxed title style={colback=MountainGreen, arc=1.2mm, boxrule=0pt,
+    top=1pt, bottom=1pt, left=2.5mm, right=2.5mm},
+  title={定义 \thetcbcounter\ifstrempty{#1}{}{（#1）}}
+}
+
+\newtcolorbox[auto counter, number within=section]{theorem}[1][]{
+  enhanced, colback=StreamBlue!6, colframe=StreamBlue!60,
+  coltitle=white, fonttitle=\bfseries\small,
+  boxrule=0.5pt, arc=1.5mm, left=3mm, right=3mm, top=2mm, bottom=1.5mm,
+  drop fuzzy shadow=StreamBlue!20,
+  attach boxed title to top left={xshift=3mm, yshift=-2mm},
+  boxed title style={colback=DeepWater, arc=1.2mm, boxrule=0pt,
+    top=1pt, bottom=1pt, left=2.5mm, right=2.5mm},
+  title={定理 \thetcbcounter\ifstrempty{#1}{}{（#1）}}
+}
+
+\newtcolorbox[auto counter, number within=section]{lemma}[1][]{
+  enhanced, colback=StreamBlue!6, colframe=StreamBlue!60,
+  coltitle=white, fonttitle=\bfseries\small,
+  boxrule=0.5pt, arc=1.5mm, left=3mm, right=3mm, top=2mm, bottom=1.5mm,
+  drop fuzzy shadow=StreamBlue!20,
+  attach boxed title to top left={xshift=3mm, yshift=-2mm},
+  boxed title style={colback=DeepWater, arc=1.2mm, boxrule=0pt,
+    top=1pt, bottom=1pt, left=2.5mm, right=2.5mm},
+  title={引理 \thetcbcounter\ifstrempty{#1}{}{（#1）}}
+}
+
+\newtcolorbox[auto counter, number within=section]{corollary}[1][]{
+  enhanced, colback=StreamBlue!6, colframe=StreamBlue!60,
+  coltitle=white, fonttitle=\bfseries\small,
+  boxrule=0.5pt, arc=1.5mm, left=3mm, right=3mm, top=2mm, bottom=1.5mm,
+  drop fuzzy shadow=StreamBlue!20,
+  attach boxed title to top left={xshift=3mm, yshift=-2mm},
+  boxed title style={colback=DeepWater, arc=1.2mm, boxrule=0pt,
+    top=1pt, bottom=1pt, left=2.5mm, right=2.5mm},
+  title={推论 \thetcbcounter\ifstrempty{#1}{}{（#1）}}
+}
+
+\newtcolorbox[auto counter, number within=section]{proposition}[1][]{
+  enhanced, colback=StreamBlue!6, colframe=StreamBlue!60,
+  coltitle=white, fonttitle=\bfseries\small,
+  boxrule=0.5pt, arc=1.5mm, left=3mm, right=3mm, top=2mm, bottom=1.5mm,
+  drop fuzzy shadow=StreamBlue!20,
+  attach boxed title to top left={xshift=3mm, yshift=-2mm},
+  boxed title style={colback=DeepWater, arc=1.2mm, boxrule=0pt,
+    top=1pt, bottom=1pt, left=2.5mm, right=2.5mm},
+  title={命题 \thetcbcounter\ifstrempty{#1}{}{（#1）}}
+}
+
+\newtcolorbox[auto counter, number within=section]{example}[1][]{
+  enhanced, colback=GoldenLeaf!6, colframe=GoldenLeaf!60,
+  coltitle=white, fonttitle=\bfseries\small,
+  boxrule=0.5pt, arc=1.5mm, left=3mm, right=3mm, top=2mm, bottom=1.5mm,
+  drop fuzzy shadow=GoldenLeaf!15,
+  attach boxed title to top left={xshift=3mm, yshift=-2mm},
+  boxed title style={colback=GoldenLeaf!80!black, arc=1.2mm, boxrule=0pt,
+    top=1pt, bottom=1pt, left=2.5mm, right=2.5mm},
+  title={例 \thetcbcounter\ifstrempty{#1}{}{（#1）}}
+}
