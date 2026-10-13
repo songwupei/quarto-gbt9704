@@ -345,20 +345,25 @@
   % 确保 monofont 在 lmodern 等模板包之后仍生效
   \setmonofont{DejaVu Sans Mono}%
 
+  % 标题行沿用正文行距：否则标题按其自身字号（三号）的行距 19.2pt 计算行节距，
+  % 会出现"标题紧贴上一段"（§5.2.3 每面 22 行、行距一致的行文要求）。
+  \newcommand{\gbt@heading@lineskip}{%
+    \setlength{\baselineskip}{\gbt@layout@body@lineSpacingPt pt}}
+
   % 标题样式（使用 ctex 原生接口，heading=true 时正确生效）
   \ctexset{
     section = {
-      format = \zihao{3}\heiti\raggedright,
+      format = \zihao{3}\heiti\raggedright\gbt@heading@lineskip,
       beforeskip = 0pt,
       afterskip = 0pt,
     },
     subsection = {
-      format = \zihao{3}\kaishu\bfseries\raggedright,
+      format = \zihao{3}\kaishu\bfseries\raggedright\gbt@heading@lineskip,
       beforeskip = 0pt,
       afterskip = 0pt,
     },
     subsubsection = {
-      format = \zihao{3}\normalfont\bfseries\raggedright,
+      format = \zihao{3}\normalfont\bfseries\raggedright\gbt@heading@lineskip,
       beforeskip = 0pt,
       afterskip = 0pt,
     },
