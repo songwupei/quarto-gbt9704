@@ -83,7 +83,10 @@ function Pandoc(doc)
   -- ============================================================
   -- 标题 (所有格式: 抑制默认输出，由 filter 在红头之后注入)
   -- ============================================================
-  -- Fallback: meta["title"] 为空时，从正文第一个 H1 提取标题
+  -- Fallback: meta["title"] 为空时，从正文提取标题
+  --   ① 优先第一个 H1
+  --   ② 没有 H1 时，取正文首个普通段落（"首行即标题" 约定，
+  --      长度 ≤ 50 字且不是 "一、/（一）/1." 这类层次序数开头）
   if not meta["title"] or escape(meta["title"]) == "" then
     for i, block in ipairs(doc.blocks) do
       if block.t == "Header" and block.level == 1 then
@@ -93,6 +96,26 @@ function Pandoc(doc)
           table.remove(doc.blocks, i)
         end
         break
+      end
+    end
+  end
+
+  if (not meta["title"] or escape(meta["title"]) == "") and #doc.blocks > 0 then
+    local first = doc.blocks[1]
+    if first.t == "Para" or first.t == "Plain" then
+      local txt = pandoc.utils.stringify(first)
+      local is_headingish = txt:match("^[一二三四五六七八九十]、")
+        or txt:match("^（[一二三四五六七八九十]）")
+        or txt:match("^%d+[%.、]")
+      -- 注意：# 返回字节数，中文需按字符数判断
+      local n_chars = utf8.len(txt) or #txt
+      -- 标题不以句末/句中标点收尾（正文首句通常以 。；：，等结尾）
+      local tail = txt:sub(-1)
+      local ends_like_sentence = tail:match("[。；：，、,;:]") ~= nil
+      if txt ~= "" and n_chars <= 60 and not is_headingish
+        and not ends_like_sentence and not txt:find("\n") then
+        meta["title"] = txt
+        table.remove(doc.blocks, 1)
       end
     end
   end
@@ -191,8 +214,33 @@ function Pandoc(doc)
   -- ============================================================
   if title_text ~= "" then
     if is_latex then
+      -- GB/T 9704-2012 §7.3.1：标题回行时词意完整、排列对称、长短适宜。
+      -- 2 号字（22pt）在 156mm 版心内一行约 20 字，超长时按字数对称折行，
+      -- 避免出现"末行只剩 1 个字"的断法；作者也可在 title 中用 \\ 显式指定。
+      local title_tex
+      if title_text:find("\\") then
+        -- 作者已在 title 里用 \\ 指定折行，原样转义输出
+        title_tex = latex_escape(title_text)
+      else
+        local n = utf8.len(title_text) or #title_text
+        -- 方正大标宋 2 号实测每个汉字约 8.23mm，156mm 版心一行装 18 字
+        local per_line = 18
+        local lines_n = (n > per_line) and math.ceil(n / per_line) or 1
+        local each = math.ceil(n / lines_n)
+        local parts, buf, cnt = {}, {}, 0
+        for _, cp in utf8.codes(title_text) do
+          buf[#buf + 1] = utf8.char(cp)
+          cnt = cnt + 1
+          if cnt == each then
+            parts[#parts + 1] = latex_escape(table.concat(buf))
+            buf, cnt = {}, 0
+          end
+        end
+        if #buf > 0 then parts[#parts + 1] = latex_escape(table.concat(buf)) end
+        title_tex = table.concat(parts, "\\\\")
+      end
       table.insert(pre_blocks, raw_latex(
-        string.format("\\gongwentitle{%s}", latex_escape(title_text))
+        string.format("\\gongwentitle{%s}", title_tex)
       ))
     elseif is_context then
       table.insert(pre_blocks, raw_context(

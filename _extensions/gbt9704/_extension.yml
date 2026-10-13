@@ -1,7 +1,7 @@
 name: gbt9704
 title: GB/T 9704 文档格式
 author: songwupei
-version: 0.7.7
+version: 0.7.8
 quarto-required: ">=1.4.0"
 contributes:
   formats:
@@ -36,9 +36,13 @@ contributes:
     pdf:
       keep-tex: true
       documentclass: gbt9704
-      pdf-engine: lualatex
+      # 引擎默认 XeLaTeX：LuaLaTeX 在部分机器上无法嵌入系统 CJK 字体
+      # （如方正_GBK/仿宋/黑体/楷体/宋体），会在写 PDF 阶段致命错误；
+      # XeLaTeX 经 fontconfig 取字体，兼容性更好，GB/T 9704 排版不需 LuaTeX 特性。
+      pdf-engine: xelatex
       format-resources:
         - gbt9704.cls
+        - gbt9704-layout.def
         - gbt9704-layout.lua
       filters:
         - assets/filters/pre-clean-markitdown.lua
