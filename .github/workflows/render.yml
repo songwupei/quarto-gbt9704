@@ -30,10 +30,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            texlive-xetex texlive-lang-chinese texlive-latex-extra \
-            texlive-fonts-recommended fonts-dejavu-core
+            texlive-xetex texlive-lang-chinese \
+            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
+            texlive-plain-generic texlive-fonts-recommended fonts-dejavu-core
           xelatex --version | head -1
           kpsewhich FandolFang-Regular.otf
+          # 类里用到的包逐个确认（Debian 的 TeX Live 分包与 TeX Live 官方不同）
+          for f in ulem.sty alltt.sty caption.sty subcaption.sty booktabs.sty \
+                   longtable.sty geometry.sty fancyhdr.sty iftex.sty fcolumn.sty; do
+            printf '%-18s %s\n' "$f" "$(kpsewhich "$f" || echo '❌ 缺')"
+          done
 
       - name: 渲染 PDF（XeLaTeX · 必过）
         run: |
