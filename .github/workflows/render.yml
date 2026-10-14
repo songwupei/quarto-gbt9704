@@ -1,19 +1,40 @@
 name: Render
 
-# 每次推送到 main / PR 时做一次真实渲染自检：
-# 只用 TeX Live 自带字体（classoption: [fandol]），不依赖 Windows/方正/WPS 字体。
-# 这层 CI 就是为了拦住"在某类机器上编译不过"的回归（例如默认引擎留 lualatex 时
-# 无法嵌入系统 CJK 字体、字体缺失导致 METAFONT 中断等）。
+# 渲染自检：push / PR 时做一次真实渲染，拦住"在某类机器上编译不过"的回归。
+#
+# 设计取舍（2026-10-14 调优，依据首次成功运行的实测分步耗时）：
+#  · PDF 与 DOCX/HTML 拆成两个 job —— DOCX/HTML 不需要 TeX，1 分钟内出结果
+#  · TeX 用上游 TeX Live（TinyTeX + tlmgr），与开发机（Arch / 上游 TeX Live）语义一致；
+#    不用 Debian 的 texlive-* 拆分包（ulem/iftex/fandol 被拆到不同包，报缺噪声大）
+#  · ~/TinyTeX 走 actions/cache —— 命中缓存时安装步骤几乎为 0
+#  · tlmgr 只调用一次：早期版本逐包调用 15 次，单这一步耗时 1778s（占整轮 95%）
+#  · LuaLaTeX 是可选引擎（默认 XeLaTeX），只在定时/手动触发时跑，且不阻断
 
 on:
   push:
     branches: [main]
+    paths:
+      - '_extensions/**'
+      - 'latex-source/**'
+      - 'tests/**'
+      - '.github/workflows/render.yml'
   pull_request:
+    paths:
+      - '_extensions/**'
+      - 'latex-source/**'
+      - 'tests/**'
+      - '.github/workflows/render.yml'
+  schedule:
+    - cron: '0 22 * * 0'   # 每周一 06:00（北京时间）跑一次全量（含 LuaLaTeX 预警项）
   workflow_dispatch:
 
+env:
+  # 改这个值（或改本文件）会让 TinyTeX 缓存失效并重建
+  TINYTEX_CACHE_VERSION: '2026.10'
+
 jobs:
-  render:
-    name: 渲染自检（XeLaTeX + Fandol）
+  docx-html:
+    name: DOCX / HTML（无需 TeX）
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,29 +47,6 @@ jobs:
       - name: 安装 Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      # 用上游 TeX Live（TinyTeX + tlmgr），与开发机上的 Arch/TeX Live 语义一致；
-      # 不用 Debian 的 texlive-* 拆分包（ulem/iftex/fandol 等会被拆到不同包里，
-      # 缺什么报什么，与真实使用环境对不上）。
-      - name: 安装 TinyTeX（上游 TeX Live）
-        uses: r-lib/actions/setup-tinytex@v2
-
-      - name: 安装中文排版所需宏包
-        run: |
-          tlmgr option repository ctan
-          for pkg in ctex fandol zhnumber xecjk ulem alltt caption subcaption \
-                     booktabs longtable geometry fancyhdr iftex fcolumn; do
-            tlmgr install "$pkg" >/dev/null 2>&1 \
-              && echo "✓ $pkg" \
-              || echo "⚠ $pkg 未能显式安装（quarto 渲染时会自动补装）"
-          done
-          xelatex --version | head -1
-          kpsewhich FandolFang-Regular.otf
-
-      - name: 渲染 PDF（XeLaTeX · 必过）
-        run: |
-          quarto render tests/ci-minimal.qmd --to gbt9704-pdf
-          test -s tests/ci-minimal.pdf
-
       - name: 渲染 DOCX / HTML（必过）
         run: |
           quarto render tests/ci-minimal.qmd --to gbt9704-docx
@@ -56,16 +54,95 @@ jobs:
           test -s tests/ci-minimal.docx
           test -s tests/ci-minimal.html
 
-      - name: 渲染 PDF · LuaLaTeX（只预警，不阻断）
-        continue-on-error: true
+      - name: 上传渲染产物
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-render-docx-html
+          path: |
+            tests/ci-minimal.docx
+            tests/ci-minimal.html
+          if-no-files-found: warn
+
+  pdf:
+    name: PDF（XeLaTeX · Fandol）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: 物化扩展（解析子模块符号链接）
+        run: ./tools/materialize.sh
+
+      - name: 安装 Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: 缓存 TinyTeX
+        uses: actions/cache@v4
+        with:
+          path: ~/TinyTeX
+          key: tinytex-${{ env.TINYTEX_CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('.github/workflows/render.yml') }}
+
+      - name: 安装 TinyTeX（上游 TeX Live，已有缓存则跳过）
+        uses: r-lib/actions/setup-tinytex@v2
+
+      - name: 安装中文排版所需宏包（单次调用）
         run: |
-          quarto render tests/ci-minimal.qmd --to gbt9704-pdf \
-            -M classoption=fandol -M pdf-engine=lualatex
+          tlmgr install ctex fandol zhnumber xecjk ulem alltt caption \
+            subcaption booktabs longtable geometry fancyhdr iftex fcolumn
+          xelatex --version | head -1
+          for f in FandolFang-Regular.otf ulem.sty geometry.sty fancyhdr.sty; do
+            printf '%-26s %s\n' "$f" "$(kpsewhich "$f" || echo '❌ 缺')"
+          done
+
+      - name: 渲染 PDF（XeLaTeX · 必过）
+        run: |
+          quarto render tests/ci-minimal.qmd --to gbt9704-pdf
+          test -s tests/ci-minimal.pdf
 
       - name: 上传渲染产物
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ci-render
-          path: tests/ci-minimal.*
+          name: ci-render-pdf
+          path: |
+            tests/ci-minimal.pdf
+            tests/ci-minimal.log
           if-no-files-found: warn
+
+  lualatex-canary:
+    name: PDF（LuaLaTeX · 只预警）
+    # 默认引擎是 XeLaTeX，LuaLaTeX 属可选路径：只在定时/手动触发时跑，且不阻断
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: 物化扩展（解析子模块符号链接）
+        run: ./tools/materialize.sh
+
+      - name: 安装 Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: 缓存 TinyTeX
+        uses: actions/cache@v4
+        with:
+          path: ~/TinyTeX
+          key: tinytex-${{ env.TINYTEX_CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('.github/workflows/render.yml') }}
+
+      - name: 安装 TinyTeX（上游 TeX Live，已有缓存则跳过）
+        uses: r-lib/actions/setup-tinytex@v2
+
+      - name: 安装中文排版所需宏包（单次调用）
+        run: |
+          tlmgr install ctex fandol zhnumber xecjk ulem alltt caption \
+            subcaption booktabs longtable geometry fancyhdr iftex fcolumn
+
+      - name: 渲染 PDF · LuaLaTeX（不阻断）
+        run: |
+          quarto render tests/ci-minimal.qmd --to gbt9704-pdf \
+            -M classoption=fandol -M pdf-engine=lualatex
