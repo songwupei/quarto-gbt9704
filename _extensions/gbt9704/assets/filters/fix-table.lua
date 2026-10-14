@@ -165,11 +165,14 @@ return {
   {
     Meta = function(meta)
       if FORMAT:match("^latex") or FORMAT == "beamer" or FORMAT == "context" then
-        -- 在 preamble 中定义回退字体；Sarasa Mono SC 已普遍安装
+        -- 在 preamble 中定义 □ 的回退字体：直接用"文档当前的等宽字体"
+        -- （类已按字体模式设好：默认分支是 Sarasa Mono SC，fandol 模式是 FandolHei）。
+        -- 原先把 Sarasa Mono SC 写死，在没有该字体的机器（CI、精简 Linux）上会
+        -- 报 "The font Sarasa Mono SC cannot be found" 而中断编译。
         local header_includes = meta["header-includes"]
         local fallback_def = pandoc.RawBlock("latex",
           "\\ifdefined\\checkboxfallback\\else\n" ..
-          "  \\newfontfamily{\\checkboxfallback}{Sarasa Mono SC}[Scale=MatchLowercase]\n" ..
+          "  \\newcommand{\\checkboxfallback}{\\ttfamily}%\n" ..
           "\\fi"
         )
         if not header_includes then
