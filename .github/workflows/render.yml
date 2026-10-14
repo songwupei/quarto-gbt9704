@@ -81,7 +81,7 @@ jobs:
       - name: 缓存 TinyTeX
         uses: actions/cache@v4
         with:
-          path: ~/TinyTeX
+          path: ~/.TinyTeX
           key: tinytex-${{ env.TINYTEX_CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('.github/workflows/render.yml') }}
 
       - name: 安装 TinyTeX（上游 TeX Live，已有缓存则跳过）
@@ -137,7 +137,7 @@ jobs:
       - name: 缓存 TinyTeX
         uses: actions/cache@v4
         with:
-          path: ~/TinyTeX
+          path: ~/.TinyTeX
           key: tinytex-${{ env.TINYTEX_CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('.github/workflows/render.yml') }}
 
       - name: 安装 TinyTeX（上游 TeX Live，已有缓存则跳过）
