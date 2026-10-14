@@ -205,6 +205,18 @@ format:
 > Debian/Ubuntu 的 TeX Live 默认不带它，这时加 `noemoji` 选项即可（`\emoji` 会退化为
 > 打印原字符并告警，不影响正文）。CI 自检用的就是 `classoption: [fandol, noemoji]`。
 
+## 开发回路 · Dev Loop
+
+改 `gbt9704.cls` 或模板时，不要每次都走 yazi 的全量渲染（PDF+DOCX+HTML+PNG，16 页约 2 分钟）：
+
+```bash
+bash tools/dev-render.sh              # 渲染 tests/ci-minimal.qmd（1 页，只出 PDF），约 30 秒
+bash tools/dev-render.sh 稿子.md       # 换成任意 .md/.qmd
+```
+
+样例用 `classoption: [fandol, noemoji]`，不依赖系统中文/方正字体；CI 也用同一个文件做自检。
+只想跳过最慢的长图截图时，可在 yazi 侧设 `QUARTO_PNG=false`（见 quarto.yazi 的 README）。
+
 ## 使用 · Usage
 
 在 Quarto 项目的 `_quarto.yml` 中：
