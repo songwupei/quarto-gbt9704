@@ -7,7 +7,7 @@
 % ==================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{gbt9704}[2026-09-06 v0.1.14 GB/T 9704-2012 Document Class]
+\ProvidesClass{gbt9704}[2026-10-14 v0.2.0 GB/T 9704-2012 Document Class]
 
 % ------------------ 引擎检测 ------------------
 \RequirePackage{iftex}
@@ -38,12 +38,14 @@
 \DeclareOption{noemoji}{\@gbt@emojifalse}
 \DeclareOption{fzfonts}{\@gbt@fzfontstrue}
 \DeclareOption{fandol}{\@gbt@fandoltrue}
-\DeclareOption*{\PassOptionsToClass{\CurrentOption}{memoir}}
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{ctexart}}
 \ProcessOptions\relax
 
 % ------------------ 基础类与中文 ------------------
-\LoadClass[article, a4paper, 12pt, oneside]{memoir}
-\RequirePackage[UTF8, scheme=plain, heading=true, fontset=none]{ctex}
+% 基类：ctexart（article + ctex）。不再依赖 memoir——memoir 与 geometry /
+% fancyhdr / titlesec 互斥，且 ctex 需要把 memoir 当"非标准文档类"打补丁
+% （会告警、补丁不全）。版面改由 geometry 控制、页脚由 fancyhdr 控制。
+\LoadClass[UTF8, a4paper, 12pt, scheme=plain, heading=true, fontset=none]{ctexart}
 
 % ------------------ zhlineskip 行距支持 ------------------
 % GB/T 9704 要求正文三号（16pt）行距 28pt
@@ -229,22 +231,18 @@
 \fi
 
 % ------------------ 页面布局 ------------------
-\setstocksize{297mm}{210mm}
-\settrimmedsize{\stockheight}{\stockwidth}{*}
-\settrims{0pt}{0pt}
-% 正文行距必须在 \checkandfixthelayout 之前设定：memoir 会按当前的 \baselineskip
-% 把版心高度凑成整行数，否则版心会偏大（225mm 变成 229.3mm，每面多出半行，
-% 与 GB/T 9704-2012 §5.2.1／§5.2.3 的 156mm×225mm、每面 22 行不符）。
+% GB/T 9704-2012 §5.2.1：天头 37mm、订口 28mm、版心 156mm×225mm
+% （右边距 210−28−156=26mm、下边距 297−37−225=35mm）。
+% geometry 直接给出精确版心，不需要像 memoir 那样"凑整行"再校正。
+\RequirePackage[
+  a4paper,
+  top=37mm, bottom=35mm, left=28mm, right=26mm,
+  includehead=false, includefoot=false
+]{geometry}
+% §5.2.3：每面 22 行，行距 28pt（3 号字 = 16pt，28pt 行距下 22 行恰好落在 225mm 内）
 \setlength{\baselineskip}{28pt}
 \setlength{\parindent}{2em}
 \setlength{\parskip}{0pt plus 0pt minus 0pt}
-\settypeblocksize{225mm}{156mm}{*}
-\setlrmargins{28mm}{*}{1}
-\setulmargins{37mm}{*}{1}
-\checkandfixthelayout
-% memoir 的 \checkandfixthelayout 会把版心高凑成整行数（22 行 × 28pt = 628pt，
-% 比国标少 3.5mm），这里按 §5.2.1 精确恢复 225mm；28pt 行距下每面仍排 22 行。
-\setlength{\textheight}{225mm}
 
 \setcounter{secnumdepth}{0}
 
@@ -361,9 +359,9 @@
 }
 
 % ------------------ 章节格式（ctex 原生接口，heading=true 兼容） ------------------
-\setbeforesecskip{0pt}\setaftersecskip{0pt}
-\setbeforesubsecskip{0pt}\setaftersubsecskip{0pt}
-\setbeforesubsubsecskip{0pt}\setaftersubsubsecskip{0pt}
+% 标题的段前/段后间距统一由下面的 \ctexset（section/subsection/subsubsection
+% 的 beforeskip/afterskip）控制；原先这里另有一组 memoir 的
+% \setbeforesecskip/\setaftersecskip 等，与 ctexset 完全重复，已删除。
 
 \AtBeginDocument{%
   \zihao{3}\setlength{\baselineskip}{28pt}%
@@ -551,15 +549,19 @@
       \hspace*{\gbt@layout@pageNumber@inset}\gbt@pagefoot@num\hfill
     \fi}%
 }
-% footskip 从版心下边缘量到页码基线：space_above(7mm) 再加基线到一字线上缘的偏移，
-% 使一字线上缘恰在版心下边缘之下 7mm（4 号字实测偏移 1.7pt）
-\setlength{\footskip}{\dimexpr\gbt@layout@pageNumber@spaceAbove + 1.7pt\relax}
-\makepagestyle{gongwen}
-% 单/双页分别用偶数页脚（左槽）与奇数页脚（右槽）；内容宏内部再按页的奇偶定位，
-% 这样单面模式（只用奇数页脚）下也能满足 §7.5 的"单页码居右、双页码居左"。
-\makeevenfoot{gongwen}{\gbt@pagefoot}{}{}
-\makeoddfoot{gongwen}{}{\gbt@pagefoot}{}
-\makeevenhead{gongwen}{}{}{}\makeoddhead{gongwen}{}{}{}
+% footskip 从版心下边缘量到页码基线：space_above(7mm) 再加"基线→一字线上缘"的偏移，
+% 使一字线上缘恰在版心下边缘之下 7mm（§7.5）。
+% 偏移量随底层不同：memoir 下实测 1.7pt，geometry+fancyhdr 下实测 11.2pt。
+\setlength{\footskip}{\dimexpr\gbt@layout@pageNumber@spaceAbove + 11.2pt\relax}
+% 页脚用 fancyhdr：内容宏内部按页的奇偶定位（§7.5 单页码居右空一字、
+% 双页码居左空一字），因此单面（oneside）模式下也能满足国标。
+\RequirePackage{fancyhdr}
+\fancypagestyle{gongwen}{%
+  \fancyhf{}%
+  \fancyfoot[L]{\gbt@pagefoot}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
 \pagestyle{gongwen}
 
 \endinput
