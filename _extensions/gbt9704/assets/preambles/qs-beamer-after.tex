@@ -1,0 +1,33 @@
+% =============================================================================
+% 青山绿水 — Beamer 结尾页
+% =============================================================================
+\begin{frame}[plain, noframenumbering]
+  \begin{tikzpicture}[overlay, remember picture]
+    \shade[top color=MistWhite, bottom color=MistyTeal!25]
+      (current page.south west) rectangle (current page.north east);
+    \fill[MountainGreen, opacity=0.09]
+      (current page.south west) --
+      ($(current page.south west)+(2,0)$) --
+      ($(current page.south west)+(4,2.5)$) --
+      ($(current page.south west)+(7,1.0)$) --
+      ($(current page.south west)+(10,2.8)$) --
+      ($(current page.south west)+(13,1.2)$) --
+      ($(current page.south east)$) -- cycle;
+    \draw[decorate, decoration={random steps, segment length=20mm, amplitude=5mm},
+          white, line width=14pt, opacity=0.25]
+      ($(current page.west)+(0,1.5)$) -- ($(current page.east)+(0,1.5)$);
+    \node[text=MountainGreen, font=\fontsize{28}{32}\selectfont\bfseries]
+      at ($(current page.center)+(0,0.8)$) {谢谢};
+    \node[text=InkGrey, font=\Large\itshape]
+      at ($(current page.center)+(0,0)$) {提问与讨论};
+    \draw[decorate, decoration={random steps, segment length=5mm, amplitude=0.6mm},
+          BambooGreen, line width=1pt, opacity=0.55]
+      ($(current page.center)+(-3.5,-0.7)$) -- ($(current page.center)+(3.5,-0.7)$);
+    \fill[StreamBlue, opacity=0.35] ($(current page.center)+(3.7,-0.7)$) circle (3pt);
+    \fill[GoldenLeaf, opacity=0.35] ($(current page.center)+(-3.7,-0.7)$) circle (3pt);
+    \node[text=DeepWater, font=\small]
+      at ($(current page.center)+(0,-1.5)$) {\insertauthor\quad$\cdot$\quad\insertshorttitle};
+    \node[text=InkGrey, font=\footnotesize\itshape]
+      at ($(current page.center)+(0,-2.1)$) {\insertinstitute};
+  \end{tikzpicture}
+\end{frame}
