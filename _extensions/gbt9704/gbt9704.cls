@@ -26,6 +26,8 @@
 \@gbt@emojitrue
 \newif\if@gbt@fzfonts
 \@gbt@fzfontsfalse  % 默认使用 fallback 开源字体
+\newif\if@gbt@fandol
+\@gbt@fandolfalse   % 打开后用 TeX Live 自带的 Fandol（无系统中文/方正字体的机器、CI 用）
 
 \DeclareOption{redline}{\@gbt@redlinetrue}
 \DeclareOption{noredline}{\@gbt@redlinefalse}
@@ -35,6 +37,7 @@
 \DeclareOption{emoji}{\@gbt@emojitrue}
 \DeclareOption{noemoji}{\@gbt@emojifalse}
 \DeclareOption{fzfonts}{\@gbt@fzfontstrue}
+\DeclareOption{fandol}{\@gbt@fandoltrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{memoir}}
 \ProcessOptions\relax
 
@@ -78,7 +81,7 @@
         \setCJKfamilyfont{xiaobiaosong}{FZDaBiaoSong-B06}
         \ClassWarning{gbt9704}{FangZheng XiaoBiaoSong not found, using FZDaBiaoSong-B06}
       }{
-        \setCJKfamilyfont{xiaobiaosong}{SimHei}[AutoFakeBold=*]
+        \setCJKfamilyfont{xiaobiaosong}{SimHei}[AutoFakeBold=2.5]
         \ClassWarning{gbt9704}{FangZheng XiaoBiaoSong/DaBiaoSong not found, using SimHei}
       }
     }
@@ -115,24 +118,41 @@
   % 匹配西文：LMRoman（Latin Modern）
   % ================================================================
 
-  % --- 红头字体：方正大标宋 → SimHei ---
-  \IfFontExistsTF{FZDaBiaoSong-B06}{
-    \setCJKfamilyfont{dabiaosong}{FZDaBiaoSong-B06}
-  }{
-    \setCJKfamilyfont{dabiaosong}{SimHei}[AutoFakeBold=*]
-    \ClassWarning{gbt9704}{FZDaBiaoSong-B06 not found, using SimHei as fallback}
-  }
+  \if@gbt@fandol
+    % --- fandol 选项：只用 TeX Live 自带字体（不依赖系统字体/fontconfig）---
+    % 供没有中文系统字体或方正字体的机器使用（CI、精简 Linux、云容器）。
+    % 注意：不要用 \IfFontExistsTF 判断 TeX 树内字体——检测不到，
+    % 且对缺失字体会退化成 METAFONT 查找并中断编译。
+    % 注意：TeX 树内的字体必须写"文件名+扩展名"（.otf），
+    % 只写家族名时 xeCJK 会退化成 METAFONT（TFM）查找并报 `I can't find file'。
+    \setCJKfamilyfont{dabiaosong}{FandolSong-Regular.otf}[AutoFakeBold=2.5]
+    \setCJKmainfont{FandolFang-Regular.otf}[AutoFakeBold=3.17, AutoFakeSlant=0.2]
+    \setCJKsansfont{FandolHei-Regular.otf}[Scale=1]
+    \setCJKfamilyfont{zhfs}{FandolFang-Regular.otf}
+    \setCJKfamilyfont{zhkai}{FandolKai-Regular.otf}
+    \setCJKfamilyfont{zhsong}{FandolSong-Regular.otf}
+    \setCJKmonofont{FandolHei-Regular.otf}
+    \setmonofont{lmmono10-regular.otf}
+  \else
+    % --- 系统字体方案（Windows/WPS 机器默认）：方正大标宋 → SimHei ---
+    \IfFontExistsTF{FZDaBiaoSong-B06}{
+      \setCJKfamilyfont{dabiaosong}{FZDaBiaoSong-B06}
+    }{
+      \setCJKfamilyfont{dabiaosong}{SimHei}[AutoFakeBold=2.5]
+      \ClassWarning{gbt9704}{FZDaBiaoSong-B06 not found, using SimHei as fallback}
+    }
 
-  % --- 主字体：仿宋 ---
-  \setCJKmainfont{FangSong}[AutoFakeBold=3.17, AutoFakeSlant=0.2]
-  \setCJKsansfont{SimHei}[Scale=1]  % 锁定 Scale，防止 unicode-math 全局缩放
-  \setCJKfamilyfont{zhfs}{FangSong}
-  \setCJKfamilyfont{zhkai}{KaiTi}
-  \setCJKfamilyfont{zhsong}{SimSun}
+    % --- 主字体：仿宋 ---
+    \setCJKmainfont{FangSong}[AutoFakeBold=3.17, AutoFakeSlant=0.2]
+    \setCJKsansfont{SimHei}[Scale=1]  % 锁定 Scale，防止 unicode-math 全局缩放
+    \setCJKfamilyfont{zhfs}{FangSong}
+    \setCJKfamilyfont{zhkai}{KaiTi}
+    \setCJKfamilyfont{zhsong}{SimSun}
 
-  % --- 等宽字体 ---
-  \setCJKmonofont{Sarasa Mono SC}
-  \setmonofont{DejaVu Sans Mono}
+    % --- 等宽字体 ---
+    \setCJKmonofont{Sarasa Mono SC}
+    \setmonofont{DejaVu Sans Mono}
+  \fi
 
   % --- 字体切换命令 ---
   \newcommand{\gbt@redheadfont}{\CJKfamily{dabiaosong}}
@@ -146,7 +166,11 @@
 
 % --- 跨主题通用 ---
 % 仿宋斜体（用于强调）
-\newCJKfontfamily{\FangSongItalic}[AutoFakeSlant=0.2]{FangSong}
+\if@gbt@fandol
+  \newCJKfontfamily{\FangSongItalic}[AutoFakeSlant=0.2]{FandolFang-Regular.otf}
+\else
+  \newCJKfontfamily{\FangSongItalic}[AutoFakeSlant=0.2]{FangSong}
+\fi
 
 % ------------------ 彩色 Emoji 支持（双引擎） ------------------
 % LuaLaTeX：bxcoloremoji → twemojis 渲染管线，输出 PDF 彩色矢量图形
@@ -167,14 +191,11 @@
       \@gbt@emojifalse
     }
   \else
-    % XeLaTeX / other：字体回退
-    % Segoe UI Emoji — COLRv0 彩色矢量，基础轮廓有实体，XeTeX 剥离 COLR 后仍可黑白渲染
-    % NotoEmoji-Regular — B&W 轮廓字体，TeX Live noto-emoji 包自带
-    \IfFontExistsTF{Segoe UI Emoji}{%
-      \newfontfamily{\gbtemojifont}{Segoe UI Emoji}[Scale=MatchUppercase]%
-    }{%
-      \newfontfamily{\gbtemojifont}{NotoEmoji-Regular.ttf}[Extension=.ttf, Scale=MatchUppercase]%
-    }
+    % XeLaTeX / other：用 TeX Live noto-emoji 包自带的 B&W 轮廓字体
+    % （COLRv0 彩色 emoji 由 LuaLaTeX 分支处理）。
+    % 注意：不要用 \IfFontExistsTF 探测系统 emoji 字体——对缺失字体会退化成
+    % METAFONT（TFM）查找并报 "I can't find file" 中断编译（CI 上必现）。
+    \newfontfamily{\gbtemojifont}{NotoEmoji-Regular.ttf}[Extension=.ttf, Scale=MatchUppercase]
   \fi
 \fi
 
@@ -342,8 +363,12 @@
   \zihao{3}\setlength{\baselineskip}{28pt}%
   \setlength{\parindent}{2\ccwd}%
 
-  % 确保 monofont 在 lmodern 等模板包之后仍生效
-  \setmonofont{DejaVu Sans Mono}%
+  % 确保 monofont 在 lmodern 等模板包之后仍生效（fandol 模式用 TeX 自带等宽字体）
+  \if@gbt@fandol
+    \setmonofont{lmmono10-regular.otf}%
+  \else
+    \setmonofont{DejaVu Sans Mono}%
+  \fi
 
   % 标题行沿用正文行距：否则标题按其自身字号（三号）的行距 19.2pt 计算行节距，
   % 会出现"标题紧贴上一段"（§5.2.3 每面 22 行、行距一致的行文要求）。

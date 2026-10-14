@@ -1,0 +1,62 @@
+name: Render
+
+# 每次推送到 main / PR 时做一次真实渲染自检：
+# 只用 TeX Live 自带字体（classoption: [fandol]），不依赖 Windows/方正/WPS 字体。
+# 这层 CI 就是为了拦住"在某类机器上编译不过"的回归（例如默认引擎留 lualatex 时
+# 无法嵌入系统 CJK 字体、字体缺失导致 METAFONT 中断等）。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  render:
+    name: 渲染自检（XeLaTeX + Fandol）
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: 物化扩展（解析子模块符号链接）
+        run: ./tools/materialize.sh
+
+      - name: 安装 Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: 安装 TeX Live 与字体
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-xetex texlive-lang-chinese texlive-latex-extra \
+            texlive-fonts-recommended fonts-dejavu-core
+          xelatex --version | head -1
+          kpsewhich FandolFang-Regular.otf
+
+      - name: 渲染 PDF（XeLaTeX · 必过）
+        run: |
+          quarto render tests/ci-minimal.qmd --to gbt9704-pdf
+          test -s tests/ci-minimal.pdf
+
+      - name: 渲染 DOCX / HTML（必过）
+        run: |
+          quarto render tests/ci-minimal.qmd --to gbt9704-docx
+          quarto render tests/ci-minimal.qmd --to gbt9704-html
+          test -s tests/ci-minimal.docx
+          test -s tests/ci-minimal.html
+
+      - name: 渲染 PDF · LuaLaTeX（只预警，不阻断）
+        continue-on-error: true
+        run: |
+          quarto render tests/ci-minimal.qmd --to gbt9704-pdf \
+            -M classoption=fandol -M pdf-engine=lualatex
+
+      - name: 上传渲染产物
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-render
+          path: tests/ci-minimal.*
+          if-no-files-found: warn

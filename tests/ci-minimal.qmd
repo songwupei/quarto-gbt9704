@@ -1,0 +1,16 @@
+---
+title: CI 渲染自检
+format:
+  gbt9704-pdf:
+    classoption: [fandol]
+  gbt9704-docx: default
+  gbt9704-html: default
+---
+
+一、测试标题
+
+这是 CI 渲染自检正文，含中英文混排 ABC 123、书名号《测试》与括号（示例）。
+
+（一）二级标题
+
+第二段正文，用于确认层次标题与行距。

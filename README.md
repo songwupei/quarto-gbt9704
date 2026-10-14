@@ -26,7 +26,7 @@ quarto add songwupei/quarto-gbt9704@dist
 <br><small>See [`example.qmd`](example.qmd) for a complete reference document with title, body, headings, tables, and more.</small>
 
 ```bash
-quarto render example.qmd --to gbt9704-pdf     # PDF (LuaLaTeX)
+quarto render example.qmd --to gbt9704-pdf     # PDF (XeLaTeX)
 quarto render example.qmd --to gbt9704-docx    # DOCX
 quarto render example.qmd --to gbt9704-html    # HTML (公文 CSS，可截图转 PNG)
 quarto render example.qmd --to gbt9704-pptx    # PPTX (蓝色商务)
@@ -172,7 +172,34 @@ title-type: zhidu
 正文内容……
 ```
 
-> 支持 PDF（LuaLaTeX）、DOCX、HTML 三种输出格式。
+> 支持 PDF（XeLaTeX，v0.7.8 起为默认引擎）、DOCX、HTML 三种输出格式。
+
+## 字体与引擎 · Fonts & Engine
+
+PDF 输出默认用 **XeLaTeX**（v0.7.8 起）。LuaLaTeX 在部分机器上无法嵌入系统 CJK 字体
+（会在写 PDF 阶段报 `cannot find file ''` 并挂起），XeLaTeX 经 fontconfig 取字体更稳。
+如需切回 LuaLaTeX：在文档 YAML 里写 `format: {gbt9704-pdf: {pdf-engine: lualatex}}`。
+
+中文字体有两套可选：
+
+| 选项 | 字体 | 适用场景 |
+|------|------|---------|
+| （默认） | 方正大标宋 + 系统仿宋/黑体/楷体/宋体（FangSong/SimHei/KaiTi/SimSun） | Windows / WPS 环境，本机已装这些字体 |
+| `fandol` | TeX Live 自带的 Fandol（仿宋/黑体/楷体/宋四种）+ Latin Modern Mono | **没有中文系统字体的机器、CI、云容器**，不依赖 fontconfig |
+
+```yaml
+---
+title: 示例
+format:
+  gbt9704-pdf:
+    classoption: [fandol]      # 只用 TeX Live 自带字体，任何装了 TeX Live 的机器都能出稿
+---
+```
+
+> 注意：`fandol` 模式下不能写家族名（如 `FandolFang-Regular`），必须带扩展名
+> （`FandolFang-Regular.otf`），否则 xeCJK 会退化成 METAFONT 查找并中断编译——
+> 类里已经处理好，自建模板时留意这一点。CI（`.github/workflows/render.yml`）就是用
+> `fandol` 模式做渲染自检的。
 
 ## 使用 · Usage
 
@@ -314,16 +341,18 @@ from: markdown+emoji
 
 | 格式 | 渲染引擎 | emoji 效果 | 字体策略 |
 |------|---------|-----------|---------|
-| **PDF** (gbt9704-pdf) | LuaLaTeX | 彩色矢量 ✅ | bxcoloremoji → twemojis（PDF 彩色矢量图形） |
-| **PDF** (gbt9704-pdf) | XeLaTeX | 黑白 ✅ | Segoe UI Emoji (COLRv0) → NotoEmoji-Regular |
+| **PDF** (gbt9704-pdf) · 默认 | XeLaTeX | 黑白 ✅ | NotoEmoji-Regular（TeX Live noto-emoji 包自带） |
+| **PDF** (gbt9704-pdf) · 可选 | LuaLaTeX | 彩色矢量 ✅ | bxcoloremoji → twemojis（PDF 彩色矢量图形） |
 | **DOCX** (gbt9704-docx) | Word / WPS | 黑白 ✅ | Segoe UI Symbol (纯 glyf，无 COLR 依赖) |
 | **HTML** (gbt9704-html) | 浏览器 | 彩色 ✅ | 原生支持 |
 
 > **技术说明**：
 >
-> **LuaLaTeX（推荐）**：bxcoloremoji → twemojis 渲染管线，emoji 以 PDF 彩色矢量图形输出，无需系统 emoji 字体。安装方式：`tlmgr install bxcoloremoji twemojis`。
+> **XeLaTeX（默认引擎）**：用 TeX Live `noto-emoji` 包自带的 `NotoEmoji-Regular.ttf` 输出黑白 emoji，
+> 不依赖系统 emoji 字体（因此不要再对系统字体做存在性探测——缺失字体触发 METAFONT 会中断编译）。
 >
-> **XeLaTeX**：CID 字体嵌入会剥离 COLR 颜色表。选择 COLRv0 字体（Segoe UI Emoji）——其基础轮廓有实体 glyph，剥离颜色后仍可黑白渲染。
+> **LuaLaTeX（可选，需要彩色 emoji 时用）**：bxcoloremoji → twemojis 渲染管线，emoji 以 PDF 彩色矢量图形输出。
+> 安装方式：`tlmgr install bxcoloremoji twemojis`，并在 YAML 里显式指定 `pdf-engine: lualatex`。
 >
 > **DOCX**：选择 Segoe UI Symbol（纯 glyf 轮廓字体），WPS / Office 均内置。
 >
