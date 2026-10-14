@@ -90,11 +90,17 @@ jobs:
       - name: 安装中文排版所需宏包（单次调用）
         run: |
           tlmgr install ctex fandol zhnumber xecjk ulem alltt caption \
-            subcaption booktabs longtable geometry fancyhdr iftex fcolumn
+            subcaption booktabs longtable geometry fancyhdr iftex fcolumn \
+            || echo "⚠ tlmgr 返回非零（多为安装后的 fmtutil/updmap 后置步骤告警），继续核验文件"
           xelatex --version | head -1
-          for f in FandolFang-Regular.otf ulem.sty geometry.sty fancyhdr.sty; do
-            printf '%-26s %s\n' "$f" "$(kpsewhich "$f" || echo '❌ 缺')"
+          # 以"文件在不在"为准：全都在才算安装成功
+          missing=0
+          for f in FandolFang-Regular.otf ctex.sty ulem.sty alltt.sty caption.sty \
+                   subcaption.sty booktabs.sty longtable.sty geometry.sty \
+                   fancyhdr.sty iftex.sty fcolumn.sty; do
+            if kpsewhich "$f" >/dev/null; then printf '✓ %s\n' "$f"; else printf '❌ 缺 %s\n' "$f"; missing=1; fi
           done
+          test "$missing" = 0
 
       - name: 渲染 PDF（XeLaTeX · 必过）
         run: |
@@ -140,7 +146,8 @@ jobs:
       - name: 安装中文排版所需宏包（单次调用）
         run: |
           tlmgr install ctex fandol zhnumber xecjk ulem alltt caption \
-            subcaption booktabs longtable geometry fancyhdr iftex fcolumn
+            subcaption booktabs longtable geometry fancyhdr iftex fcolumn \
+            || echo "⚠ tlmgr 返回非零（多为后置步骤告警），继续"
 
       - name: 渲染 PDF · LuaLaTeX（不阻断）
         run: |
