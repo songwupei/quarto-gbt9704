@@ -232,18 +232,24 @@
 \setstocksize{297mm}{210mm}
 \settrimmedsize{\stockheight}{\stockwidth}{*}
 \settrims{0pt}{0pt}
+% 正文行距必须在 \checkandfixthelayout 之前设定：memoir 会按当前的 \baselineskip
+% 把版心高度凑成整行数，否则版心会偏大（225mm 变成 229.3mm，每面多出半行，
+% 与 GB/T 9704-2012 §5.2.1／§5.2.3 的 156mm×225mm、每面 22 行不符）。
+\setlength{\baselineskip}{28pt}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt plus 0pt minus 0pt}
 \settypeblocksize{225mm}{156mm}{*}
 \setlrmargins{28mm}{*}{1}
 \setulmargins{37mm}{*}{1}
 \checkandfixthelayout
+% memoir 的 \checkandfixthelayout 会把版心高凑成整行数（22 行 × 28pt = 628pt，
+% 比国标少 3.5mm），这里按 §5.2.1 精确恢复 225mm；28pt 行距下每面仍排 22 行。
+\setlength{\textheight}{225mm}
 
 \setcounter{secnumdepth}{0}
 
 % ------------------ 段落格式（全局） ------------------
 \RequirePackage{indentfirst}  % 确保章节后第一段也缩进
-\setlength{\parindent}{2em}
-\setlength{\parskip}{0pt plus 0pt minus 0pt}
-\setlength{\baselineskip}{28pt}
 
 % CJK 断行优化
 \hyphenpenalty=10000
