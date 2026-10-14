@@ -200,6 +200,10 @@ format:
 > （`FandolFang-Regular.otf`），否则 xeCJK 会退化成 METAFONT 查找并中断编译——
 > 类里已经处理好，自建模板时留意这一点。CI（`.github/workflows/render.yml`）就是用
 > `fandol` 模式做渲染自检的。
+>
+> 另一处环境差异：TexLive 的 `noto-emoji` 包提供 XeLaTeX 用的 `NotoEmoji-Regular.ttf`。
+> Debian/Ubuntu 的 TeX Live 默认不带它，这时加 `noemoji` 选项即可（`\emoji` 会退化为
+> 打印原字符并告警，不影响正文）。CI 自检用的就是 `classoption: [fandol, noemoji]`。
 
 ## 使用 · Usage
 

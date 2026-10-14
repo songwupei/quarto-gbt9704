@@ -2,7 +2,10 @@
 title: CI 渲染自检
 format:
   gbt9704-pdf:
-    classoption: [fandol]
+    # fandol：只用 TeX Live 自带字体（不依赖系统中文/方正字体）
+    # noemoji：CI 的 Debian TeX Live 没有 noto-emoji 包，跳过硬编码的 emoji 字体
+    #          （类里 \emoji 有退化定义，仍可编译，只在真正用 emoji 时告警）
+    classoption: [fandol, noemoji]
   gbt9704-docx: default
   gbt9704-html: default
 ---
