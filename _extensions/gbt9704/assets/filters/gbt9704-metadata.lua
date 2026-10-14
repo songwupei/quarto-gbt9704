@@ -454,12 +454,12 @@ function Pandoc(doc)
       ))
     elseif is_context then
       table.insert(post_blocks, raw_context(
-        string.format("\\noindent\\switchtobodyfont[16pt]\\FangSong （%s）", notes)
+        string.format("\\noindent\\hskip2em\\switchtobodyfont[16pt]\\FangSong （%s）", notes)
       ))
     elseif is_docx then
       table.insert(post_blocks, pandoc.RawBlock("openxml",
         string.format(
-          '<w:p><w:pPr><w:ind w:firstLine="0"/></w:pPr><w:r><w:t xml:space="preserve">（%s）</w:t></w:r></w:p>',
+          '<w:p><w:pPr><w:ind w:firstLineChars="200"/></w:pPr><w:r><w:t xml:space="preserve">（%s）</w:t></w:r></w:p>',
           notes
         )
       ))

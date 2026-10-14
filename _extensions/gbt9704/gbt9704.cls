@@ -507,8 +507,10 @@
 }
 
 % 附注
+% 附注（GB/T 9704-2012 §7.3.6）：居左空二字，加圆括号
 \newcommand{\notes}[1]{%
-  \begingroup\zihao{3}\setlength{\baselineskip}{28pt}\noindent （#1）\par\endgroup
+  \begingroup\zihao{3}\setlength{\baselineskip}{28pt}%
+  \noindent\hspace{2\ccwd}（#1）\par\endgroup
 }
 
 % 版记分隔线
