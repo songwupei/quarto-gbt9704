@@ -26,20 +26,23 @@ jobs:
       - name: 安装 Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: 安装 TeX Live 与字体
+      # 用上游 TeX Live（TinyTeX + tlmgr），与开发机上的 Arch/TeX Live 语义一致；
+      # 不用 Debian 的 texlive-* 拆分包（ulem/iftex/fandol 等会被拆到不同包里，
+      # 缺什么报什么，与真实使用环境对不上）。
+      - name: 安装 TinyTeX（上游 TeX Live）
+        uses: r-lib/actions/setup-tinytex@v2
+
+      - name: 安装中文排版所需宏包
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            texlive-xetex texlive-lang-chinese \
-            texlive-latex-base texlive-latex-recommended texlive-latex-extra \
-            texlive-plain-generic texlive-fonts-recommended fonts-dejavu-core
+          tlmgr option repository ctan
+          for pkg in ctex fandol zhnumber xecjk ulem alltt caption subcaption \
+                     booktabs longtable geometry fancyhdr iftex fcolumn; do
+            tlmgr install "$pkg" >/dev/null 2>&1 \
+              && echo "✓ $pkg" \
+              || echo "⚠ $pkg 未能显式安装（quarto 渲染时会自动补装）"
+          done
           xelatex --version | head -1
           kpsewhich FandolFang-Regular.otf
-          # 类里用到的包逐个确认（Debian 的 TeX Live 分包与 TeX Live 官方不同）
-          for f in ulem.sty alltt.sty caption.sty subcaption.sty booktabs.sty \
-                   longtable.sty geometry.sty fancyhdr.sty iftex.sty fcolumn.sty; do
-            printf '%-18s %s\n' "$f" "$(kpsewhich "$f" || echo '❌ 缺')"
-          done
 
       - name: 渲染 PDF（XeLaTeX · 必过）
         run: |
