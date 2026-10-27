@@ -89,6 +89,10 @@ jobs:
 
       - name: 安装中文排版所需宏包（单次调用）
         run: |
+          # 缓存里的 tlmgr 可能是旧版；旧版 tlmgr 会直接拒绝安装并报
+          # “tlmgr itself needs to be updated.”，因此先自更新再装包。
+          tlmgr update --self \
+            || echo "⚠ tlmgr 自更新失败，继续尝试安装"
           tlmgr install ctex fandol zhnumber xecjk ulem alltt caption \
             subcaption booktabs longtable geometry fancyhdr iftex fcolumn \
             || echo "⚠ tlmgr 返回非零（多为安装后的 fmtutil/updmap 后置步骤告警），继续核验文件"
@@ -145,6 +149,9 @@ jobs:
 
       - name: 安装中文排版所需宏包（单次调用）
         run: |
+          # 缓存里的 tlmgr 可能是旧版，先自更新再装包（同 pdf job）。
+          tlmgr update --self \
+            || echo "⚠ tlmgr 自更新失败，继续尝试安装"
           tlmgr install ctex fandol zhnumber xecjk ulem alltt caption \
             subcaption booktabs longtable geometry fancyhdr iftex fcolumn \
             || echo "⚠ tlmgr 返回非零（多为后置步骤告警），继续"
