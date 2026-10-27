@@ -43,8 +43,22 @@ local function promote(text)
 end
 
 -- ============================================================================
--- 表格式返回：确保 Meta → Para 按序执行
+-- 表格式返回：确保 Meta → Pandoc 按序执行
 -- ============================================================================
+-- 注意：不能用 Para/Plain 元素回调，否则表格单元格里以“一、”开头的正文
+-- （如“一、项目建设费改为……”）也会被提升为标题，在 LaTeX 中生成
+-- minipage 内的 \section，把表格撑出大片空白。这里只遍历顶层块和 Div。
+
+local function promote_blocks(blocks)
+  for i, blk in ipairs(blocks) do
+    if blk.t == "Para" or blk.t == "Plain" then
+      local heading = promote(pandoc.utils.stringify(blk))
+      if heading then blocks[i] = heading end
+    elseif blk.t == "Div" then
+      promote_blocks(blk.content)
+    end
+  end
+end
 
 return {
   {
@@ -57,15 +71,10 @@ return {
       end
       return nil
     end,
-  },
-  {
-    Para = function(el)
-      if not has_tongzhi then return nil end
-      return promote(pandoc.utils.stringify(el))
-    end,
-    Plain = function(el)
-      if not has_tongzhi then return nil end
-      return promote(pandoc.utils.stringify(el))
+    Pandoc = function(doc)
+      if not has_tongzhi then return doc end
+      promote_blocks(doc.blocks)
+      return doc
     end,
   },
 }

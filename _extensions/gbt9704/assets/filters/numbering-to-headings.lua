@@ -28,6 +28,21 @@ end
 -- ============================================================================
 -- 表格式返回
 -- ============================================================================
+-- 只遍历顶层块和 Div，避免表格单元格中的“1 xxx”被误提升为标题。
+
+local function promote_blocks(blocks)
+  for i, blk in ipairs(blocks) do
+    if blk.t == "Para" then
+      local text = pandoc.utils.stringify(blk.content)
+      local level = #text > 0 and detect_level(text) or nil
+      if level then
+        blocks[i] = pandoc.Header(level, blk.content)
+      end
+    elseif blk.t == "Div" then
+      promote_blocks(blk.content)
+    end
+  end
+end
 
 return {
   {
@@ -39,20 +54,10 @@ return {
       end
       return nil
     end,
-  },
-  {
-    Para = function(el)
-      if not has_biaozhun then return nil end
-
-      local text = pandoc.utils.stringify(el.content)
-      if #text == 0 then return nil end
-
-      local level = detect_level(text)
-      if level then
-        return pandoc.Header(level, el.content)
-      end
-
-      return nil
+    Pandoc = function(doc)
+      if not has_biaozhun then return doc end
+      promote_blocks(doc.blocks)
+      return doc
     end,
   },
 }
